@@ -127,7 +127,7 @@ void uplink() {
   } 
   for (uint8_t ch = 0; ch < 2 ; ch++) {
     if (conf.dig_type[ch]) {
-      lpp.addDigitalInput(ch + 11, digitalRead(DIG_PIN[ch]));
+      lpp.addDigitalInput(ch + 11, !digitalRead(DIG_PIN[ch]));
     } 
   } 
   lpp.addAnalogInput(20, BatVolt);  
