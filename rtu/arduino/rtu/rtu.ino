@@ -6,24 +6,20 @@
 #include "ADS1118.h"
 #include <SPI.h>
 
-const uint8_t DIG_PIN[2]    = {3, 2}; // PD0/SCL/INT0, PD1/SDA/INT1
-const uint8_t RAK_RES_PIN   = 4;   // PD4/ADC8
-const uint8_t LED_PIN       = 10;  // PB6/ADC13/PCINT6
-const uint8_t BAT_PIN       = A0;  // PF7/ADC7
-const uint8_t BAT_EN_PIN    = A1;  // PF6/ADC6
-const uint8_t VREF_EN_PIN   = A2;  // PF5/ADC5
-const uint8_t VOUT_EN_PIN   = A3;  // PF4/ADC4
-const uint8_t ADS_CS_PIN    = A4;  // PF1/ADC1
+const uint8_t BUTTON_PIN    = 7;        // PE6/AIN0/INT6
+const uint8_t R485_DIR_PIN  = 4;        // PD4/ADC8
+const uint8_t RELAY_PIN[2]  = {12, 6};  // PD6/ADC9, PD7/ADC10
+const uint8_t DIG_PIN[2]    = {8, 9};   // PB4/ADC11/PCINT4, PB5/ADC12/PCINT5
+const uint8_t RAK_RES_PIN   = 10;       // PB6/ADC13/PCINT6
+const uint8_t LED_PIN       = A4;       // PF1/ADC1
+const uint8_t MEM_CS_PIN    = A5;       // PF0/ADC0
 
-float In, R, Val[2], BatVolt;
+float Val[2];
 uint8_t hysRegionPrev[2] = {3, 3};
-const float rtd_coeff = 0.3851, rtd_r0 = 100, extRef = 2.5, r_ext = 2400;
 volatile bool isAlarm = false;
-bool isPowerUp;
-const uint8_t vrefEnDly = 20, digDly = 100;
-const uint8_t batEnDly = 1, batSampDly = 1, batSampNum = 3;
+const uint8_t digDly = 100;
 const uint8_t atWake = 1, atSleep = 2, atJoin = 3, atSend = 4, atDr = 5;
-uint16_t minuteRead, minuteSend, sendP;
+unsigned long tmrSecRead, tmrSecSend;
 const long tmrSec120 = 120000, tmrSec10 = 10000, tmrMsec100 = 100;
 
 struct Conf {
@@ -130,11 +126,7 @@ void uplink() {
       lpp.addDigitalInput(ch + 11, digitalRead(DIG_PIN[ch]));
     } 
   } 
-  lpp.addAnalogInput(20, BatVolt);  
-  //if (!isPowerUp) {
-  //  isPowerUp = true;
-  //  lpp.addAnalogOutput(30, 0);    
-  //}
+  lpp.addAnalogInput(20, BatVolt);   
   if (!rakWake()) {
     resetMe();
   }
