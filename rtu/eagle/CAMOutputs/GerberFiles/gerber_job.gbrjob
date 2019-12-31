@@ -1,7 +1,7 @@
 {
     "Header": {
         "Comment": "All values are metric (mm)",
-        "CreationDate": "2019-12-26T08:31:10Z",
+        "CreationDate": "2019-12-31T13:39:26Z",
         "GenerationSoftware": {
             "Application": "EAGLE",
             "Vendor": "Autodesk",
@@ -13,7 +13,7 @@
         "BoardThickness": 1.57,
         "LayerNumber": 2,
         "Name": {
-            "ProjectId": "remote-io-24v-v3"
+            "ProjectId": "rtu"
         },
         "Owner": "serkan urkmez <mserkanu@gmail.com>",
         "Size": {
