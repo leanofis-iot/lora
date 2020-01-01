@@ -38,7 +38,7 @@
 <layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
-<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
@@ -66,6 +66,8 @@
 <wire x1="3.81" y1="0" x2="3.81" y2="65.405" width="0" layer="51" locked="yes"/>
 <wire x1="72.39" y1="0" x2="72.39" y2="65.405" width="0" layer="51" locked="yes"/>
 <wire x1="38.1" y1="65.405" x2="38.1" y2="0" width="0" layer="51" locked="yes"/>
+<hole x="16.891" y="44.6405" drill="1.8"/>
+<hole x="16.891" y="52.1335" drill="1.1"/>
 </plain>
 <libraries>
 <library name="myparts">
@@ -1773,8 +1775,6 @@ design rules under a new name.</description>
 <wire x1="40.894" y1="21.971" x2="40.64" y2="22.225" width="0.3048" layer="1"/>
 <wire x1="41.148" y1="15.113" x2="40.894" y2="15.367" width="0.3048" layer="1"/>
 <wire x1="40.894" y1="15.367" x2="40.894" y2="21.971" width="0.3048" layer="1"/>
-<wire x1="6.477" y1="37.846" x2="6.604" y2="37.719" width="0.3048" layer="16"/>
-<wire x1="6.604" y1="37.719" x2="6.604" y2="35.941" width="0.3048" layer="16"/>
 <contactref element="R25" pad="1"/>
 <contactref element="R30" pad="1"/>
 <contactref element="IC3" pad="2"/>
