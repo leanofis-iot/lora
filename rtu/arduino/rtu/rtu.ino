@@ -1,85 +1,109 @@
 #include <avr/wdt.h>
-#include "LowPower.h"
 #include <AltSoftSerial.h>
 #include <EEPROM.h>
 #include <CayenneLPP.h>
-#include "ADS1118.h"
-#include <SPI.h>
 
-const uint8_t BUTTON_PIN    = 7;        // PE6/AIN0/INT6
-const uint8_t R485_DIR_PIN  = 4;        // PD4/ADC8
-const uint8_t RELAY_PIN[2]  = {12, 6};  // PD6/ADC9, PD7/ADC10
-const uint8_t DIG_PIN[2]    = {8, 9};   // PB4/ADC11/PCINT4, PB5/ADC12/PCINT5
-const uint8_t RAK_RES_PIN   = 10;       // PB6/ADC13/PCINT6
-const uint8_t LED_PIN       = A4;       // PF1/ADC1
-const uint8_t MEM_CS_PIN    = A5;       // PF0/ADC0
+const uint8_t BUTTON_PIN    = 7;                // PE6/AIN0/INT6
+const uint8_t DS_INT_PIN    = SCK;              // PB1/SCLK/PCINT1
+const uint8_t INA_ALR_PIN[2]= {MOSI, MISO};     // PB2/MOSI/PCINT2, PB3/MISO/PCINT3 
+const uint8_t RS_DIR_PIN    = 4;                // PD4/ADC8
+const uint8_t DIG_PIN[2]    = {9, 8};           // PB5/ADC12/PCINT5, PB4/ADC11/PCINT4
+const uint8_t RAK_RES_PIN   = 10;               // PB6/ADC13/PCINT6
+const uint8_t RELAY_PIN[4]  = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
+const uint8_t LED_PIN       = A5;               // PF0/ADC0
 
 float Val[2];
 uint8_t hysRegionPrev[2] = {3, 3};
 volatile bool isAlarm = false;
-const uint8_t digDly = 100;
-const uint8_t atWake = 1, atSleep = 2, atJoin = 3, atSend = 4, atDr = 5;
-unsigned long tmrSecRead, tmrSecSend;
-const long tmrSec120 = 120000, tmrSec10 = 10000, tmrMsec100 = 100;
+const uint8_t digDly = 50;
+unsigned long tmrMillis, tmrMinutes;
+String strSerial, strRak;
+bool loraJoin = false, loraSend = true;
 
 struct Conf {
-  uint16_t read_p;
-  uint16_t send_p;        
-  float alr_max[2];
-  float alr_min[2];
-  float alr_hys[2];
-  float cal_b[2];  
-  uint8_t an_type[2];
-  uint8_t dig_type[2];
-  uint8_t dr;  
+  uint8_t bytes[6];   // an0_en, an1_en, dig0_en, dig1_en, dr 
+  uint16_t words[1];  // send_p
+  float floats[6];    // alr0_min, alr0_max, alr1_min, alr1_max, hys0, hys1
 };
 
 Conf conf;
-ADS1118 ads1118(ADS_CS_PIN);
 AltSoftSerial rakSerial;
 CayenneLPP lpp(51);
 
-void setup() {  
+void setup() {
+  if (USBSTA >> VBUS & 1) {
+    Serial.begin(115200);
+    while (!Serial);
+  }
+  wdt_enable(WDTO_8S);  
   setPins();
   rakSerial.begin(9600);
-  analogReference(INTERNAL);
   loadConf();  
-  flashLed();
-  setAds();    
-  if (USBSTA >> VBUS & 1) {
-    setUsb();
-  }
-  pwrDownUsb();
-  readAll();
-  readAll();
-  if (rakJoin()) {
-    if (!rakDr()) {
-      resetMe();     
-    }    
-    if (!rakSleep()) {      
-      resetMe();
-    }
-    delay(1000);    
-    uplink();         
-  } else {
-    if (!rakDr()) {
-      resetMe();     
-    }       
-    if (!rakSleep()) {          
-      resetMe();
-    }    
-  }   
+  setAds();   
+  tmrMillis = millis();
 }
-void loop() {  
-  for (uint8_t slpCnt = 0; slpCnt < 8 ; slpCnt++) {   
-    sleepAndWake();
-    if (isAlarm) {
+void loop() {
+  wdt_reset();
+  if (millis() - tmrMillis >= conf.send_p * 60000) {
+    tmrMillis = millis();
+    if (loraJoin && loraSend) {
+      loraSend = false;
       readAll();
-      delay(digDly);      
       uplink();
-      return;      
-    }              
-  }    
+    } else {
+      resetMe();
+    }    
+  }
+  while (rakSerial.available()) {
+    const char chrRak = (char)rakSerial.read();
+    //if (Serial) {
+      Serial.print(chrRak); // or line print
+    //}
+    strRak += chrRak;
+    if (chrRak == '\n') {
+      strRak.trim();
+      if (strRak.equalsIgnoreCase(F("[LoRa]:Join Success"))) {        
+        // delay
+        rakSerial.print(F("at+set_config=lora:dr:")); 
+        rakSerial.println(conf.dr);
+      } else if (strRak.equalsIgnoreCase(F("LoRa configure DR0 success"))) { /// DR0
+        loraJoin = true; 
+        digitalWrite(LED_PIN, HIGH);       
+      } else if (strRak.equalsIgnoreCase(F("[LoRa]: RUI_MCPS_UNCONFIRMED send success"))) { 
+        loraSend = true;
+      }
+      strRak = "";
+    }
+  }
+  while (Serial.available()) {
+    const char chrSerial = (char)Serial.read();
+    strSerial += chrSerial;
+    if (chrSerial == '\n') {
+      strSerial.trim();       
+      if (strSerial.startsWith(F("at"))) {
+        rakSerial.println(strSerial); 
+      } else if (strSerial.equalsIgnoreCase(F("eof"))) {
+        EEPROM.put(0, conf);
+        Serial.println(F("OK"));       
+      } else if (strSerial.equalsIgnoreCase(F("&b"))) {
+        conf.bytes[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();
+      } else if (strSerial.equalsIgnoreCase(F("&w"))) {
+        conf.words[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();     
+      } else if (strSerial.equalsIgnoreCase(F("&f"))) {
+        conf.floats[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toFloat();
+      }
+      strSerial = "";
+    }
+  }
+        
+  if (isAlarm) {
+    readAll();
+    delay(digDly);      
+    uplink();
+    return;      
+  }
+  
+        
   minuteRead++;
   minuteSend++;  
   if (minuteRead >= conf.read_p) {
@@ -362,22 +386,23 @@ void lppDownlinkDec(String str) {
   }  
 }
 void setPins() {
-  for (uint8_t ch = 0; ch < 2 ; ch++) {
-    pinMode(DIG_PIN[ch], INPUT);
-  }   
+  pinMode(BUTTON_PIN, INPUT);  
+  pinMode(DS_INT_PIN, INPUT);
+  pinMode(RS_DIR_PIN, OUTPUT);
   pinMode(RAK_RES_PIN, OUTPUT);
-  pinMode(LED_PIN, OUTPUT);  
-  pinMode(BAT_PIN, INPUT);
-  pinMode(BAT_EN_PIN, OUTPUT);
-  pinMode(VREF_EN_PIN, OUTPUT);
-  pinMode(VOUT_EN_PIN, OUTPUT);
-  pinMode(ADS_CS_PIN, OUTPUT);  
+  pinMode(LED_PIN, OUTPUT);
+  for (uint8_t ch = 0; ch < 2 ; ch++) {
+    pinMode(INA_ALR_PIN[ch], INPUT);
+    pinMode(DIG_PIN[ch], INPUT);
+  }
+  for (uint8_t ch = 0; ch < 4 ; ch++) {
+    pinMode(RELAY_PIN[ch], OUTPUT);    
+  }   
   digitalWrite(RAK_RES_PIN, LOW);
-  digitalWrite(LED_PIN, HIGH);
-  digitalWrite(BAT_EN_PIN, HIGH);
-  digitalWrite(VREF_EN_PIN, HIGH);
-  digitalWrite(VOUT_EN_PIN, LOW);
-  digitalWrite(ADS_CS_PIN, HIGH);
+  digitalWrite(LED_PIN, LOW);
+  for (uint8_t ch = 0; ch < 4 ; ch++) {
+    digitalWrite(RELAY_PIN[ch], LOW);    
+  }   
 }
 void setUsb() {
   Serial.begin(115200);
