@@ -14,14 +14,14 @@ const uint8_t LED_PIN       = A5;               // PF0/ADC0
 
 float Val[2];
 uint8_t hysRegionPrev[2] = {3, 3};
-volatile bool isAlarm = false;
+volatile bool isAttachInt = false;
 const uint8_t digDly = 50;
 unsigned long tmrMillis, tmrMinutes;
-String strSerial, strRak;
+String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
 
 struct Conf {
-  uint8_t bytes[6];   // an0_en, an1_en, dig0_en, dig1_en, dr 
+  uint8_t bytes[6];   // an0_type, an1_type, dig0_type, dig1_type, dr 
   uint16_t words[1];  // send_p
   float floats[6];    // alr0_min, alr0_max, alr1_min, alr1_max, hys0, hys1
 };
@@ -39,7 +39,15 @@ void setup() {
   setPins();
   rakSerial.begin(9600);
   loadConf();  
-  setAds();   
+  setAds(); 
+
+  EIFR = 255;  
+  for (uint8_t ch = 0; ch < 2 ; ch++) {
+    if (conf.dig_type[ch]) {
+      attachInterrupt(digitalPinToInterrupt(DIG_PIN[ch]), attachInt, conf.dig_type[ch]);    
+    }    
+  }   
+  isAttachInt = false; 
   tmrMillis = millis();
 }
 void loop() {
@@ -50,29 +58,56 @@ void loop() {
       loraSend = false;
       readAll();
       uplink();
+      return;
     } else {
       resetMe();
     }    
   }
+  if (isAttachInt) {
+    isAttachInt = false;
+    delay(digDly);
+    if (loraJoin && loraSend) {
+      loraSend = false;
+      readAll();
+      uplink();
+      return;
+    } else {
+      resetMe();
+    }          
+  }
+  for (uint8_t ch = 0; ch < 2 ; ch++) {
+    if (conf.an_type[ch]) {
+      if (!INA_ALR_PIN[ch]) {        
+        if (loraJoin && loraSend) {
+          loraSend = false;
+          readAll();
+          uplink();
+          return;
+        } else {
+          resetMe();
+        }       
+      }
+    }    
+  }   
   while (rakSerial.available()) {
-    const char chrRak = (char)rakSerial.read();
+    const char chrRakSerial = (char)rakSerial.read();
     //if (Serial) {
-      Serial.print(chrRak); // or line print
+      Serial.print(chrRakSerial); // or line print
     //}
-    strRak += chrRak;
-    if (chrRak == '\n') {
-      strRak.trim();
-      if (strRak.equalsIgnoreCase(F("[LoRa]:Join Success"))) {        
+    strRakSerial += chrRakSerial;
+    if (chrRakSerial == '\n') {
+      strRakSerial.trim();
+      if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
         rakSerial.print(F("at+set_config=lora:dr:")); 
         rakSerial.println(conf.dr);
-      } else if (strRak.equalsIgnoreCase(F("LoRa configure DR0 success"))) { /// DR0
+      } else if (strRakSerial.endsWith(F("DR0 success"))) { /// DR0
         loraJoin = true; 
         digitalWrite(LED_PIN, HIGH);       
-      } else if (strRak.equalsIgnoreCase(F("[LoRa]: RUI_MCPS_UNCONFIRMED send success"))) { 
+      } else if (strRakSerial.endsWith(F("send success"))) { 
         loraSend = true;
       }
-      strRak = "";
+      strRakSerial = "";
     }
   }
   while (Serial.available()) {
@@ -82,48 +117,26 @@ void loop() {
       strSerial.trim();       
       if (strSerial.startsWith(F("at"))) {
         rakSerial.println(strSerial); 
-      } else if (strSerial.equalsIgnoreCase(F("eof"))) {
+      } else if (strSerial.startsWith(F("&eof"))) {
         EEPROM.put(0, conf);
         Serial.println(F("OK"));       
-      } else if (strSerial.equalsIgnoreCase(F("&b"))) {
+      } else if (strSerial.startsWith(F("&b"))) {
         conf.bytes[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();
-      } else if (strSerial.equalsIgnoreCase(F("&w"))) {
+      } else if (strSerial.startsWith(F("&w"))) {
         conf.words[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();     
-      } else if (strSerial.equalsIgnoreCase(F("&f"))) {
+      } else if (strSerial.startsWith(F("&f"))) {
         conf.floats[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toFloat();
       }
       strSerial = "";
     }
-  }
-        
-  if (isAlarm) {
-    readAll();
-    delay(digDly);      
-    uplink();
-    return;      
-  }
-  
-        
-  minuteRead++;
-  minuteSend++;  
-  if (minuteRead >= conf.read_p) {
-    minuteRead = 0;    
-    readAll();
-    if (isAlarm) {      
-      uplink();
-      return;      
-    }    
-  }    
-  if (minuteSend >= sendP) {
-    uplink();
-    return;
-  }    
+  } 
+   
 }
 void sleepAndWake() { 
   EIFR = 255;  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
     if (conf.dig_type[ch]) {
-      attachInterrupt(digitalPinToInterrupt(DIG_PIN[ch]), wakeUp, conf.dig_type[ch]);    
+      attachInterrupt(digitalPinToInterrupt(DIG_PIN[ch]), attachInt, conf.dig_type[ch]);    
     }    
   }   
   isAlarm = false; 
@@ -135,7 +148,7 @@ void sleepAndWake() {
   }   
 }
 void uplink() {
-  isAlarm = false;
+  isAttachInt = false;
   minuteRead = 0;  
   minuteSend = 0; 
   readBattery(); 
@@ -606,8 +619,8 @@ void pwrDownRef() {
   ACSR &= ~_BV(ACIE);
   ACSR |= _BV(ACD);
 }
-void wakeUp() {
-  isAlarm = true;   
+void attachInt() {
+  isAttachInt = true;   
 }
 void resetMe() {
   wdt_enable(WDTO_15MS);
