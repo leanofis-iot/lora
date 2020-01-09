@@ -17,7 +17,8 @@ const uint8_t LED_PIN       = A5;               // PF0/ADC0
 const uint8_t an_en_i       = 0;
 const uint8_t dig_en_i      = 2;
 const uint8_t dig_int_i     = 4;
-const uint8_t dr_i          = 6;
+const uint8_t lora_dr_i     = 6;
+const uint8_t lora_port_i   = 7;
 const uint8_t send_per_i    = 0;
 const uint8_t alr_min_i     = 0;
 const uint8_t alr_max_i     = 2;
@@ -36,7 +37,7 @@ String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true, isValAlarm = false;
 
 struct Conf {
-  uint8_t bytes[5];   // an0_en, an1_en, dig0_en, dig1_en, dig0_int, dig1_int, dr 
+  uint8_t bytes[5];   // an0_en, an1_en, dig0_en, dig1_en, dig0_int, dig1_int, lora_dr, lora_port
   uint16_t words[1];  // send_p
   float floats[14];   // alr0_min, alr1_min, alr0_max, alr1_max, hys0, hys1, in0_min, in1_min, in0_max, in1_max, val0_min, val1_min, val0_max, val1_max
 };
@@ -47,17 +48,19 @@ CayenneLPP lpp(51);
 INA226 ina;
 
 void setup() {
-  if (USBSTA >> VBUS & 1) {
+  wdt_enable(WDTO_8S);
+  if (USBSTA >> VBUS & 1) {    
     Serial.begin(115200);
-    while (!Serial);
-  }
-  wdt_enable(WDTO_8S);  
+    while (!Serial) {
+      wdt_reset();
+    }
+  }    
   setPins();
   rakSerial.begin(9600);
   loadConf();  
   setIna();
   setAttachInt();  
-  resetRak(); 
+  setRak(); 
   tmrMillis = millis();
 }
 void loop() {
@@ -100,7 +103,8 @@ void getInaAlert() {
   for (uint8_t ch = 0; ch < 2 ; ch++) {
     if (conf.bytes[an_en_i + ch]) {
       if (!INA_ALR_PIN[ch]) {        
-        readAll();        
+        readAll();
+        return;        
       }
     }    
   } 
@@ -129,8 +133,8 @@ void getRakSerial() {
       if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
         rakSerial.print(F("at+set_config=lora:dr:")); 
-        rakSerial.println(conf.bytes[dr_i]);
-      } else if (strRakSerial.endsWith(F("DR0 success"))) { /// DR0
+        rakSerial.println(conf.bytes[lora_dr_i]);
+      } else if (strRakSerial.endsWith("DR" + String(conf.bytes[lora_dr_i]) +" success")) { 
         loraJoin = true; 
         digitalWrite(LED_PIN, HIGH);       
       } else if (strRakSerial.endsWith(F("send success"))) { 
@@ -174,7 +178,7 @@ void uplink() {
       lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));
     } 
   } 
-  rakSerial.print(F("at+send=lora:1:")); 
+  rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
   rakSerial.println(lppGetBuffer());  
 }
 void readAll() {  
@@ -249,10 +253,12 @@ void setPins() {
 }
 void setIna() {
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    ina.begin(0x40 + ch);
-    ina.configure(INA226_AVERAGES_128, INA226_BUS_CONV_TIME_140US, INA226_SHUNT_CONV_TIME_8244US, INA226_MODE_SHUNT_CONT);
-    ina.calibrate(3.3, 0.30);
-    ina.enableConversionReadyAlert();       
+    if (conf.bytes[an_en_i + ch]) {
+      ina.begin(0x40 + ch);
+      ina.configure(INA226_AVERAGES_128, INA226_BUS_CONV_TIME_140US, INA226_SHUNT_CONV_TIME_8244US, INA226_MODE_SHUNT_CONT);
+      ina.calibrate(3.3, 0.30);
+      ina.enableConversionReadyAlert();
+    }           
   } 
 }
 void setAttachInt() {
@@ -267,7 +273,7 @@ void setAttachInt() {
 void attachInt() {
   isAttachInt = true;   
 }
-void resetRak() {
+void setRak() {
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
 }
