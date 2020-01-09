@@ -5,27 +5,39 @@
 #include <Wire.h>
 #include <INA226.h>
 
-const uint8_t BUTTON_PIN    = 7;                // PE6/AIN0/INT6
-const uint8_t DS_INT_PIN    = SCK;              // PB1/SCLK/PCINT1
-const uint8_t INA_ALR_PIN[2]= {MOSI, MISO};     // PB2/MOSI/PCINT2, PB3/MISO/PCINT3 
-const uint8_t RS_DIR_PIN    = 4;                // PD4/ADC8
-const uint8_t DIG_PIN[2]    = {9, 8};           // PB5/ADC12/PCINT5, PB4/ADC11/PCINT4
-const uint8_t RAK_RES_PIN   = 10;               // PB6/ADC13/PCINT6
-const uint8_t RELAY_PIN[4]  = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
-const uint8_t LED_PIN       = A5;               // PF0/ADC0
+#define BUTTON_PIN    = 7;                // PE6/AIN0/INT6
+#define DS_INT_PIN    = SCK;              // PB1/SCLK/PCINT1
+#define INA_ALR_PIN[2]= {MOSI, MISO};     // PB2/MOSI/PCINT2, PB3/MISO/PCINT3 
+#define RS_DIR_PIN    = 4;                // PD4/ADC8
+#define DIG_PIN[2]    = {9, 8};           // PB5/ADC12/PCINT5, PB4/ADC11/PCINT4
+#define RAK_RES_PIN   = 10;               // PB6/ADC13/PCINT6
+#define RELAY_PIN[4]  = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
+#define LED_PIN       = A5;               // PF0/ADC0
+
+#define an_type_i   = 0;
+#define dig_type_i  = 2;
+#define dr_i        = 4;
+#define send_per_i  = 0;
+#define alr_min_i   = 0;
+#define alr_max_i   = 2;
+#define hys_i       = 4;
+#define in_min_i    = 6;
+#define in_max_i    = 8;
+#define val_min_i   = 10;
+#define val_max_i   = 12;
 
 float In, Val[2];
 uint8_t hysRegionPrev[2] = {3, 3};
-volatile bool isAttachInt = false;
 const uint8_t digDly = 50;
+volatile bool isAttachInt = false;
 unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true, isValAlarm = false;
 
 struct Conf {
-  uint8_t bytes[6];   // an0_type, an1_type, dig0_type, dig1_type, dr 
+  uint8_t bytes[5];   // an0_en, an1_en, dig0_type, dig1_type, dr 
   uint16_t words[1];  // send_p
-  float floats[6];    // alr0_min, alr0_max, alr1_min, alr1_max, hys0, hys1
+  float floats[14];   // alr0_min, alr1_min, alr0_max, alr1_max, hys0, hys1, in0_min, in1_min, in0_max, in1_max, val0_min, val1_min, val0_max, val1_max
 };
 
 Conf conf;
@@ -49,7 +61,15 @@ void setup() {
 }
 void loop() {
   wdt_reset();
-  if (millis() - tmrMillis >= conf.send_p * 60000) {
+  getMillis();
+  getAttachInt();
+  getInaAlert();
+  getValAlarm();
+  getRakSerial();
+  getSerial(); 
+}
+void getMillis() {
+  if (millis() - tmrMillis >= conf.words[send_per_i] * 60000) {
     tmrMillis = millis();
     if (loraJoin && loraSend) {
       loraSend = false;
@@ -60,6 +80,8 @@ void loop() {
       resetMe();
     }    
   }
+}
+void getAttachInt() {
   if (isAttachInt) {
     isAttachInt = false;
     delay(digDly);
@@ -72,13 +94,17 @@ void loop() {
       resetMe();
     }          
   }
+}
+void getInaAlert() {
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.an_type[ch]) {
+    if (conf.bytes[an_type_i + ch]) {
       if (!INA_ALR_PIN[ch]) {        
         readAll();        
       }
     }    
   } 
+}
+void getValAlarm() {
   if (isValAlarm) {
     isValAlarm = false;
     if (loraJoin && loraSend) {
@@ -89,6 +115,8 @@ void loop() {
       resetMe();
     }             
   }
+}
+void getRakSerial() {
   while (rakSerial.available()) {
     const char chrRakSerial = (char)rakSerial.read();
     //if (Serial) {
@@ -100,7 +128,7 @@ void loop() {
       if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
         rakSerial.print(F("at+set_config=lora:dr:")); 
-        rakSerial.println(conf.dr);
+        rakSerial.println(conf.bytes[dr_i]);
       } else if (strRakSerial.endsWith(F("DR0 success"))) { /// DR0
         loraJoin = true; 
         digitalWrite(LED_PIN, HIGH);       
@@ -110,6 +138,8 @@ void loop() {
       strRakSerial = "";
     }
   }
+}
+void getSerial() {
   while (Serial.available()) {
     const char chrSerial = (char)Serial.read();
     strSerial += chrSerial;
@@ -134,12 +164,12 @@ void loop() {
 void uplink() {
   lpp.reset();  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.an_type[ch]) {
+    if (conf.bytes[an_type_i + ch]) {
       lpp.addAnalogInput(ch + 1, Val[ch]);      
     } 
   } 
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.dig_type[ch]) {
+    if (conf.bytes[dig_type_i + ch]) {
       lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));
     } 
   } 
@@ -148,7 +178,7 @@ void uplink() {
 }
 void readAll() {  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.an_type[ch]) {
+    if (conf.bytes[an_type_i + ch]) {
       ina.begin(0x40 + ch);
       readIn();
       calcVal(ch);
@@ -162,7 +192,7 @@ void readIn() {
   }
 }
 void calcVal(const uint8_t ch) {  
-  Val[ch] = (In - conf.in_min[ch]) * (conf.val_max[ch] - conf.val_min[ch]) / (conf.in_max[ch] - conf.in_min[ch]) + conf.val_min[ch];  
+  Val[ch] = (In - conf.floats[in_min_i + ch]) * (conf.floats[val_max_i + ch] - conf.floats[val_min_i + ch]) / (conf.floats[in_max_i + ch] - conf.floats[in_min_i + ch]) + conf.floats[val_min_i + ch];  
   //(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;  
 }
 void calcValAlarm(const uint8_t ch) {  
