@@ -14,7 +14,7 @@ const uint8_t RAK_RES_PIN   = 10;               // PB6/ADC13/PCINT6
 const uint8_t RELAY_PIN[4]  = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
 const uint8_t LED_PIN       = A5;               // PF0/ADC0
 
-const uint8_t an_en_i       = 0;
+const uint8_t amp_en_i      = 0;
 const uint8_t dig_en_i      = 2;
 const uint8_t dig_int_i     = 4;
 const uint8_t lora_dr_i     = 6;
@@ -37,9 +37,9 @@ String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true, isValAlarm = false;
 
 struct Conf {
-  uint8_t bytes[5];   // an0_en, an1_en, dig0_en, dig1_en, dig0_int, dig1_int, lora_dr, lora_port
-  uint16_t words[1];  // send_p
-  float floats[14];   // alr0_min, alr1_min, alr0_max, alr1_max, hys0, hys1, in0_min, in1_min, in0_max, in1_max, val0_min, val1_min, val0_max, val1_max
+  uint8_t bytes[5];   
+  uint16_t words[1];  
+  float floats[14];
 };
 
 Conf conf;
@@ -101,7 +101,7 @@ void getAttachInt() {
 }
 void getInaAlert() {
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[an_en_i + ch]) {
+    if (conf.bytes[amp_en_i + ch]) {
       if (!INA_ALR_PIN[ch]) {        
         readAll();
         return;        
@@ -154,7 +154,7 @@ void getSerial() {
         rakSerial.println(strSerial); 
       } else if (strSerial.startsWith(F("&eof"))) {
         EEPROM.put(0, conf);
-        Serial.println(F("OK"));       
+        resetMe();       
       } else if (strSerial.startsWith(F("&b"))) {
         conf.bytes[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();
       } else if (strSerial.startsWith(F("&w"))) {
@@ -169,7 +169,7 @@ void getSerial() {
 void uplink() {
   lpp.reset();  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[an_en_i + ch]) {
+    if (conf.bytes[amp_en_i + ch]) {
       lpp.addAnalogInput(ch + 1, Val[ch]);      
     } 
   } 
@@ -183,7 +183,7 @@ void uplink() {
 }
 void readAll() {  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[an_en_i + ch]) {
+    if (conf.bytes[amp_en_i + ch]) {
       ina.begin(0x40 + ch);
       readAmp();
       calcVal(ch);
@@ -253,7 +253,7 @@ void setPins() {
 }
 void setIna() {
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[an_en_i + ch]) {
+    if (conf.bytes[amp_en_i + ch]) {
       ina.begin(0x40 + ch);
       ina.configure(INA226_AVERAGES_128, INA226_BUS_CONV_TIME_140US, INA226_SHUNT_CONV_TIME_8244US, INA226_MODE_SHUNT_CONT);
       ina.calibrate(3.3, 0.30);
