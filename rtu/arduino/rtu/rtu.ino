@@ -14,30 +14,34 @@ const uint8_t RAK_RES_PIN   = 10;               // PB6/ADC13/PCINT6
 const uint8_t RELAY_PIN[4]  = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
 const uint8_t LED_PIN       = A5;               // PF0/ADC0
 
-const uint8_t amp_en_i      = 0;
-const uint8_t dig_en_i      = 2;
-const uint8_t dig_int_i     = 4;
-const uint8_t lora_dr_i     = 6;
-const uint8_t lora_port_i   = 7;
-const uint8_t send_per_i    = 0;
-const uint8_t alr_min_i     = 0;
-const uint8_t alr_max_i     = 2;
-const uint8_t alr_hys_i     = 4;
-const uint8_t amp_min_i     = 6;
-const uint8_t amp_max_i     = 8;
-const uint8_t val_min_i     = 10;
-const uint8_t val_max_i     = 12;
+const uint8_t an_en_i      = 0;
+const uint8_t an_alr_lo_i  = 2;
+const uint8_t an_alr_hi_i  = 4;
+const uint8_t dig_en_i     = 6;
+const uint8_t dig_alr_i    = 8;
+const uint8_t lora_dr_i    = 10;
+const uint8_t lora_port_i  = 11;
 
-float Amp, Val[2];
+const uint8_t send_per_i   = 0;
+
+const uint8_t amp_min_i    = 0;
+const uint8_t amp_max_i    = 2;
+const uint8_t an_min_i     = 4;
+const uint8_t an_max_i     = 6;
+const uint8_t an_alr_min_i = 8;
+const uint8_t an_alr_max_i = 10;
+const uint8_t an_alr_hys_i = 12;
+
+float Amp, An[2];
 uint8_t hysRegionPrev[2] = {3, 3};
 const uint8_t digDly = 50;
-volatile bool isAttachInt = false;
+volatile bool isDigAlr = false;
 unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
-bool loraJoin = false, loraSend = true, isValAlarm = false;
+bool loraJoin = false, loraSend = true, isAnAlr = false;
 
 struct Conf {
-  uint8_t bytes[5];   
+  uint8_t bytes[12];   
   uint16_t words[1];  
   float floats[14];
 };
@@ -59,20 +63,20 @@ void setup() {
   rakSerial.begin(9600);
   loadConf();  
   setIna();
-  setAttachInt();  
+  setDigAlr();  
   setRak(); 
   tmrMillis = millis();
 }
 void loop() {
   wdt_reset();
-  getMillis();
-  getAttachInt();
-  getInaAlert();
-  getValAlarm();
-  getRakSerial();
-  getSerial(); 
+  chkMillis();
+  chkDigAlr();
+  chkAmpReady();
+  chkAnAlr();
+  chkRakSerial();
+  chkSerial(); 
 }
-void getMillis() {
+void chkMillis() {
   if (millis() - tmrMillis >= conf.words[send_per_i] * 60000) {
     tmrMillis = millis();
     if (loraJoin && loraSend) {
@@ -85,9 +89,9 @@ void getMillis() {
     }    
   }
 }
-void getAttachInt() {
-  if (isAttachInt) {
-    isAttachInt = false;
+void chkDigAlr() {
+  if (isDigAlr) {
+    isDigAlr = false;
     delay(digDly);
     if (loraJoin && loraSend) {
       loraSend = false;
@@ -99,9 +103,9 @@ void getAttachInt() {
     }          
   }
 }
-void getInaAlert() {
+void chkAmpReady() {
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[amp_en_i + ch]) {
+    if (conf.bytes[an_en_i + ch]) {
       if (!INA_ALR_PIN[ch]) {        
         readAll();
         return;        
@@ -109,9 +113,9 @@ void getInaAlert() {
     }    
   } 
 }
-void getValAlarm() {
-  if (isValAlarm) {
-    isValAlarm = false;
+void chkAnAlr() {
+  if (isAnAlr) {
+    isAnAlr = false;
     if (loraJoin && loraSend) {
       loraSend = false;
       uplink();
@@ -121,7 +125,7 @@ void getValAlarm() {
     }             
   }
 }
-void getRakSerial() {
+void chkRakSerial() {
   while (rakSerial.available()) {
     const char chrRakSerial = (char)rakSerial.read();
     //if (Serial) {
@@ -144,7 +148,7 @@ void getRakSerial() {
     }
   }
 }
-void getSerial() {
+void chkSerial() {
   while (Serial.available()) {
     const char chrSerial = (char)Serial.read();
     strSerial += chrSerial;
@@ -169,8 +173,8 @@ void getSerial() {
 void uplink() {
   lpp.reset();  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[amp_en_i + ch]) {
-      lpp.addAnalogInput(ch + 1, Val[ch]);      
+    if (conf.bytes[an_en_i + ch]) {
+      lpp.addAnalogInput(ch + 1, An[ch]);      
     } 
   } 
   for (uint8_t ch = 0; ch < 2 ; ch++) {
@@ -183,11 +187,11 @@ void uplink() {
 }
 void readAll() {  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[amp_en_i + ch]) {
+    if (conf.bytes[an_en_i + ch]) {
       ina.begin(0x40 + ch);
       readAmp();
-      calcVal(ch);
-      calcValAlarm(ch); 
+      calcAn(ch);
+      calcAnAlr(ch); 
     }
   }
 }
@@ -196,24 +200,24 @@ void readAmp() {
   if (ina.isAlert()) {    
   }
 }
-void calcVal(const uint8_t ch) {  
-  Val[ch] = (Amp - conf.floats[amp_min_i + ch]) * (conf.floats[val_max_i + ch] - conf.floats[val_min_i + ch]) / (conf.floats[amp_max_i + ch] - conf.floats[amp_min_i + ch]) + conf.floats[val_min_i + ch];  
+void calcAn(const uint8_t ch) {  
+  An[ch] = (Amp - conf.floats[amp_min_i + ch]) * (conf.floats[an_max_i + ch] - conf.floats[an_min_i + ch]) / (conf.floats[amp_max_i + ch] - conf.floats[amp_min_i + ch]) + conf.floats[an_min_i + ch];  
   //(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;  
 }
-void calcValAlarm(const uint8_t ch) {  
-  if (Val[ch] <= conf.floats[alr_min_i + ch]) {
+void calcAnAlr(const uint8_t ch) {  
+  if (An[ch] <= conf.floats[an_alr_min_i + ch]) {
     if (hysRegionPrev[ch] > 2) {
-      isValAlarm = true;
+      isAnAlr = true;
     }
     hysRegionPrev[ch] = 1;  
-  } else if ((Val[ch] >= conf.floats[alr_min_i + ch] + conf.floats[alr_hys_i + ch]) && (Val[ch] <= conf.floats[alr_max_i + ch] - conf.floats[alr_hys_i + ch])) {
+  } else if ((An[ch] >= conf.floats[an_alr_min_i + ch] + conf.floats[an_alr_hys_i + ch]) && (An[ch] <= conf.floats[an_alr_max_i + ch] - conf.floats[an_alr_hys_i + ch])) {
     if (hysRegionPrev[ch] < 2 || hysRegionPrev[ch] > 4) {
-      isValAlarm = true;
+      isAnAlr = true;
     }
     hysRegionPrev[ch] = 3; 
-  } else if (Val[ch] >= conf.floats[alr_max_i + ch]) {
+  } else if (An[ch] >= conf.floats[an_alr_max_i + ch]) {
     if (hysRegionPrev[ch] < 4) {
-      isValAlarm = true;
+      isAnAlr = true;
     }
     hysRegionPrev[ch] = 5;    
   }
@@ -253,7 +257,7 @@ void setPins() {
 }
 void setIna() {
   for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[amp_en_i + ch]) {
+    if (conf.bytes[an_en_i + ch]) {
       ina.begin(0x40 + ch);
       ina.configure(INA226_AVERAGES_128, INA226_BUS_CONV_TIME_140US, INA226_SHUNT_CONV_TIME_8244US, INA226_MODE_SHUNT_CONT);
       ina.calibrate(3.3, 0.30);
@@ -261,17 +265,17 @@ void setIna() {
     }           
   } 
 }
-void setAttachInt() {
+void setDigAlr() {
   EIFR = 255;  
   for (uint8_t ch = 0; ch < 2 ; ch++) {
     if (conf.bytes[dig_en_i + ch]) {
-      attachInterrupt(digitalPinToInterrupt(DIG_PIN[ch]), attachInt, conf.bytes[dig_int_i + ch]);    
+      attachInterrupt(digitalPinToInterrupt(DIG_PIN[ch]), digAlr, conf.bytes[dig_alr_i + ch]);    
     }    
   }   
-  isAttachInt = false;
+  isDigAlr = false;
 }
-void attachInt() {
-  isAttachInt = true;   
+void digAlr() {
+  isDigAlr = true;   
 }
 void setRak() {
   delay(100);
