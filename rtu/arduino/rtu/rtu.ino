@@ -14,6 +14,7 @@ const uint8_t RAK_RES_PIN       = 10;               // PB6/ADC13/PCINT6
 const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
 const uint8_t LED_PIN           = A5;               // PF0/ADC0
 
+// bytes
 const uint8_t act_an_lo_set_i   = 0;
 const uint8_t act_an_lo_clr_i   = 3;
 const uint8_t act_an_hi_set_i   = 6;
@@ -28,8 +29,11 @@ const uint8_t act_dig1_hi_i     = 33;
 const uint8_t lora_dr_i         = 36;
 const uint8_t lora_port_i       = 37;
 
+// words
 const uint8_t send_per_i        = 0;
+const uint8_t rly_pulse_dur_i   = 0;
 
+// floats
 const uint8_t amp_min_i         = 0;
 const uint8_t amp_max_i         = 2;
 const uint8_t an_min_i          = 4;
@@ -41,15 +45,15 @@ const uint8_t an_hi_clr_i       = 14;
 
 float Amp, An[2];
 uint8_t hysPrev[2] = {3, 3};
-const uint8_t digDly = 50;
-volatile uint8_t alarmNum = 255;
+const uint8_t digDly = 10; // ms, max 16ms
+volatile uint8_t alrIndex = 255;
 unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
 
 struct Conf {
   uint8_t bytes[38];   
-  uint16_t words[1];  
+  uint16_t words[3];  
   float floats[16];
 };
 
@@ -80,11 +84,10 @@ void loop() {
     readAn(ch);
     calcAnAlr(ch);    
   }
-  
-  
-  chkAnAlr();  
-  chkDigAlr();
-  
+  if (alrIndex != 255) {
+    doAction();  
+  }
+    
   chkMillis();
   chkRakSerial();
   chkSerial();
@@ -100,59 +103,36 @@ void readAn(const uint8_t ch) {
 void calcAnAlr(const uint8_t ch) {  
   if (An[ch] <= conf.floats[an_lo_set_i + ch]) {
     if (hysPrev[ch] > 2) {
-      alarmNum = act_an_lo_set_i + ch * act_an_ch_i;      
+      alrIndex = act_an_lo_set_i + ch * act_an_ch_i;      
     }
     hysPrev[ch] = 1;  
   } else if ((An[ch] >= conf.floats[an_lo_clr_i + ch]) && (An[ch] <= conf.floats[an_hi_clr_i + ch)) {
     if (hysPrev[ch] < 2) {
-      alarmNum = act_an_lo_clr_i + ch * act_an_ch_i;
+      alrIndex = act_an_lo_clr_i + ch * act_an_ch_i;
     } else if (hysPrev[ch] > 4) {
-      alarmNum = act_an_hi_clr_i + ch * act_an_ch_i;
+      alrIndex = act_an_hi_clr_i + ch * act_an_ch_i;
     }
     hysPrev[ch] = 3; 
   } else if (An[ch] >= conf.floats[an_hi_set_i + ch]) {
     if (hysPrev[ch] < 4) {
-      alarmNum = act_an_hi_set_i + ch * act_an_ch_i;
+      alrIndex = act_an_hi_set_i + ch * act_an_ch_i;
     }
     hysPrev[ch] = 5;    
   }
 }
+void doAction()() {  
+  for (uint8_t ch = 0; ch < 2 ; ch++) {    
+    actRelay(ch, conf.bytes[alrIndex + ch]);    
+  } 
+  if (conf.bytes[alrIndex + 2]) {
+    uplink();  
+  } 
+  alrIndex = 255;  
+}
 void chkMillis() {
   if (millis() - tmrMillis >= conf.words[send_per_i] * 60000) {
     tmrMillis = millis();
-    if (loraJoin && loraSend) {
-      loraSend = false;
-      readAll();
-      uplink();
-      return;
-    } else {
-      resetMe();
-    }    
-  }
-}
-void chkDigAlr() {
-  if (isDigAlr) {
-    isDigAlr = false;
-    if (loraJoin && loraSend) {
-      loraSend = false;
-      readAll();
-      uplink();
-      return;
-    } else {
-      resetMe();
-    }          
-  }
-}
-void chkAnAlr() {
-  if (isAnAlr) {
-    isAnAlr = false;
-    if (loraJoin && loraSend) {
-      loraSend = false;
-      uplink();
-      return;
-    } else {
-      resetMe();
-    }             
+    uplink();
   }
 }
 void chkRakSerial() {
@@ -201,21 +181,25 @@ void chkSerial() {
   }   
 }
 void uplink() {
-  lpp.reset();  
-  for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[an_en_i + ch]) {
-      lpp.addAnalogInput(ch + 1, An[ch]);      
+  if (loraJoin && loraSend) {
+    loraSend = false;      
+    lpp.reset();  
+    for (uint8_t ch = 0; ch < 2 ; ch++) {
+      if (conf.bytes[an_en_i + ch]) {////////////////////////////////////
+        lpp.addAnalogInput(ch + 1, An[ch]);      
+      } 
     } 
-  } 
-  for (uint8_t ch = 0; ch < 2 ; ch++) {
-    if (conf.bytes[dig_en_i + ch]) {
-      lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));
+    for (uint8_t ch = 0; ch < 2 ; ch++) {
+      if (conf.bytes[dig_en_i + ch]) {
+        lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));
+      } 
     } 
-  } 
-  rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
-  rakSerial.println(lppGetBuffer());  
+    rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
+    rakSerial.println(lppGetBuffer());
+  } else {
+    resetMe();
+  }    
 }
-
 String lppGetBuffer() {
   String str;
   for(uint8_t ii = 0; ii < lpp.getSize(); ii++){    
@@ -263,19 +247,19 @@ void setDigAlr() {
   attachInterrupt(digitalPinToInterrupt(DIG_PIN[1]), digAlr1, CHANGE);
 }
 void digAlr0() {
-  delay(digdly);
+  delayMicroseconds(digDly * 1000);
   if (DIG_PIN[0]) {
-    alarmNum = act_dig0_hi_i; 
+    alrIndex = act_dig0_hi_i; 
   } else {
-    alarmNum = act_dig0_lo_i;
+    alrIndex = act_dig0_lo_i;
   }
 }
 void digAlr1() {
-  delay(digdly);
+  delayMicroseconds(digDly * 1000);
   if (DIG_PIN[1]) {
-    alarmNum = act_dig1_hi_i; 
+    alrIndex = act_dig1_hi_i; 
   } else {
-    alarmNum = act_dig1_lo_i;
+    alrIndex = act_dig1_lo_i;
   }
 }
 void setRak() {
