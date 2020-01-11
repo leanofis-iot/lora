@@ -31,7 +31,7 @@ const uint8_t lora_port_i       = 37;
 
 // words
 const uint8_t send_per_i        = 0;
-const uint8_t rly_pulse_dur_i   = 0;
+const uint8_t rly_pulse_dur_i   = 1;
 
 // floats
 const uint8_t amp_min_i         = 0;
@@ -86,8 +86,7 @@ void loop() {
   }
   if (alrIndex != 255) {
     doAction();  
-  }
-    
+  }    
   chkMillis();
   chkRakSerial();
   chkSerial();
@@ -106,7 +105,7 @@ void calcAnAlr(const uint8_t ch) {
       alrIndex = act_an_lo_set_i + ch * act_an_ch_i;      
     }
     hysPrev[ch] = 1;  
-  } else if ((An[ch] >= conf.floats[an_lo_clr_i + ch]) && (An[ch] <= conf.floats[an_hi_clr_i + ch)) {
+  } else if ((An[ch] >= conf.floats[an_lo_clr_i + ch]) && (An[ch] <= conf.floats[an_hi_clr_i + ch])) {
     if (hysPrev[ch] < 2) {
       alrIndex = act_an_lo_clr_i + ch * act_an_ch_i;
     } else if (hysPrev[ch] > 4) {
@@ -120,7 +119,7 @@ void calcAnAlr(const uint8_t ch) {
     hysPrev[ch] = 5;    
   }
 }
-void doAction()() {  
+void doAction() {  
   for (uint8_t ch = 0; ch < 2 ; ch++) {    
     actRelay(ch, conf.bytes[alrIndex + ch]);    
   } 
@@ -184,15 +183,11 @@ void uplink() {
   if (loraJoin && loraSend) {
     loraSend = false;      
     lpp.reset();  
-    for (uint8_t ch = 0; ch < 2 ; ch++) {
-      if (conf.bytes[an_en_i + ch]) {////////////////////////////////////
-        lpp.addAnalogInput(ch + 1, An[ch]);      
-      } 
+    for (uint8_t ch = 0; ch < 2 ; ch++) {      
+      lpp.addAnalogInput(ch + 1, An[ch]);       
     } 
-    for (uint8_t ch = 0; ch < 2 ; ch++) {
-      if (conf.bytes[dig_en_i + ch]) {
-        lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));
-      } 
+    for (uint8_t ch = 0; ch < 2 ; ch++) {      
+      lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));      
     } 
     rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
     rakSerial.println(lppGetBuffer());
@@ -265,6 +260,25 @@ void digAlr1() {
 void setRak() {
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
+}
+void actRelay(const uint8_t ch, const uint8_t act) {
+  if (act == 1) {                           // SET
+    digitalWrite(RELAY_PIN[ch], HIGH);      
+    delay(10);
+    digitalWrite(RELAY_PIN[ch], LOW);
+  } else if (act == 2) {                    // RESET
+    digitalWrite(RELAY_PIN[ch + 1], HIGH);  
+    delay(10);
+    digitalWrite(RELAY_PIN[ch + 1], LOW);    
+  } else if (act == 3) {                    // PULSE
+    digitalWrite(RELAY_PIN[ch], HIGH);      
+    delay(10);
+    digitalWrite(RELAY_PIN[ch], LOW); 
+    delay(conf.words[rly_pulse_dur_i + ch]);
+    digitalWrite(RELAY_PIN[ch + 1], HIGH);  
+    delay(10);
+    digitalWrite(RELAY_PIN[ch + 1], LOW); 
+  }
 }
 void resetMe() {
   wdt_enable(WDTO_15MS);
