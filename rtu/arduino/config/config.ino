@@ -1,9 +1,9 @@
 #include <EEPROM.h>
 
 struct Conf {
-  uint8_t bytes[];   // an0_en, an1_en, dig0_type, dig1_type, dr 
-  uint16_t words[1];  // send_p
-  float floats[14];    // alr0_min, alr0_max, alr1_min, alr1_max, hys0, hys1, in0_min, in0_max, in1_min, in1_max, val0_min, val0_max, val1_min, val1_max
+  uint8_t bytes[38] = {0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,2,1};   
+  uint16_t words[3] = {30,1000,1000};  
+  float floats[16]  = {0.004,0.004,0.020,0.020,0,0,100,100,10,10,9,9,50,50,49,49};
 };
 
 Conf conf;

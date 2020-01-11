@@ -14,26 +14,19 @@ const uint8_t RAK_RES_PIN       = 10;               // PB6/ADC13/PCINT6
 const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
 const uint8_t LED_PIN           = A5;               // PF0/ADC0
 
-// bytes
+// conf.bytes[alrIndex]
 const uint8_t act_an_lo_set_i   = 0;
-const uint8_t act_an_lo_clr_i   = 3;
-const uint8_t act_an_hi_set_i   = 6;
-const uint8_t act_an_hi_clr_i   = 9;
-
-const uint8_t act_an_ch_i       = 12;
-
-const uint8_t act_dig0_lo_i     = 24;
-const uint8_t act_dig0_hi_i     = 27;
-const uint8_t act_dig1_lo_i     = 30;
-const uint8_t act_dig1_hi_i     = 33;
+const uint8_t act_an_lo_clr_i   = 6;
+const uint8_t act_an_hi_set_i   = 12;
+const uint8_t act_an_hi_clr_i   = 18;
+const uint8_t act_dig_lo_i      = 24;
+const uint8_t act_dig_hi_i      = 30;
 const uint8_t lora_dr_i         = 36;
 const uint8_t lora_port_i       = 37;
-
-// words
+// conf.words[alrIndex]
 const uint8_t send_per_i        = 0;
 const uint8_t rly_pulse_dur_i   = 1;
-
-// floats
+// conf.floats[alrIndex]
 const uint8_t amp_min_i         = 0;
 const uint8_t amp_max_i         = 2;
 const uint8_t an_min_i          = 4;
@@ -42,6 +35,11 @@ const uint8_t an_lo_set_i       = 8;
 const uint8_t an_lo_clr_i       = 10;
 const uint8_t an_hi_set_i       = 12;
 const uint8_t an_hi_clr_i       = 14;
+
+const uint8_t set_relay         = 1;
+const uint8_t res_relay         = 2;
+const uint8_t set_pulse_relay   = 3;
+const uint8_t res_pulse_relay   = 4;
 
 float Amp, An[2];
 uint8_t hysPrev[2] = {3, 3};
@@ -92,7 +90,24 @@ void loop() {
   chkSerial();
   wdt_reset();      
 }
-void readAn(const uint8_t ch) {   
+void uplink() {
+  if (loraJoin && loraSend) {
+    loraSend = false;      
+    lpp.reset();  
+    for (uint8_t ch = 0; ch < 2 ; ch++) {      
+      lpp.addAnalogInput(ch + 1, An[ch]);       
+    } 
+    for (uint8_t ch = 0; ch < 2 ; ch++) {      
+      lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));      
+    } 
+    rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
+    rakSerial.println(lppGetBuffer());
+  } else {
+    resetMe();
+  }    
+}
+void readAn(const uint8_t ch) {
+  // wire.end();   
   ina.begin(0x40 + ch);
   Amp = ina.readShuntCurrent();
   if (ina.isAlert()) {}
@@ -102,19 +117,19 @@ void readAn(const uint8_t ch) {
 void calcAnAlr(const uint8_t ch) {  
   if (An[ch] <= conf.floats[an_lo_set_i + ch]) {
     if (hysPrev[ch] > 2) {
-      alrIndex = act_an_lo_set_i + ch * act_an_ch_i;      
+      alrIndex = act_an_lo_set_i + ch * 3;      
     }
     hysPrev[ch] = 1;  
   } else if ((An[ch] >= conf.floats[an_lo_clr_i + ch]) && (An[ch] <= conf.floats[an_hi_clr_i + ch])) {
     if (hysPrev[ch] < 2) {
-      alrIndex = act_an_lo_clr_i + ch * act_an_ch_i;
+      alrIndex = act_an_lo_clr_i + ch * 3;
     } else if (hysPrev[ch] > 4) {
-      alrIndex = act_an_hi_clr_i + ch * act_an_ch_i;
+      alrIndex = act_an_hi_clr_i + ch * 3;
     }
     hysPrev[ch] = 3; 
   } else if (An[ch] >= conf.floats[an_hi_set_i + ch]) {
     if (hysPrev[ch] < 4) {
-      alrIndex = act_an_hi_set_i + ch * act_an_ch_i;
+      alrIndex = act_an_hi_set_i + ch * 3;
     }
     hysPrev[ch] = 5;    
   }
@@ -179,22 +194,6 @@ void chkSerial() {
     }
   }   
 }
-void uplink() {
-  if (loraJoin && loraSend) {
-    loraSend = false;      
-    lpp.reset();  
-    for (uint8_t ch = 0; ch < 2 ; ch++) {      
-      lpp.addAnalogInput(ch + 1, An[ch]);       
-    } 
-    for (uint8_t ch = 0; ch < 2 ; ch++) {      
-      lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));      
-    } 
-    rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
-    rakSerial.println(lppGetBuffer());
-  } else {
-    resetMe();
-  }    
-}
 String lppGetBuffer() {
   String str;
   for(uint8_t ii = 0; ii < lpp.getSize(); ii++){    
@@ -229,7 +228,8 @@ void setPins() {
   }   
 }
 void setIna() {
-  for (uint8_t ch = 0; ch < 2 ; ch++) {    
+  for (uint8_t ch = 0; ch < 2 ; ch++) { 
+    // wire.end();   
     ina.begin(0x40 + ch);
     ina.configure(INA226_AVERAGES_128, INA226_BUS_CONV_TIME_140US, INA226_SHUNT_CONV_TIME_8244US, INA226_MODE_SHUNT_CONT);
     ina.calibrate(3.3, 0.30);
@@ -244,17 +244,17 @@ void setDigAlr() {
 void digAlr0() {
   delayMicroseconds(digDly * 1000);
   if (DIG_PIN[0]) {
-    alrIndex = act_dig0_hi_i; 
+    alrIndex = act_dig_hi_i; 
   } else {
-    alrIndex = act_dig0_lo_i;
+    alrIndex = act_dig_lo_i;
   }
 }
 void digAlr1() {
   delayMicroseconds(digDly * 1000);
   if (DIG_PIN[1]) {
-    alrIndex = act_dig1_hi_i; 
+    alrIndex = act_dig_hi_i + 3; 
   } else {
-    alrIndex = act_dig1_lo_i;
+    alrIndex = act_dig_lo_i + 3;
   }
 }
 void setRak() {
@@ -262,23 +262,29 @@ void setRak() {
   digitalWrite(RAK_RES_PIN, HIGH);
 }
 void actRelay(const uint8_t ch, const uint8_t act) {
-  if (act == 1) {                           // SET
-    digitalWrite(RELAY_PIN[ch], HIGH);      
-    delay(10);
-    digitalWrite(RELAY_PIN[ch], LOW);
-  } else if (act == 2) {                    // RESET
-    digitalWrite(RELAY_PIN[ch + 1], HIGH);  
-    delay(10);
-    digitalWrite(RELAY_PIN[ch + 1], LOW);    
-  } else if (act == 3) {                    // PULSE
-    digitalWrite(RELAY_PIN[ch], HIGH);      
-    delay(10);
-    digitalWrite(RELAY_PIN[ch], LOW); 
+  if (act == set_relay) {                  
+    setRelay(ch);
+  } else if (act == res_relay) {           
+    resRelay(ch);    
+  } else if (act == set_pulse_relay) {       
+    setRelay(ch); 
     delay(conf.words[rly_pulse_dur_i + ch]);
-    digitalWrite(RELAY_PIN[ch + 1], HIGH);  
-    delay(10);
-    digitalWrite(RELAY_PIN[ch + 1], LOW); 
-  }
+    resRelay(ch);
+  } else if (act == res_pulse_relay) {       
+    resRelay(ch);
+    delay(conf.words[rly_pulse_dur_i + ch]);
+    setRelay(ch); 
+  }  
+}
+void setRelay(const uint8_t ch) {
+  digitalWrite(RELAY_PIN[ch], HIGH);      
+  delay(10);
+  digitalWrite(RELAY_PIN[ch], LOW);
+}
+void resRelay(const uint8_t ch) {
+  digitalWrite(RELAY_PIN[ch + 1], HIGH);  
+  delay(10);
+  digitalWrite(RELAY_PIN[ch + 1], LOW);
 }
 void resetMe() {
   wdt_enable(WDTO_15MS);
