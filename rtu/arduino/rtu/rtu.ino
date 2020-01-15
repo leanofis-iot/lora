@@ -21,8 +21,9 @@ const uint8_t act_an_hi_set_i   = 12;
 const uint8_t act_an_hi_clr_i   = 18;
 const uint8_t act_dig_lo_i      = 24;
 const uint8_t act_dig_hi_i      = 30;
-const uint8_t lora_dr_i         = 36;
-const uint8_t lora_port_i       = 37;
+const uint8_t an_unit_i         = 36;
+const uint8_t lora_dr_i         = 38;
+const uint8_t lora_port_i       = 39;
 // conf.words[alrIndex]
 const uint8_t send_per_i        = 0;
 const uint8_t rly_pulse_dur_i   = 1;
@@ -41,6 +42,11 @@ const uint8_t res_relay         = 2;
 const uint8_t set_pulse_relay   = 3;
 const uint8_t res_pulse_relay   = 4;
 
+const uint8_t unit_temp         = 1;
+const uint8_t unit_hum          = 2;
+const uint8_t unit_bar          = 3;
+const uint8_t unit_lum          = 4;
+
 float Amp, An[2];
 uint8_t hysPrev[2] = {3, 3};
 const uint8_t digDly = 10; // ms, max 16ms
@@ -50,7 +56,7 @@ String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
 
 struct Conf {
-  uint8_t bytes[38];   
+  uint8_t bytes[40];   
   uint16_t words[3];  
   float floats[16];
 };
@@ -94,8 +100,18 @@ void uplink() {
   if (loraJoin && loraSend) {
     loraSend = false;      
     lpp.reset();  
-    for (uint8_t ch = 0; ch < 2 ; ch++) {      
-      lpp.addAnalogInput(ch + 1, An[ch]);       
+    for (uint8_t ch = 0; ch < 2 ; ch++) {
+      if (conf.bytes[an_unit_i + ch] == unit_temp) {
+        lpp.addTemperature(ch + 1, An[ch]);      
+      } else if (conf.bytes[an_unit_i + ch] == unit_hum) {
+        lpp.addRelativeHumidity(ch + 1, An[ch]);
+      } else if (conf.bytes[an_unit_i + ch] == unit_bar) {
+        lpp.addBarometricPressure(ch + 1, An[ch]);
+      } else if (conf.bytes[an_unit_i + ch] == unit_lum) {
+        lpp.addLuminosity(ch + 1, An[ch]);
+      } else {
+      lpp.addAnalogInput(ch + 1, An[ch]);
+      }       
     } 
     for (uint8_t ch = 0; ch < 2 ; ch++) {      
       lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));      
