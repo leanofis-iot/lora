@@ -4,6 +4,7 @@
 #include <CayenneLPP.h>
 #include <Wire.h>
 #include <INA226.h>
+#include <DS3232RTC.h>
 
 const uint8_t BUTTON_PIN        = 7;                // PE6/AIN0/INT6
 const uint8_t DS_INT_PIN        = SCK;              // PB1/SCLK/PCINT1
@@ -12,7 +13,8 @@ const uint8_t RS_DIR_PIN        = 4;                // PD4/ADC8
 const uint8_t DIG_PIN[2]        = {9, 8};           // PB5/ADC12/PCINT5, PB4/ADC11/PCINT4
 const uint8_t RAK_RES_PIN       = 10;               // PB6/ADC13/PCINT6
 const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
-const uint8_t LED_PIN           = A5;               // PF0/ADC0
+const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
+const uint8_t ACT_LED_PIN       = A5;               // PF0/ADC0
 
 // conf.bytes[alrIndex]
 const uint8_t act_an_lo_set_i   = 0;
@@ -21,9 +23,10 @@ const uint8_t act_an_hi_set_i   = 12;
 const uint8_t act_an_hi_clr_i   = 18;
 const uint8_t act_dig_lo_i      = 24;
 const uint8_t act_dig_hi_i      = 30;
-const uint8_t an_unit_i         = 36;
-const uint8_t lora_dr_i         = 38;
-const uint8_t lora_port_i       = 39;
+const uint8_t act_tm_i          = 36;
+const uint8_t an_unit_i         = 46;
+const uint8_t lora_dr_i         = 48;
+const uint8_t lora_port_i       = 49;
 // conf.words[alrIndex]
 const uint8_t send_per_i        = 0;
 const uint8_t rly_pulse_dur_i   = 1;
@@ -56,7 +59,7 @@ String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
 
 struct Conf {
-  uint8_t bytes[40];   
+  uint8_t bytes[50];   
   uint16_t words[3];  
   float floats[16];
 };
@@ -77,7 +80,8 @@ void setup() {
   setPins();
   rakSerial.begin(9600);
   loadConf();  
-  setIna();
+  setINA226();
+  setDS3231M();
   setDigAlr();  
   setRak(); 
   tmrMillis = millis();
@@ -88,6 +92,7 @@ void loop() {
     readAn(ch);
     calcAnAlr(ch);    
   }
+  
   if (alrIndex != 255) {
     doAction();  
   }    
@@ -180,7 +185,7 @@ void chkRakSerial() {
         rakSerial.println(conf.bytes[lora_dr_i]);
       } else if (strRakSerial.endsWith("DR" + String(conf.bytes[lora_dr_i]) +" success")) { 
         loraJoin = true; 
-        digitalWrite(LED_PIN, HIGH);       
+        digitalWrite(JOIN_LED_PIN, HIGH);       
       } else if (strRakSerial.endsWith(F("send success"))) { 
         loraSend = true;
       }
@@ -229,7 +234,8 @@ void setPins() {
   pinMode(DS_INT_PIN, INPUT);
   pinMode(RS_DIR_PIN, OUTPUT);
   pinMode(RAK_RES_PIN, OUTPUT);
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(JOIN_LED_PIN, OUTPUT);
+  pinMode(ACT_LED_PIN, OUTPUT);
   for (uint8_t ch = 0; ch < 2 ; ch++) {
     pinMode(INA_ALR_PIN[ch], INPUT);
     pinMode(DIG_PIN[ch], INPUT);
@@ -238,12 +244,13 @@ void setPins() {
     pinMode(RELAY_PIN[ch], OUTPUT);    
   }   
   digitalWrite(RAK_RES_PIN, LOW);
-  digitalWrite(LED_PIN, LOW);
+  digitalWrite(JOIN_LED_PIN, LOW);
+  digitalWrite(ACT_LED_PIN, HIGH);
   for (uint8_t ch = 0; ch < 4 ; ch++) {
     digitalWrite(RELAY_PIN[ch], LOW);    
   }   
 }
-void setIna() {
+void setINA226() {
   for (uint8_t ch = 0; ch < 2 ; ch++) { 
     // wire.end();   
     ina.begin(0x40 + ch);
@@ -272,6 +279,34 @@ void digAlr1() {
   } else {
     alrIndex = act_dig_lo_i + 3;
   }
+}
+void setDS3231M() {
+  /*
+  RTC.setAlarm(ALM1_MATCH_DATE, 0, 0, 0, 1);
+  RTC.setAlarm(ALM2_MATCH_DATE, 0, 0, 0, 1);
+  RTC.alarm(ALARM_1);
+  RTC.alarm(ALARM_2);
+  RTC.alarmInterrupt(ALARM_1, false);
+  RTC.alarmInterrupt(ALARM_2, false);
+  RTC.squareWave(SQWAVE_NONE);
+  */
+  /*
+  tmElements_t tm;
+  tm.Hour = 06;               // set the RTC time to 06:29:50
+  tm.Minute = 29;
+  tm.Second = 50;
+  tm.Day = 16;
+  tm.Month = 9;
+  tm.Year = 2017 - 1970;      // tmElements_t.Year is the offset from 1970
+  RTC.write(tm);              // set the RTC from the tm structure
+  */
+  RTC.setAlarm(ALM1_MATCH_HOURS, 0, 30, 6, 0);
+  RTC.setAlarm(ALM2_MATCH_HOURS, 0, 30, 6, 0);
+  RTC.alarm(ALARM_1);
+  RTC.alarm(ALARM_2);
+  RTC.squareWave(SQWAVE_NONE);
+  RTC.alarmInterrupt(ALARM_1, true);
+  RTC.alarmInterrupt(ALARM_2, true);
 }
 void setRak() {
   delay(100);
