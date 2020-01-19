@@ -58,6 +58,7 @@ volatile uint8_t alrIndex = 255;
 unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
+tmElements_t tm;
 
 struct Conf {
   uint8_t bytes[50];   
@@ -82,8 +83,8 @@ void setup() {
   rakSerial.begin(9600);
   loadConf();  
   setINA226();
-  setDS3231M();
-  setDigAlr();  
+  setDigAlr();
+  setDS3231M();    
   setRak(); 
   tmrMillis = millis();
 }
@@ -108,33 +109,6 @@ void loop() {
   chkRakSerial();
   chkSerial();
   wdt_reset();      
-}
-void uplink() {
-  wdt_reset();
-  if (loraJoin && loraSend) {
-    loraSend = false;      
-    lpp.reset();  
-    for (uint8_t ch = 0; ch < 2 ; ch++) {
-      if (conf.bytes[an_unit_i + ch] == unit_temp) {
-        lpp.addTemperature(ch + 1, An[ch]);      
-      } else if (conf.bytes[an_unit_i + ch] == unit_hum) {
-        lpp.addRelativeHumidity(ch + 1, An[ch]);
-      } else if (conf.bytes[an_unit_i + ch] == unit_bar) {
-        lpp.addBarometricPressure(ch + 1, An[ch]);
-      } else if (conf.bytes[an_unit_i + ch] == unit_lum) {
-        lpp.addLuminosity(ch + 1, An[ch]);
-      } else {
-      lpp.addAnalogInput(ch + 1, An[ch]);
-      }       
-    } 
-    for (uint8_t ch = 0; ch < 2 ; ch++) {      
-      lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));      
-    } 
-    rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
-    rakSerial.println(lppGetBuffer());
-  } else {
-    resetMe();
-  }    
 }
 void readAn(const uint8_t ch) {
   // wire.end();   
@@ -163,15 +137,6 @@ void calcAnAlr(const uint8_t ch) {
     }
     hysPrev[ch] = 5;    
   }
-}
-void doAction() {  
-  for (uint8_t ch = 0; ch < 2 ; ch++) {    
-    actRelay(ch, conf.bytes[alrIndex + ch]);    
-  } 
-  if (conf.bytes[alrIndex + 2]) {
-    uplink();  
-  } 
-  alrIndex = 255;  
 }
 void chkMillis() {
   if (millis() - tmrMillis >= conf.words[send_per_i] * 60000) {
@@ -219,7 +184,21 @@ void chkSerial() {
         conf.words[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();     
       } else if (strSerial.startsWith(F("&f"))) {
         conf.floats[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toFloat();
-      }
+      } else if (strSerial.startsWith(F("&ss"))) {
+        tm.Second = strSerial.substring(5).toInt();
+      } else if (strSerial.startsWith(F("&mm"))) {
+        tm.Minute = strSerial.substring(5).toInt();
+      } else if (strSerial.startsWith(F("&hh"))) {
+        tm.Hour = strSerial.substring(5).toInt();
+      } else if (strSerial.startsWith(F("&dd"))) {
+        tm.Day = strSerial.substring(5).toInt();
+      } else if (strSerial.startsWith(F("&mo"))) {
+        tm.Month = strSerial.substring(5).toInt();
+      } else if (strSerial.startsWith(F("&yy"))) {
+        tm.Year = strSerial.substring(5).toInt() - 1970;
+      } else if (strSerial.startsWith(F("&tm"))) {
+        RTC.write(tm);
+      }     
       strSerial = "";
     }
   }   
@@ -299,19 +278,9 @@ void setDS3231M() {
   RTC.alarmInterrupt(ALARM_1, false);
   RTC.alarmInterrupt(ALARM_2, false);
   RTC.squareWave(SQWAVE_NONE);
-  */
-  /*
-  tmElements_t tm;
-  tm.Hour = 06;               // set the RTC time to 06:29:50
-  tm.Minute = 29;
-  tm.Second = 50;
-  tm.Day = 16;
-  tm.Month = 9;
-  tm.Year = 2017 - 1970;      // tmElements_t.Year is the offset from 1970
-  RTC.write(tm);              // set the RTC from the tm structure
-  */
-  RTC.setAlarm(ALM1_MATCH_HOURS, 0, 30, 6, 0);
-  RTC.setAlarm(ALM2_MATCH_HOURS, 0, 30, 6, 0);
+  */  
+  RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.bytes[act_tm_i + 4], conf.bytes[act_tm_i + 3], 0);
+  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.bytes[act_tm_i + 5 + 4], conf.bytes[act_tm_i + 5 + 3], 0);
   RTC.alarm(ALARM_1);
   RTC.alarm(ALARM_2);
   RTC.squareWave(SQWAVE_NONE);
@@ -322,12 +291,21 @@ void calcTmAlr() {
   if (RTC.alarm(ALARM_1)) {
     alrIndex = conf.bytes[act_tm_i];
   } else if (RTC.alarm(ALARM_2)) {
-    alrIndex = conf.bytes[act_tm_i + 6];
+    alrIndex = conf.bytes[act_tm_i + 5];
   }  
 }
 void setRak() {
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
+}
+void doAction() {  
+  for (uint8_t ch = 0; ch < 2 ; ch++) {    
+    actRelay(ch, conf.bytes[alrIndex + ch]);    
+  } 
+  if (conf.bytes[alrIndex + 2]) {
+    uplink();  
+  } 
+  alrIndex = 255;  
 }
 void actRelay(const uint8_t ch, const uint8_t act) {
   if (act == set_relay) {                  
@@ -353,6 +331,33 @@ void resRelay(const uint8_t ch) {
   digitalWrite(RELAY_PIN[ch + 1], HIGH);  
   delay(10);
   digitalWrite(RELAY_PIN[ch + 1], LOW);
+}
+void uplink() {
+  wdt_reset();
+  if (loraJoin && loraSend) {
+    loraSend = false;      
+    lpp.reset();  
+    for (uint8_t ch = 0; ch < 2 ; ch++) {
+      if (conf.bytes[an_unit_i + ch] == unit_temp) {
+        lpp.addTemperature(ch + 1, An[ch]);      
+      } else if (conf.bytes[an_unit_i + ch] == unit_hum) {
+        lpp.addRelativeHumidity(ch + 1, An[ch]);
+      } else if (conf.bytes[an_unit_i + ch] == unit_bar) {
+        lpp.addBarometricPressure(ch + 1, An[ch]);
+      } else if (conf.bytes[an_unit_i + ch] == unit_lum) {
+        lpp.addLuminosity(ch + 1, An[ch]);
+      } else {
+      lpp.addAnalogInput(ch + 1, An[ch]);
+      }       
+    } 
+    for (uint8_t ch = 0; ch < 2 ; ch++) {      
+      lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));      
+    } 
+    rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
+    rakSerial.println(lppGetBuffer());
+  } else {
+    resetMe();
+  }    
 }
 void resetMe() {
   wdt_enable(WDTO_15MS);
