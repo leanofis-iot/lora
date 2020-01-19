@@ -53,6 +53,7 @@ const uint8_t unit_lum          = 4;
 float Amp, An[2];
 uint8_t hysPrev[2] = {3, 3};
 const uint8_t digDly = 10; // ms, max 16ms
+bool dsIntPinPrev = HIGH;
 volatile uint8_t alrIndex = 255;
 unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
@@ -91,8 +92,15 @@ void loop() {
     while (INA_ALR_PIN[ch]);
     readAn(ch);
     calcAnAlr(ch);    
-  }
-  
+  }  
+  if (!DS_INT_PIN) {    
+    if (dsIntPinPrev) {
+      dsIntPinPrev = LOW;
+      calcTmAlr();
+    }    
+  } else {
+    dsIntPinPrev = HIGH;
+  }  
   if (alrIndex != 255) {
     doAction();  
   }    
@@ -102,6 +110,7 @@ void loop() {
   wdt_reset();      
 }
 void uplink() {
+  wdt_reset();
   if (loraJoin && loraSend) {
     loraSend = false;      
     lpp.reset();  
@@ -242,7 +251,8 @@ void setPins() {
   }
   for (uint8_t ch = 0; ch < 4 ; ch++) {
     pinMode(RELAY_PIN[ch], OUTPUT);    
-  }   
+  } 
+  digitalWrite(RS_DIR_PIN, LOW);  
   digitalWrite(RAK_RES_PIN, LOW);
   digitalWrite(JOIN_LED_PIN, LOW);
   digitalWrite(ACT_LED_PIN, HIGH);
@@ -307,6 +317,13 @@ void setDS3231M() {
   RTC.squareWave(SQWAVE_NONE);
   RTC.alarmInterrupt(ALARM_1, true);
   RTC.alarmInterrupt(ALARM_2, true);
+}
+void calcTmAlr() {
+  if (RTC.alarm(ALARM_1)) {
+    alrIndex = conf.bytes[act_tm_i];
+  } else if (RTC.alarm(ALARM_2)) {
+    alrIndex = conf.bytes[act_tm_i + 6];
+  }  
 }
 void setRak() {
   delay(100);
