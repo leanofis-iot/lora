@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <INA226.h>
 #include <DS3232RTC.h>
+#include <WebUSB.h>
 
 const uint8_t BUTTON_PIN        = 7;                // PE6/AIN0/INT6
 const uint8_t DS_INT_PIN        = SCK;              // PB1/SCLK/PCINT1
