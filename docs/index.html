@@ -1,18 +1,104 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <!-- Origin Trial Token, feature = WebUSB (For Chrome M57+), origin = https://webusb.github.io, expires = 2017-06-19 -->
-    <meta http-equiv="origin-trial" data-feature="WebUSB (For Chrome M57+)" data-expires="2017-06-19" content="Ag83MurQOa5N4SKRCqqtSlbycfe08s5LgUiqEI7J3jTk2NEIpRp7SLPz2i+EBDuXyf+AeRMdD6BI++kTSJmGzQEAAABReyJvcmlnaW4iOiJodHRwczovL3dlYnVzYi5naXRodWIuaW86NDQzIiwiZmVhdHVyZSI6IldlYlVTQjIiLCJleHBpcnkiOjE0OTc4OTM2OTV9">
-    <title>RGB LED</title>
-    <script src="serial.js"></script>
-    <script src="rgb.js"></script>
-  </head>
-  <body>
-    <p>
-      <button id="connect">Connect</button> <span id="status"></span>
-    </p>
-    <input type="range" min="0" max="255" value="0" id="red"/>
-    <input type="range" min="0" max="255" value="0" id="green"/>
-    <input type="range" min="0" max="255" value="0" id="blue"/>
-  </body>
+<html lang="en">
+<head>
+  <title>LoRa Wireless RTU</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="serial.js"></script>
+  <script src="rtu.js"></script>  
+</head>
+<body>
+
+<div class="container">
+
+  <h5>LoRaWAN</h5>
+  <label for="&b48">Data Rate:</label>
+  <select class="form-control" id="&b48">
+    <option>0</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+  </select>  
+  <label for="&b49">Port:</label>
+  <input type="text" class="form-control" id="&b49">
+  <br>
+
+  <h5>Uplink:</h5>
+  <label for="&w00">Send Minute:</label>
+  <input type="text" class="form-control" id="&w00">
+  <br> 
+
+  <h5>Analog Input 1:</h5>
+  <label for="&b46">Unit:</label>
+  <select class="form-control" id="&b46">
+    <option>0</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+  </select>      
+  <label for="&f00">Min. mA:</label>
+  <input type="text" class="form-control" id="&f00"> 
+  <label for="&f02">Max. mA:</label>
+  <input type="text" class="form-control" id="&f02"> 
+  <label for="&f04">Min. Value:</label>
+  <input type="text" class="form-control" id="&f04"> 
+  <label for="&f06">Max. Value:</label>
+  <input type="text" class="form-control" id="&f06">
+  <label for="&f08">Alarm Value Low Set:</label>
+  <input type="text" class="form-control" id="&f08"> 
+  <label for="&f10">Alarm Value Low Clear::</label>
+  <input type="text" class="form-control" id="&f10"> 
+  <label for="&f12">Alarm Value High Set:</label>
+  <input type="text" class="form-control" id="&f12"> 
+  <label for="&f14">Alarm Value High Clear:</label>
+  <input type="text" class="form-control" id="&f14">
+  <br> 
+
+  <h5>Analog Input 2:</h5>
+  <label for="&b47">Unit:</label>
+  <select class="form-control" id="&b47">
+    <option>0</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+  </select>      
+  <label for="&f01">Min. mA:</label>
+  <input type="text" class="form-control" id="&f01"> 
+  <label for="&f03">Max. mA:</label>
+  <input type="text" class="form-control" id="&f03"> 
+  <label for="&f05">Min. Value:</label>
+  <input type="text" class="form-control" id="&f05"> 
+  <label for="&f07">Max. Value:</label>
+  <input type="text" class="form-control" id="&f07">
+  <label for="&f09">Alarm Value Low Set:</label>
+  <input type="text" class="form-control" id="&f09"> 
+  <label for="&f11">Alarm Value Low Clear::</label>
+  <input type="text" class="form-control" id="&f11"> 
+  <label for="&f13">Alarm Value High Set:</label>
+  <input type="text" class="form-control" id="&f13"> 
+  <label for="&f15">Alarm Value High Clear:</label>
+  <input type="text" class="form-control" id="&f15">
+  <br>
+
+  <h5>Relay Output 1:</h5>
+  <label for="&w01">Pulse mSec:</label>
+  <input type="text" class="form-control" id="&w01">
+  <br>
+  
+  <h5>Relay Output 2:</h5>
+  <label for="&w02">Pulse mSec:</label>
+  <input type="text" class="form-control" id="&w02">
+  <br>
+
+         
+</div>
+
+</body>
 </html>
