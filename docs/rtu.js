@@ -53,7 +53,6 @@
         let b = 0;                  
         for (let i = 0; i < 50; i++) {
           let ii = '&b';
-          //ii += (i < 10) ? ('0' + i) : i;
           ii += ('0' + i).slice (-2);
           if (document.getElementById(ii).type === 'checkbox') {
             b = document.getElementById(ii).checked ? 1 : 0;            
