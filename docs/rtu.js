@@ -47,13 +47,19 @@
       //if (!port) {
       //  return;
       //}
-      let config = '';
-      if (!configurationForm.checkValidity()) {                  
+      let config = '';      
+      if (configurationForm.checkValidity()) {
+        statusDisplay.textContent = 'heyyy';
+        let b = 0;                  
         for (let i = 0; i < 50; i++) {
           let ii = '&b';
           //ii += (i < 10) ? ('0' + i) : i;
-          ii += ('0' + i).slice (-2);      
-          let b = parseInt(document.getElementById(ii).value);
+          ii += ('0' + i).slice (-2);
+          if (document.getElementById(ii).type === 'checkbox') {
+            b = document.getElementById(ii).checked ? 1 : 0;            
+          } else {
+            b = parseInt(document.getElementById(ii).value);
+          }           
           config += ii + b + '\r\n';
         }
         for (let i = 0; i < 3; i++) {
