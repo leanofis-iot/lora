@@ -24,9 +24,9 @@
       <option value = "5">5 - SF7BW125</option>
     </select>  
     <label for="&b49">Port:</label>
-    <input type="number" class="form-control" value="1" min="1" max="223" maxlength="3" id="&b49">
+    <input type="text" class="form-control" value="1" min="1" max="223" pattern="[0-9]" maxlength="3" id="&b49">
     <label for="&w00">Uplink Period Minute:</label>
-    <input type="text" class="form-control" maxlength="5" id="&w00">
+    <input type="text" class="form-control" value="5" min="5" pattern="[0-9]" maxlength="5" id="&w00">
     <br> 
 
     <h5>Analog Input 1:</h5>
@@ -39,13 +39,13 @@
       <option value = "4">Luminosity - lux</option>    
     </select>      
     <label for="&f00">Min. Amp.:</label>
-    <input type="text" class="form-control" value="0.004" maxlength="7" id="&f00"> 
+    <input type="text" class="form-control" value="0.004" min="0" pattern="[0-9.]" maxlength="7" id="&f00"> 
     <label for="&f02">Max. Amp.:</label>
-    <input type="text" class="form-control" value="0.020" maxlength="7" id="&f02"> 
+    <input type="text" class="form-control" value="0.020" min="0" pattern="[0-9.]" maxlength="7" id="&f02"> 
     <label for="&f04">Min. Value:</label>
-    <input type="text" class="form-control" pattern="[0-9]+" maxlength="7" id="&f04"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f04"> 
     <label for="&f06">Max. Value:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f06">  
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f06">  
     <br> 
 
     <h5>Analog Input 2:</h5>
@@ -58,59 +58,59 @@
       <option value = "4">Luminosity - lux</option>
     </select>      
     <label for="&f01">Min. Amp.:</label>
-    <input type="text" class="form-control" value="0.004" maxlength="7" id="&f01"> 
+    <input type="text" class="form-control" value="0.004" min="0" pattern="[0-9.]" maxlength="7" id="&f01"> 
     <label for="&f03">Max. Amp.:</label>
-    <input type="text" class="form-control" value="0.020" maxlength="7" id="&f03"> 
+    <input type="text" class="form-control" value="0.020" min="0" pattern="[0-9.]" maxlength="7" id="&f03"> 
     <label for="&f05">Min. Value:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f05"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f05"> 
     <label for="&f07">Max. Value:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f07">  
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f07">  
     <br>
 
     <h5>Relay Output 1:</h5>
     <label for="&w01">Pulse mSec:</label>
-    <input type="text" class="form-control" maxlength="10" id="&w01">
+    <input type="text" class="form-control" value="1000" min="100" pattern="[0-9]" maxlength="10" id="&w01">
     <br>
     
     <h5>Relay Output 2:</h5>
     <label for="&w02">Pulse mSec:</label>
-    <input type="text" class="form-control" maxlength="10" id="&w02">
+    <input type="text" class="form-control" value="1000" min="100" pattern="[0-9]" maxlength="10" id="&w02">
     <br>
 
     <h5>Alarm Value, Analog Input 1:</h5>
     <label for="&f08">Low Set:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f08"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f08"> 
     <label for="&f10">Low Clear:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f10"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f10"> 
     <label for="&f12">High Set:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f12"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f12"> 
     <label for="&f14">High Clear:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f14">
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f14">
     <br>
 
     <h5>Alarm Value, Analog Input 2:</h5>
     <label for="&f09">Low Set:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f09"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f09"> 
     <label for="&f11">Low Clear:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f11"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f11"> 
     <label for="&f13">High Set:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f13"> 
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f13"> 
     <label for="&f15">High Clear:</label>
-    <input type="text" class="form-control" maxlength="7" id="&f15">
+    <input type="text" class="form-control" min="0" pattern="[0-9.]" maxlength="7" id="&f15">
     <br>
 
     <h5>Alarm Time 1:</h5>
     <label for="&b39">Hour:</label>
-    <input type="text" class="form-control" max="23" maxlength="2" id="&b39"> 
+    <input type="text" class="form-control" min="0" max="23" pattern="[0-9]" maxlength="2" id="&b39"> 
     <label for="&b40">Minute:</label>
-    <input type="text" class="form-control" max="59" maxlength="2" id="&b40">
+    <input type="text" class="form-control" min="0" max="59" pattern="[0-9]" maxlength="2" id="&b40">
     <br>
 
     <h5>Alarm Time 2:</h5>
     <label for="&b44">Hour:</label>
-    <input type="text" class="form-control" max="23" maxlength="2" id="&b44"> 
+    <input type="text" class="form-control" min="0" max="23" pattern="[0-9]" maxlength="2" id="&b44"> 
     <label for="&b45">Minute:</label>
-    <input type="text" class="form-control" max="59" maxlength="2" id="&b45">
+    <input type="text" class="form-control" min="0" max="59" pattern="[0-9]" maxlength="2" id="&b45">
     <br>
 
     <h5>IF Alarm, Low Set, Analog Input 1:</h5>

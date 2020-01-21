@@ -48,28 +48,26 @@
       //  return;
       //}
       let config = '';
-      if (!configurationForm.checkValidity()) {
-        return;
-      }
-      statusDisplay.textContent = 'heyyy';            
-      for (let i = 0; i < 50; i++) {
-        let ii = '&b';
-        //ii += (i < 10) ? ('0' + i) : i;
-        ii += ('0' + i).slice (-2);      
-        let b = parseInt(document.getElementById(ii).value);
-        config += ii + b + '\r\n';
-      }
-      for (let i = 0; i < 3; i++) {
-        let ii = '&w';        
-        ii += ('0' + i).slice (-2);      
-        let w = parseInt(document.getElementById(ii).value);
-        config += ii + w + '\r\n';
-      }
-      for (let i = 0; i < 16; i++) {
-        let ii = '&f';        
-        ii += ('0' + i).slice (-2);      
-        let f = parseFloat(document.getElementById(ii).value);
-        config += ii + f + '\r\n';
+      if (!configurationForm.checkValidity()) {                  
+        for (let i = 0; i < 50; i++) {
+          let ii = '&b';
+          //ii += (i < 10) ? ('0' + i) : i;
+          ii += ('0' + i).slice (-2);      
+          let b = parseInt(document.getElementById(ii).value);
+          config += ii + b + '\r\n';
+        }
+        for (let i = 0; i < 3; i++) {
+          let ii = '&w';        
+          ii += ('0' + i).slice (-2);      
+          let w = parseInt(document.getElementById(ii).value);
+          config += ii + w + '\r\n';
+        }
+        for (let i = 0; i < 16; i++) {
+          let ii = '&f';        
+          ii += ('0' + i).slice (-2);      
+          let f = parseFloat(document.getElementById(ii).value);
+          config += ii + f + '\r\n';
+        }
       }      
       statusDisplay.textContent = config;      
       //port.send(config);      
