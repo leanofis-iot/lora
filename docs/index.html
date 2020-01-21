@@ -12,448 +12,450 @@
 
 <div class="container">
 
-  <h5>LoRaWAN</h5>
-  <label for="&b48">Data Rate:</label>
-  <select class="form-control" id="&b48">
-    <option value = "0">0 - SF12BW125</option>
-    <option value = "1">1 - SF11BW125</option>
-    <option value = "2">2 - SF10BW125</option>
-    <option value = "3">3 - SF9BW125</option>
-    <option value = "4">4 - SF8BW125</option>
-    <option value = "5">5 - SF7BW125</option>
-  </select>  
-  <label for="&b49">Port:</label>
-  <input type="text" class="form-control" id="&b49">
-  <label for="&w00">Uplink Period Minute:</label>
-  <input type="text" class="form-control" id="&w00">
-  <br> 
+  <form onsubmit="return false" id="configuration">
+    <h5>LoRaWAN</h5>
+    <label for="&b48">Data Rate:</label>
+    <select class="form-control" id="&b48">
+      <option value = "0">0 - SF12BW125</option>
+      <option value = "1">1 - SF11BW125</option>
+      <option value = "2">2 - SF10BW125</option>
+      <option value = "3">3 - SF9BW125</option>
+      <option value = "4">4 - SF8BW125</option>
+      <option value = "5">5 - SF7BW125</option>
+    </select>  
+    <label for="&b49">Port:</label>
+    <input type="number" class="form-control" value="1" min="1" max="223" maxlength="3" id="&b49">
+    <label for="&w00">Uplink Period Minute:</label>
+    <input type="text" class="form-control" maxlength="5" id="&w00">
+    <br> 
 
-  <h5>Analog Input 1:</h5>
-  <label for="&b46">Unit:</label>
-  <select class="form-control" id="&b46">
-    <option value = "0">none</option>
-    <option value = "1">Temperature - C</option>
-    <option value = "2">Relative Humidity - %</option>
-    <option value = "3">Barometer - hpa</option>
-    <option value = "4">Luminosity - lux</option>    
-  </select>      
-  <label for="&f00">Min. Amp.:</label>
-  <input type="text" class="form-control" value="0.004" id="&f00"> 
-  <label for="&f02">Max. Amp.:</label>
-  <input type="text" class="form-control" value="0.020" id="&f02"> 
-  <label for="&f04">Min. Value:</label>
-  <input type="text" class="form-control" id="&f04"> 
-  <label for="&f06">Max. Value:</label>
-  <input type="text" class="form-control" id="&f06">  
-  <br> 
+    <h5>Analog Input 1:</h5>
+    <label for="&b46">Unit:</label>
+    <select class="form-control" id="&b46">
+      <option value = "0">none</option>
+      <option value = "1">Temperature - C</option>
+      <option value = "2">Relative Humidity - %</option>
+      <option value = "3">Barometer - hpa</option>
+      <option value = "4">Luminosity - lux</option>    
+    </select>      
+    <label for="&f00">Min. Amp.:</label>
+    <input type="text" class="form-control" value="0.004" maxlength="7" id="&f00"> 
+    <label for="&f02">Max. Amp.:</label>
+    <input type="text" class="form-control" value="0.020" maxlength="7" id="&f02"> 
+    <label for="&f04">Min. Value:</label>
+    <input type="text" class="form-control" pattern="[0-9]+" maxlength="7" id="&f04"> 
+    <label for="&f06">Max. Value:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f06">  
+    <br> 
 
-  <h5>Analog Input 2:</h5>
-  <label for="&b47">Unit:</label>
-  <select class="form-control" id="&b47">
-    <option value = "0">none</option>
-    <option value = "1">Temperature - C</option>
-    <option value = "2">Relative Humidity - %</option>
-    <option value = "3">Barometer - hpa</option>
-    <option value = "4">Luminosity - lux</option>
-  </select>      
-  <label for="&f01">Min. Amp.:</label>
-  <input type="text" class="form-control" value="0.004" id="&f01"> 
-  <label for="&f03">Max. Amp.:</label>
-  <input type="text" class="form-control" value="0.020" id="&f03"> 
-  <label for="&f05">Min. Value:</label>
-  <input type="text" class="form-control" id="&f05"> 
-  <label for="&f07">Max. Value:</label>
-  <input type="text" class="form-control" id="&f07">  
-  <br>
+    <h5>Analog Input 2:</h5>
+    <label for="&b47">Unit:</label>
+    <select class="form-control" id="&b47">
+      <option value = "0">none</option>
+      <option value = "1">Temperature - C</option>
+      <option value = "2">Relative Humidity - %</option>
+      <option value = "3">Barometer - hpa</option>
+      <option value = "4">Luminosity - lux</option>
+    </select>      
+    <label for="&f01">Min. Amp.:</label>
+    <input type="text" class="form-control" value="0.004" maxlength="7" id="&f01"> 
+    <label for="&f03">Max. Amp.:</label>
+    <input type="text" class="form-control" value="0.020" maxlength="7" id="&f03"> 
+    <label for="&f05">Min. Value:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f05"> 
+    <label for="&f07">Max. Value:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f07">  
+    <br>
 
-  <h5>Relay Output 1:</h5>
-  <label for="&w01">Pulse mSec:</label>
-  <input type="text" class="form-control" id="&w01">
-  <br>
-  
-  <h5>Relay Output 2:</h5>
-  <label for="&w02">Pulse mSec:</label>
-  <input type="text" class="form-control" id="&w02">
-  <br>
+    <h5>Relay Output 1:</h5>
+    <label for="&w01">Pulse mSec:</label>
+    <input type="text" class="form-control" maxlength="10" id="&w01">
+    <br>
+    
+    <h5>Relay Output 2:</h5>
+    <label for="&w02">Pulse mSec:</label>
+    <input type="text" class="form-control" maxlength="10" id="&w02">
+    <br>
 
-  <h5>Alarm Value, Analog Input 1:</h5>
-  <label for="&f08">Low Set:</label>
-  <input type="text" class="form-control" id="&f08"> 
-  <label for="&f10">Low Clear:</label>
-  <input type="text" class="form-control" id="&f10"> 
-  <label for="&f12">High Set:</label>
-  <input type="text" class="form-control" id="&f12"> 
-  <label for="&f14">High Clear:</label>
-  <input type="text" class="form-control" id="&f14">
-  <br>
+    <h5>Alarm Value, Analog Input 1:</h5>
+    <label for="&f08">Low Set:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f08"> 
+    <label for="&f10">Low Clear:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f10"> 
+    <label for="&f12">High Set:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f12"> 
+    <label for="&f14">High Clear:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f14">
+    <br>
 
-  <h5>Alarm Value, Analog Input 2:</h5>
-  <label for="&f09">Low Set:</label>
-  <input type="text" class="form-control" id="&f09"> 
-  <label for="&f11">Low Clear:</label>
-  <input type="text" class="form-control" id="&f11"> 
-  <label for="&f13">High Set:</label>
-  <input type="text" class="form-control" id="&f13"> 
-  <label for="&f15">High Clear:</label>
-  <input type="text" class="form-control" id="&f15">
-  <br>
+    <h5>Alarm Value, Analog Input 2:</h5>
+    <label for="&f09">Low Set:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f09"> 
+    <label for="&f11">Low Clear:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f11"> 
+    <label for="&f13">High Set:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f13"> 
+    <label for="&f15">High Clear:</label>
+    <input type="text" class="form-control" maxlength="7" id="&f15">
+    <br>
 
-  <h5>Alarm Time 1:</h5>
-  <label for="&b39">Hour:</label>
-  <input type="text" class="form-control" id="&b39"> 
-  <label for="&b40">Minute:</label>
-  <input type="text" class="form-control" id="&b40">
-  <br>
+    <h5>Alarm Time 1:</h5>
+    <label for="&b39">Hour:</label>
+    <input type="text" class="form-control" max="23" maxlength="2" id="&b39"> 
+    <label for="&b40">Minute:</label>
+    <input type="text" class="form-control" max="59" maxlength="2" id="&b40">
+    <br>
 
-  <h5>Alarm Time 2:</h5>
-  <label for="&b44">Hour:</label>
-  <input type="text" class="form-control" id="&b44"> 
-  <label for="&b45">Minute:</label>
-  <input type="text" class="form-control" id="&b45">
-  <br>
+    <h5>Alarm Time 2:</h5>
+    <label for="&b44">Hour:</label>
+    <input type="text" class="form-control" max="23" maxlength="2" id="&b44"> 
+    <label for="&b45">Minute:</label>
+    <input type="text" class="form-control" max="59" maxlength="2" id="&b45">
+    <br>
 
-  <h5>IF Alarm, Low Set, Analog Input 1:</h5>
-  <label for="&b00">Relay Output 1</label>
-  <select class="form-control" id="&b00">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b01">Relay Output 2</label>
-  <select class="form-control" id="&b01">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>   
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b02">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, Low Set, Analog Input 1:</h5>
+    <label for="&b00">Relay Output 1</label>
+    <select class="form-control" id="&b00">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b01">Relay Output 2</label>
+    <select class="form-control" id="&b01">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b02">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, Low Clear, Analog Input 1:</h5>
-  <label for="&b06">Relay Output 1</label>
-  <select class="form-control" id="&b06">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b07">Relay Output 2</label>
-  <select class="form-control" id="&b07">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b08">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, Low Clear, Analog Input 1:</h5>
+    <label for="&b06">Relay Output 1</label>
+    <select class="form-control" id="&b06">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b07">Relay Output 2</label>
+    <select class="form-control" id="&b07">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b08">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, High Set, Analog Input 1:</h5>
-  <label for="&b12">Relay Output 1</label>
-  <select class="form-control" id="&b12">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b13">Relay Output 2</label>
-  <select class="form-control" id="&b13">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b14">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, High Set, Analog Input 1:</h5>
+    <label for="&b12">Relay Output 1</label>
+    <select class="form-control" id="&b12">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b13">Relay Output 2</label>
+    <select class="form-control" id="&b13">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b14">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, High Clear, Analog Input 1:</h5>
-  <label for="&b18">Relay Output 1</label>
-  <select class="form-control" id="&b18">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>   
-  </select> 
-  <label for="&b19">Relay Output 2</label>
-  <select class="form-control" id="&b19">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b20">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, High Clear, Analog Input 1:</h5>
+    <label for="&b18">Relay Output 1</label>
+    <select class="form-control" id="&b18">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>   
+    </select> 
+    <label for="&b19">Relay Output 2</label>
+    <select class="form-control" id="&b19">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b20">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, Low Set, Analog Input 2:</h5>
-  <label for="&b03">Relay Output 1</label>
-  <select class="form-control" id="&b03">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b04">Relay Output 2</label>
-  <select class="form-control" id="&b04">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b05">Uplink
-    </label>
-  </div>
-  <br>  
+    <h5>IF Alarm, Low Set, Analog Input 2:</h5>
+    <label for="&b03">Relay Output 1</label>
+    <select class="form-control" id="&b03">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b04">Relay Output 2</label>
+    <select class="form-control" id="&b04">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b05">Uplink
+      </label>
+    </div>
+    <br>  
 
-  <h5>IF Alarm, Low Clear, Analog Input 2:</h5>
-  <label for="&b09">Relay Output 1</label>
-  <select class="form-control" id="&b09">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>   
-  </select> 
-  <label for="&b10">Relay Output 2</label>
-  <select class="form-control" id="&b10">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b11">Uplink
-    </label>
-  </div>
-  <br>  
+    <h5>IF Alarm, Low Clear, Analog Input 2:</h5>
+    <label for="&b09">Relay Output 1</label>
+    <select class="form-control" id="&b09">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>   
+    </select> 
+    <label for="&b10">Relay Output 2</label>
+    <select class="form-control" id="&b10">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b11">Uplink
+      </label>
+    </div>
+    <br>  
 
-  <h5>IF Alarm, High Set, Analog Input 2:</h5>
-  <label for="&b15">Relay Output 1</label>
-  <select class="form-control" id="&b15">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b16">Relay Output 2</label>
-  <select class="form-control" id="&b16">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b17">Uplink
-    </label>
-  </div>
-  <br>  
+    <h5>IF Alarm, High Set, Analog Input 2:</h5>
+    <label for="&b15">Relay Output 1</label>
+    <select class="form-control" id="&b15">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b16">Relay Output 2</label>
+    <select class="form-control" id="&b16">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b17">Uplink
+      </label>
+    </div>
+    <br>  
 
-  <h5>IF Alarm, High Clear, Analog Input 2:</h5>
-  <label for="&b21">Relay Output 1</label>
-  <select class="form-control" id="&b21">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b22">Relay Output 2</label>
-  <select class="form-control" id="&b22">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b23">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, High Clear, Analog Input 2:</h5>
+    <label for="&b21">Relay Output 1</label>
+    <select class="form-control" id="&b21">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b22">Relay Output 2</label>
+    <select class="form-control" id="&b22">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b23">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, Low, Digital Input 1:</h5>
-  <label for="&b24">Relay Output 1</label>
-  <select class="form-control" id="&b24">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b25">Relay Output 2</label>
-  <select class="form-control" id="&b25">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b26">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, Low, Digital Input 1:</h5>
+    <label for="&b24">Relay Output 1</label>
+    <select class="form-control" id="&b24">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b25">Relay Output 2</label>
+    <select class="form-control" id="&b25">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b26">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, High, Digital Input 1:</h5>
-  <label for="&b30">Relay Output 1</label>
-  <select class="form-control" id="&b30">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b31">Relay Output 2</label>
-  <select class="form-control" id="&b31">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b32">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, High, Digital Input 1:</h5>
+    <label for="&b30">Relay Output 1</label>
+    <select class="form-control" id="&b30">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b31">Relay Output 2</label>
+    <select class="form-control" id="&b31">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b32">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, Low, Digital Input 2:</h5>
-  <label for="&b27">Relay Output 1</label>
-  <select class="form-control" id="&b27">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b28">Relay Output 2</label>
-  <select class="form-control" id="&b28">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b29">Uplink
-    </label>
-  </div>
-  <br>  
+    <h5>IF Alarm, Low, Digital Input 2:</h5>
+    <label for="&b27">Relay Output 1</label>
+    <select class="form-control" id="&b27">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b28">Relay Output 2</label>
+    <select class="form-control" id="&b28">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b29">Uplink
+      </label>
+    </div>
+    <br>  
 
-  <h5>IF Alarm, High, Digital Input 2:</h5>
-  <label for="&b33">Relay Output 1</label>
-  <select class="form-control" id="&b33">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b34">Relay Output 2</label>
-  <select class="form-control" id="&b34">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b35">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, High, Digital Input 2:</h5>
+    <label for="&b33">Relay Output 1</label>
+    <select class="form-control" id="&b33">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b34">Relay Output 2</label>
+    <select class="form-control" id="&b34">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b35">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, Time 1:</h5>
-  <label for="&b36">Relay Output 1</label>
-  <select class="form-control" id="&b36">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b37">Relay Output 2</label>
-  <select class="form-control" id="&b37">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <div class="form-check" hidden>
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b38">Uplink
-    </label>
-  </div>
-  <br>
+    <h5>IF Alarm, Time 1:</h5>
+    <label for="&b36">Relay Output 1</label>
+    <select class="form-control" id="&b36">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b37">Relay Output 2</label>
+    <select class="form-control" id="&b37">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <div class="form-check" hidden>
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b38">Uplink
+      </label>
+    </div>
+    <br>
 
-  <h5>IF Alarm, Time 2:</h5>
-  <label for="&b41">Relay Output 1</label>
-  <select class="form-control" id="&b41">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select> 
-  <label for="&b42">Relay Output 2</label>
-  <select class="form-control" id="&b42">
-    <option value = "0">none</option>
-    <option value = "1">Activate</option>
-    <option value = "2">Deactivate</option>
-    <option value = "3">Activate pulse</option>
-    <option value = "4">Deactivate pulse</option>    
-  </select>
-  <div class="form-check" hidden>
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" value="" id="&b43">Uplink
-    </label>
-  </div>
-  <br>
-  <br>
+    <h5>IF Alarm, Time 2:</h5>
+    <label for="&b41">Relay Output 1</label>
+    <select class="form-control" id="&b41">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&b42">Relay Output 2</label>
+    <select class="form-control" id="&b42">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select>
+    <div class="form-check" hidden>
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" value="" id="&b43">Uplink
+      </label>
+    </div>
+    <br>
+    <br>
+  </form>
 
   <h6 id="status">This is the message</h6>
   <button type="button" class="btn btn-secondary" id="connect">Connect</button>
   <button type="button" class="btn btn-secondary" id="time">Time</button>
   <button type="button" class="btn btn-secondary"id ="read">Read</button>
-  <button type="button" class="btn btn-secondary" id="save">Save</button>
+  <button type="submit" class="btn btn-secondary" form="configuration" id="save">Save</button>
   <br>
   <br>
   <br>
