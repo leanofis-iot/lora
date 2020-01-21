@@ -2,11 +2,11 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', event => {
-    let connectButton = document.querySelector("#connect");
-    let statusDisplay = document.querySelector('#status');
-    let redSlider = document.querySelector('#red');
-    let greenSlider = document.querySelector('#green');
-    let blueSlider = document.querySelector('#blue');
+    let statusDisplay = document.getElementById('status');
+    let connectButton = document.getElementById("connect");    
+    let timeButton = document.getElementById('time');
+    let readButton = document.getElementById('read');
+    let saveButton = document.getElementById('save');
     let port;
 
     function connect() {
@@ -24,24 +24,8 @@
       }, error => {
         statusDisplay.textContent = error;
       });
-    }
-
-    function onUpdate() {
-      if (!port) {
-        return;
-      }
-
-      let view = new Uint8Array(3);
-      view[0] = parseInt(redSlider.value);
-      view[1] = parseInt(greenSlider.value);
-      view[2] = parseInt(blueSlider.value);
-      port.send(view);
-    };
-
-    redSlider.addEventListener('input', onUpdate);
-    greenSlider.addEventListener('input', onUpdate);
-    blueSlider.addEventListener('input', onUpdate);
-
+    }    
+    
     connectButton.addEventListener('click', function() {
       if (port) {
         port.disconnect();
@@ -56,6 +40,36 @@
           statusDisplay.textContent = error;
         });
       }
+    });
+
+    saveButton.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      statusDisplay.textContent = 'heyyy';
+      let config = '';      
+      for (let i = 0; i < 50; i++) {
+        let ii = '&b';
+        //ii += (i < 10) ? ('0' + i) : i;
+        ii += ('0' + i).slice (-2);      
+        let b = parseInt(document.getElementById(ii).value);
+        config += ii + b + '\r\n';
+      }
+      for (let i = 0; i < 3; i++) {
+        let ii = '&w';        
+        ii += ('0' + i).slice (-2);      
+        let w = parseInt(document.getElementById(ii).value);
+        config += ii + w + '\r\n';
+      }
+      for (let i = 0; i < 16; i++) {
+        let ii = '&f';        
+        ii += ('0' + i).slice (-2);      
+        let f = parseFloat(document.getElementById(ii).value);
+        config += ii + f + '\r\n';
+      }
+      statusDisplay.textContent = config;
+      //console.log(config);
+      //port.send(config);      
     });
 
     serial.getPorts().then(ports => {
