@@ -18,37 +18,29 @@ const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5,
 const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
 const uint8_t RANDOM_PIN        = A5;               // PF0/ADC0
 
-// lrb[]
-const uint8_t lrb_dr_i          = 0;
-const uint8_t lrb_port_i        = 1;
-// lrw[]
-const uint8_t lrw_report_i      = 0;
-// tmb[]
-const uint8_t tmb_alr_i         = 0;
-// rlw[]
-const uint8_t rlw_pulse_dur_i   = 0;
-// anb[]
-const uint8_t anb_alr_lo_set_i  = 0;
-const uint8_t anb_alr_lo_clr_i  = 6;
-const uint8_t anb_alr_hi_set_i  = 12;
-const uint8_t anb_alr_hi_clr_i  = 18;
-const uint8_t anb_unit_i        = 24;
-// anf[]
-const uint8_t anf_amp_min_i     = 0;
-const uint8_t anf_amp_max_i     = 2;
-const uint8_t anf_min_i         = 4;
-const uint8_t anf_max_i         = 6;
-const uint8_t anf_lo_set_i      = 8;
-const uint8_t anf_lo_clr_i      = 10;
-const uint8_t anf_hi_set_i      = 12;
-const uint8_t anf_hi_clr_i      = 14;
-// dgb[]
-const uint8_t dgb_alr_lo_i      = 0;
-const uint8_t dgb_alr_hi_i      = 6;
-
-const uint8_t alr_an            = 1;
-const uint8_t alr_dig           = 2;
-const uint8_t alr_time          = 3;
+// conf.bytes[alrIndex]
+const uint8_t act_an_lo_set_i   = 0;
+const uint8_t act_an_lo_clr_i   = 6;
+const uint8_t act_an_hi_set_i   = 12;
+const uint8_t act_an_hi_clr_i   = 18;
+const uint8_t act_dig_lo_i      = 24;
+const uint8_t act_dig_hi_i      = 30;
+const uint8_t act_tm_i          = 36;
+const uint8_t an_unit_i         = 46;
+const uint8_t lora_dr_i         = 48;
+const uint8_t lora_port_i       = 49;
+// conf.words[alrIndex]
+const uint8_t send_per_i        = 0;
+const uint8_t rly_pulse_dur_i   = 1;
+// conf.floats[alrIndex]
+const uint8_t amp_min_i         = 0;
+const uint8_t amp_max_i         = 2;
+const uint8_t an_min_i          = 4;
+const uint8_t an_max_i          = 6;
+const uint8_t an_lo_set_i       = 8;
+const uint8_t an_lo_clr_i       = 10;
+const uint8_t an_hi_set_i       = 12;
+const uint8_t an_hi_clr_i       = 14;
 
 const uint8_t set_relay         = 1;
 const uint8_t res_relay         = 2;
@@ -60,26 +52,20 @@ const uint8_t unit_hum          = 2;
 const uint8_t unit_bar          = 3;
 const uint8_t unit_lum          = 4;
 
-
-
 float Amp, An[2];
 uint8_t hysPrev[2] = {3, 3};
 const uint8_t digDly = 10; // ms, max 16ms
 bool dsIntPinPrev = HIGH;
-volatile uint8_t alrType = 0, alrIndex = 0;
+volatile uint8_t alrIndex = 255;
 unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
 tmElements_t tm;
 
 struct Conf {
-  uint8_t lrb[2];
-  uint16_t lrw[1];
-  uint8_t tmb[10];
-  uint16_t rlw[2];
-  uint8_t anb[26];
-  float anf[16];
-  uint8_t dgb[12];
+  uint8_t bytes[50];   
+  uint16_t words[3];  
+  float floats[16];
 };
 
 Conf conf;
@@ -106,7 +92,7 @@ void setup() {
   tmrMillis = millis();
 }
 void loop() {
-  for (uint8_t ch = 0; ch < 2; ch++) {    
+  for (uint8_t ch = 0; ch < 2 ; ch++) {    
     while (INA_ALR_PIN[ch]);
     readAn(ch);
     calcAnAlr(ch);    
@@ -119,7 +105,7 @@ void loop() {
   } else {
     dsIntPinPrev = HIGH;
   }  
-  if (alrType) {
+  if (alrIndex != 255) {
     doAction();  
   }    
   chkMillis();
@@ -132,35 +118,31 @@ void readAn(const uint8_t ch) {
   ina.begin(0x40 + ch);
   Amp = ina.readShuntCurrent();
   if (ina.isAlert()) {}
-  An[ch] = (Amp - conf.anf[anf_amp_min_i + ch]) * (conf.anf[anf_max_i + ch] - conf.anf[anf_min_i + ch]) / (conf.anf[anf_amp_max_i + ch] - conf.anf[anf_amp_min_i + ch]) + conf.anf[anf_min_i + ch];  
+  An[ch] = (Amp - conf.floats[amp_min_i + ch]) * (conf.floats[an_max_i + ch] - conf.floats[an_min_i + ch]) / (conf.floats[amp_max_i + ch] - conf.floats[amp_min_i + ch]) + conf.floats[an_min_i + ch];  
   //(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;  
 }
 void calcAnAlr(const uint8_t ch) {  
-  if (An[ch] <= conf.anf[anf_lo_set_i + ch]) {
+  if (An[ch] <= conf.floats[an_lo_set_i + ch]) {
     if (hysPrev[ch] > 2) {
-      alrType = alr_an;
-      alrIndex = anb_alr_lo_set_i + ch * 3;      
+      alrIndex = act_an_lo_set_i + ch * 3;      
     }
     hysPrev[ch] = 1;  
-  } else if ((An[ch] >= conf.anf[anf_lo_clr_i + ch]) && (An[ch] <= conf.anf[anf_hi_clr_i + ch])) {
+  } else if ((An[ch] >= conf.floats[an_lo_clr_i + ch]) && (An[ch] <= conf.floats[an_hi_clr_i + ch])) {
     if (hysPrev[ch] < 2) {
-      alrType = alr_an;
-      alrIndex = anb_alr_lo_clr_i + ch * 3;
+      alrIndex = act_an_lo_clr_i + ch * 3;
     } else if (hysPrev[ch] > 4) {
-      alrType = alr_an;
-      alrIndex = anb_alr_hi_clr_i + ch * 3;
+      alrIndex = act_an_hi_clr_i + ch * 3;
     }
     hysPrev[ch] = 3; 
-  } else if (An[ch] >= conf.anf[anf_hi_set_i + ch]) {
+  } else if (An[ch] >= conf.floats[an_hi_set_i + ch]) {
     if (hysPrev[ch] < 4) {
-      alrType = alr_an;
-      alrIndex = anb_alr_hi_set_i + ch * 3;
+      alrIndex = act_an_hi_set_i + ch * 3;
     }
     hysPrev[ch] = 5;    
   }
 }
 void chkMillis() {
-  if (millis() - tmrMillis >= conf.lrw[lrw_report_i] * 60000) {
+  if (millis() - tmrMillis >= conf.words[send_per_i] * 60000) {
     tmrMillis = millis();
     uplink();
   }
@@ -177,8 +159,8 @@ void chkRakSerial() {
       if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
         rakSerial.print(F("at+set_config=lora:dr:")); 
-        rakSerial.println(conf.lrb[lrb_dr_i]);
-      } else if (strRakSerial.endsWith("DR" + String(conf.lrb[lrb_dr_i]) +" success")) { 
+        rakSerial.println(conf.bytes[lora_dr_i]);
+      } else if (strRakSerial.endsWith("DR" + String(conf.bytes[lora_dr_i]) +" success")) { 
         loraJoin = true; 
         digitalWrite(JOIN_LED_PIN, HIGH);       
       } else if (strRakSerial.endsWith(F("send success"))) { 
@@ -195,39 +177,31 @@ void chkSerial() {
     if (chrSerial == '\n') {
       strSerial.trim();       
       if (strSerial.startsWith(F("at"))) {
-        rakSerial.println(strSerial);       
-      } else if (strSerial.startsWith(F("&lrb"))) {
-        conf.lrb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&lrw"))) {
-        conf.lrw[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&tmb"))) {
-        conf.tmb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&rlw"))) {
-        conf.rlw[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&anb"))) {
-        conf.anb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&anf"))) {
-        conf.anf[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toFloat();
-      } else if (strSerial.startsWith(F("&dgb"))) {
-        conf.dgb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt(); 
+        rakSerial.println(strSerial); 
       } else if (strSerial.startsWith(F("&eof"))) {
         EEPROM.put(0, conf);
-        resetMe();         
+        resetMe();       
+      } else if (strSerial.startsWith(F("&b"))) {
+        conf.bytes[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();
+      } else if (strSerial.startsWith(F("&w"))) {
+        conf.words[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toInt();     
+      } else if (strSerial.startsWith(F("&f"))) {
+        conf.floats[strSerial.substring(2,4).toInt()] = strSerial.substring(5).toFloat();
       } else if (strSerial.startsWith(F("&ss"))) {
-        tm.Second = strSerial.substring(3).toInt();
+        tm.Second = strSerial.substring(5).toInt();
       } else if (strSerial.startsWith(F("&mm"))) {
-        tm.Minute = strSerial.substring(3).toInt();
+        tm.Minute = strSerial.substring(5).toInt();
       } else if (strSerial.startsWith(F("&hh"))) {
-        tm.Hour = strSerial.substring(3).toInt();
+        tm.Hour = strSerial.substring(5).toInt();
       } else if (strSerial.startsWith(F("&dd"))) {
-        tm.Day = strSerial.substring(3).toInt();
+        tm.Day = strSerial.substring(5).toInt();
       } else if (strSerial.startsWith(F("&mo"))) {
-        tm.Month = strSerial.substring(3).toInt();
+        tm.Month = strSerial.substring(5).toInt();
       } else if (strSerial.startsWith(F("&yy"))) {
-        tm.Year = strSerial.substring(3).toInt() - 1970;
-      } else if (strSerial.startsWith(F("&tt"))) {
+        tm.Year = strSerial.substring(5).toInt() - 1970;
+      } else if (strSerial.startsWith(F("&tm"))) {
         RTC.write(tm);
-      }
+      }     
       strSerial = "";
     }
   }   
@@ -253,23 +227,23 @@ void setPins() {
   pinMode(RAK_RES_PIN, OUTPUT);
   pinMode(JOIN_LED_PIN, OUTPUT);
   pinMode(ACT_LED_PIN, OUTPUT);
-  for (uint8_t ch = 0; ch < 2; ch++) {
+  for (uint8_t ch = 0; ch < 2 ; ch++) {
     pinMode(INA_ALR_PIN[ch], INPUT);
     pinMode(DIG_PIN[ch], INPUT);
   }
-  for (uint8_t ch = 0; ch < 4; ch++) {
+  for (uint8_t ch = 0; ch < 4 ; ch++) {
     pinMode(RELAY_PIN[ch], OUTPUT);    
   } 
   digitalWrite(RS_DIR_PIN, LOW);  
   digitalWrite(RAK_RES_PIN, LOW);
   digitalWrite(JOIN_LED_PIN, LOW);
   digitalWrite(ACT_LED_PIN, HIGH);
-  for (uint8_t ch = 0; ch < 4; ch++) {
+  for (uint8_t ch = 0; ch < 4 ; ch++) {
     digitalWrite(RELAY_PIN[ch], LOW);    
   }   
 }
 void setINA226() {
-  for (uint8_t ch = 0; ch < 2; ch++) { 
+  for (uint8_t ch = 0; ch < 2 ; ch++) { 
     // wire.end();   
     ina.begin(0x40 + ch);
     ina.configure(INA226_AVERAGES_128, INA226_BUS_CONV_TIME_140US, INA226_SHUNT_CONV_TIME_8244US, INA226_MODE_SHUNT_CONT);
@@ -284,21 +258,19 @@ void setDigAlr() {
 }
 void digAlr0() {
   delayMicroseconds(digDly * 1000);
-  if (DIG_PIN[0]) {    
-    alrIndex = dgb_alr_hi_i; 
+  if (DIG_PIN[0]) {
+    alrIndex = act_dig_hi_i; 
   } else {
-    alrIndex = dgb_alr_lo_i;
+    alrIndex = act_dig_lo_i;
   }
-  alrType = alr_dig;
 }
 void digAlr1() {
   delayMicroseconds(digDly * 1000);
   if (DIG_PIN[1]) {
-    alrIndex = dgb_alr_hi_i + 3; 
+    alrIndex = act_dig_hi_i + 3; 
   } else {
-    alrIndex = dgb_alr_lo_i + 3;
+    alrIndex = act_dig_lo_i + 3;
   }
-  alrType = alr_dig;
 }
 void setDS3231M() {
   /*
@@ -310,8 +282,8 @@ void setDS3231M() {
   RTC.alarmInterrupt(ALARM_2, false);
   RTC.squareWave(SQWAVE_NONE);
   */  
-  RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.tmb[tmb_alr_i + 4], conf.tmb[tmb_alr_i + 3], 0);
-  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.tmb[tmb_alr_i + 5 + 4], conf.tmb[tmb_alr_i + 5 + 3], 0);
+  RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.bytes[act_tm_i + 4], conf.bytes[act_tm_i + 3], 0);
+  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.bytes[act_tm_i + 5 + 4], conf.bytes[act_tm_i + 5 + 3], 0);
   RTC.alarm(ALARM_1);
   RTC.alarm(ALARM_2);
   RTC.squareWave(SQWAVE_NONE);
@@ -320,11 +292,9 @@ void setDS3231M() {
 }
 void calcTmAlr() {
   if (RTC.alarm(ALARM_1)) {
-    alrType = alr_time;
-    alrIndex = conf.tmb[tmb_alr_i];
+    alrIndex = conf.bytes[act_tm_i];
   } else if (RTC.alarm(ALARM_2)) {
-    alrType = alr_time;
-    alrIndex = conf.tmb[tmb_alr_i + 5];
+    alrIndex = conf.bytes[act_tm_i + 5];
   }  
 }
 void setRak() {
@@ -332,26 +302,13 @@ void setRak() {
   digitalWrite(RAK_RES_PIN, HIGH);
 }
 void doAction() {  
-  for (uint8_t ch = 0; ch < 2; ch++) {
-    if (alrType == alr_an) {
-      actRelay(ch, conf.anb[alrIndex + ch]); 
-      if (conf.anb[alrIndex + 2]) {
-        uplink();  
-      }    
-    } else if (alrType == alr_dig) {
-      actRelay(ch, conf.dgb[alrIndex + ch]);
-      if (conf.dgb[alrIndex + 2]) {
-        uplink();  
-      } 
-    } else if (alrType == alr_time) {
-      actRelay(ch, conf.tmb[alrIndex + ch]);
-      if (conf.tmb[alrIndex + 2]) {
-        uplink();  
-      } 
-    }        
-  }   
-  alrType = 0;
-  alrIndex = 0;  
+  for (uint8_t ch = 0; ch < 2 ; ch++) {    
+    actRelay(ch, conf.bytes[alrIndex + ch]);    
+  } 
+  if (conf.bytes[alrIndex + 2]) {
+    uplink();  
+  } 
+  alrIndex = 255;  
 }
 void actRelay(const uint8_t ch, const uint8_t act) {
   if (act == set_relay) {                  
@@ -360,11 +317,11 @@ void actRelay(const uint8_t ch, const uint8_t act) {
     resRelay(ch);    
   } else if (act == set_pulse_relay) {       
     setRelay(ch); 
-    delay(conf.rlw[rlw_pulse_dur_i + ch]);
+    delay(conf.words[rly_pulse_dur_i + ch]);
     resRelay(ch);
   } else if (act == res_pulse_relay) {       
     resRelay(ch);
-    delay(conf.rlw[rlw_pulse_dur_i + ch]);
+    delay(conf.words[rly_pulse_dur_i + ch]);
     setRelay(ch); 
   }  
 }
@@ -383,23 +340,23 @@ void uplink() {
   if (loraJoin && loraSend) {
     loraSend = false;      
     lpp.reset();  
-    for (uint8_t ch = 0; ch < 2; ch++) {
-      if (conf.anb[anb_unit_i + ch] == unit_temp) {
+    for (uint8_t ch = 0; ch < 2 ; ch++) {
+      if (conf.bytes[an_unit_i + ch] == unit_temp) {
         lpp.addTemperature(ch + 1, An[ch]);      
-      } else if (conf.anb[anb_unit_i + ch] == unit_hum) {
+      } else if (conf.bytes[an_unit_i + ch] == unit_hum) {
         lpp.addRelativeHumidity(ch + 1, An[ch]);
-      } else if (conf.anb[anb_unit_i + ch] == unit_bar) {
+      } else if (conf.bytes[an_unit_i + ch] == unit_bar) {
         lpp.addBarometricPressure(ch + 1, An[ch]);
-      } else if (conf.anb[anb_unit_i + ch] == unit_lum) {
+      } else if (conf.bytes[an_unit_i + ch] == unit_lum) {
         lpp.addLuminosity(ch + 1, An[ch]);
       } else {
-      lpp.addAnalogInput(1 + ch, An[ch]);
+      lpp.addAnalogInput(ch + 1, An[ch]);
       }       
     } 
-    for (uint8_t ch = 0; ch < 2; ch++) {      
-      lpp.addDigitalInput(3 + ch, digitalRead(DIG_PIN[ch]));      
+    for (uint8_t ch = 0; ch < 2 ; ch++) {      
+      lpp.addDigitalInput(ch + 3, digitalRead(DIG_PIN[ch]));      
     } 
-    rakSerial.print("at+send=lora:" + String(conf.lrb[lrb_port_i]) + ':'); 
+    rakSerial.print("at+send=lora:" + String(conf.bytes[lora_port_i]) + ':'); 
     rakSerial.println(lppGetBuffer());
   } else {
     resetMe();
