@@ -10,12 +10,13 @@
 const uint8_t BUTTON_PIN        = 7;                // PE6/AIN0/INT6
 const uint8_t DS_INT_PIN        = SCK;              // PB1/SCLK/PCINT1
 const uint8_t INA_ALR_PIN[2]    = {MOSI, MISO};     // PB2/MOSI/PCINT2, PB3/MISO/PCINT3 
+const uint8_t ACT_LED_PIN       = 11;               // PB7/PCINT7
 const uint8_t RS_DIR_PIN        = 4;                // PD4/ADC8
 const uint8_t DIG_PIN[2]        = {9, 8};           // PB5/ADC12/PCINT5, PB4/ADC11/PCINT4
 const uint8_t RAK_RES_PIN       = 10;               // PB6/ADC13/PCINT6
 const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
 const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
-const uint8_t ACT_LED_PIN       = A5;               // PF0/ADC0
+const uint8_t RANDOM_PIN        = A5;               // PF0/ADC0
 
 // conf.bytes[alrIndex]
 const uint8_t act_an_lo_set_i   = 0;
@@ -85,7 +86,8 @@ void setup() {
   loadConf();  
   setINA226();
   setDigAlr();
-  setDS3231M();    
+  setDS3231M();
+  //delayRandom();    
   setRak(); 
   tmrMillis = millis();
 }
@@ -359,6 +361,14 @@ void uplink() {
   } else {
     resetMe();
   }    
+}
+void delayRandom() {
+  randomSeed(analogRead(RANDOM_PIN));
+  const unsigned long rnd = random(24) * 5000;   // max 2 minutes
+  tmrMillis = millis();
+  while (millis() - tmrMillis < rnd) {
+    wdt_reset();    
+  }
 }
 void resetMe() {
   wdt_enable(WDTO_15MS);
