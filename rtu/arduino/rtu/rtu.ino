@@ -60,13 +60,13 @@ struct Conf {
   float ans_f[8];
   float ana_f[8];
   uint8_t tma_b[4];    
-  uint8_t alr_b[900];   
+  uint8_t alr_b[360];   
 };
 
 struct Alarm {
   uint8_t inp;
   uint8_t typ;
-  uint8_t ch;
+  uint8_t chn;
 };
 
 float Amp, Ang[2];
@@ -197,21 +197,23 @@ void chkSerial() {
     if (chrSerial == '\n') {
       strSerial.trim();       
       if (strSerial.startsWith(F("at"))) {
-        rakSerial.println(strSerial);       
-      } else if (strSerial.startsWith(F("&lrb"))) {
-        conf.lor_b[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&lrw"))) {
-        conf.lor_w[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&tmb"))) {
-        conf.tmb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&rlw"))) {
-        conf.rlw[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&anb"))) {
-        conf.anb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
-      } else if (strSerial.startsWith(F("&anf"))) {
-        conf.anf[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toFloat();
-      } else if (strSerial.startsWith(F("&dgb"))) {
-        conf.dgb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt(); 
+        rakSerial.println(strSerial);
+      } else if (strSerial.startsWith(F("&lor_b"))) {
+        conf.lor_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
+      } else if (strSerial.startsWith(F("&lor_w"))) {
+        conf.lor_w[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
+      } else if (strSerial.startsWith(F("&rly_w"))) {
+        conf.rly_w[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
+      } else if (strSerial.startsWith(F("&anu_b"))) {
+        conf.anu_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
+      } else if (strSerial.startsWith(F("&ans_f"))) {
+        conf.ans_f[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toFloat();
+      } else if (strSerial.startsWith(F("&ana_f"))) {
+        conf.ana_f[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toFloat();
+      } else if (strSerial.startsWith(F("&tma_b"))) {
+        conf.tma_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();     
+      } else if (strSerial.startsWith(F("&alr_b"))) {
+        conf.alr_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt(); 
       } else if (strSerial.startsWith(F("&eof"))) {
         EEPROM.put(0, conf);
         resetMe();         
@@ -247,8 +249,8 @@ String lppGetBuffer() {
 }
 void loadConf() {
   EEPROM.get(0, conf);
-  for (uint8_t ii = 0; ii < conf.alr_b.length; ii = ii + 6) {
-    if (!conf.conf.alr_b[ii]) {
+  for (uint8_t ii = 0; ii < sizeof(conf.alr_b); ii = ii + 6) {
+    if (!conf.alr_b[ii]) {
       alarms = ii;
       break;
     }    
