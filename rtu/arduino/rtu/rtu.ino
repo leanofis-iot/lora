@@ -162,7 +162,7 @@ void calcAngAlr(const uint8_t ch) {
   }
 }
 void chkMillis() {
-  if (millis() - tmrMillis >= conf.lor_w[lrw_report_i] * 60000) {
+  if (millis() - tmrMillis >= conf.lor_w[_report] * 60000) {
     tmrMillis = millis();
     uplink();
   }
@@ -179,8 +179,8 @@ void chkRakSerial() {
       if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
         rakSerial.print(F("at+set_config=lora:dr:")); 
-        rakSerial.println(conf.lor_b[lrb_dr_i]);
-      } else if (strRakSerial.endsWith("DR" + String(conf.lor_b[lrb_dr_i]) +" success")) { 
+        rakSerial.println(conf.lor_b[_dr]);
+      } else if (strRakSerial.endsWith("DR" + String(conf.lor_b[_dr]) +" success")) { 
         loraJoin = true; 
         digitalWrite(JOIN_LED_PIN, HIGH);       
       } else if (strRakSerial.endsWith(F("send success"))) { 
@@ -348,36 +348,20 @@ void doAction() {
     if (conf.alr_b[ii * 6 + _input] == alr.inp) {
       if (conf.alr_b[ii * 6 + _type] == alr.typ) {        
         if (conf.alr_b[ii * 6 + _channel] == alr.chn) {
-          
+          for (uint8_t ch = 0; ch < 2; ch++) {            
+            actRelay(ch, conf.alr_b[ii * 6 + _relay + ch]);              
+          }    
+          if (conf.alr_b[ii * 6 + _uplink]) {
+            uplink();  
+          }          
         }
       }        
     }
   }
+  alr.inp = 0;
+  alr.typ = 0;  // ????????
+  alr.chn = 0;  // ????????
 }
-/*
-void doAction() {  
-  for (uint8_t ch = 0; ch < 2; ch++) {
-    if (alrType == alr_an) {
-      actRelay(ch, conf.anb[alrIndex + ch]); 
-      if (conf.anb[alrIndex + 2]) {
-        uplink();  
-      }    
-    } else if (alrType == alr_dig) {
-      actRelay(ch, conf.dgb[alrIndex + ch]);
-      if (conf.dgb[alrIndex + 2]) {
-        uplink();  
-      } 
-    } else if (alrType == alr_time) {
-      actRelay(ch, conf.tmb[alrIndex + ch]);
-      if (conf.tmb[alrIndex + 2]) {
-        uplink();  
-      } 
-    }        
-  }   
-  alrType = 0;
-  alrIndex = 0;  
-}
-*/
 void actRelay(const uint8_t ch, const uint8_t act) {
   if (act == _set) {                  
     setRelay(ch);
@@ -409,14 +393,14 @@ void uplink() {
     loraSend = false;      
     lpp.reset();  
     for (uint8_t ch = 0; ch < 2; ch++) {
-      if (conf.anu_b[anb_unit_i + ch] == _temp) {
-        lpp.addTemperature(ch + 1, Ang[ch]);      
-      } else if (conf.anu_b[anb_unit_i + ch] == _hum) {
-        lpp.addRelativeHumidity(ch + 1, Ang[ch]);
-      } else if (conf.anu_b[anb_unit_i + ch] == _bar) {
-        lpp.addBarometricPressure(ch + 1, Ang[ch]);
-      } else if (conf.anu_b[anb_unit_i + ch] == _lum) {
-        lpp.addLuminosity(ch + 1, Ang[ch]);
+      if (conf.anu_b[ch] == _temp) {
+        lpp.addTemperature(1 + ch, Ang[ch]);      
+      } else if (conf.anu_b[ch] == _hum) {
+        lpp.addRelativeHumidity(1 + ch, Ang[ch]);
+      } else if (conf.anu_b[ch] == _bar) {
+        lpp.addBarometricPressure(1 + ch, Ang[ch]);
+      } else if (conf.anu_b[ch] == _lum) {
+        lpp.addLuminosity(1 + ch, Ang[ch]);
       } else {
       lpp.addAnalogInput(1 + ch, Ang[ch]);
       }       
@@ -424,7 +408,7 @@ void uplink() {
     for (uint8_t ch = 0; ch < 2; ch++) {      
       lpp.addDigitalInput(3 + ch, digitalRead(DIG_PIN[ch]));      
     } 
-    rakSerial.print("at+send=lora:" + String(conf.lor_b[lrb_port_i]) + ':'); 
+    rakSerial.print("at+send=lora:" + String(conf.lor_b[_port]) + ':'); 
     rakSerial.println(lppGetBuffer());
   } else {
     resetMe();
