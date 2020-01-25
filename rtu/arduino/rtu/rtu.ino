@@ -46,15 +46,21 @@ const uint8_t _res              = 2;
 const uint8_t _set_pulse        = 3;
 const uint8_t _res_pulse        = 4;
 
+const uint8_t _input            = 0;
+const uint8_t _type             = 1;
+const uint8_t _channel          = 2;
+const uint8_t _relay            = 3;
+const uint8_t _uplink           = 5;
+
 struct Conf {
   uint8_t lor_b[2];
   uint16_t lor_w[1];
-  uint16_t rly_w[2];  
+  uint16_t rly_w[2];
+  uint8_t anu_b[2];  
   float ans_f[8];
   float ana_f[8];
   uint8_t tma_b[4];    
-  uint8_t alr_b[26];  
-  
+  uint8_t alr_b[900];   
 };
 
 struct Alarm {
@@ -71,6 +77,7 @@ unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
 tmElements_t tm;
+uint8_t alarms;
 
 Conf conf;
 Alarm alr;
@@ -127,29 +134,29 @@ void readAng(const uint8_t ch) {
   //(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;  
 }
 void calcAngAlr(const uint8_t ch) {  
-  if (Ang[ch] <= conf.anf[anf_lo_set_i ]) {
+  if (Ang[ch] <= conf.ana_f[_low_set + ch * 8]) {
     if (hysPrev[ch] > 2) {
       alr.inp = _ang;
       alr.typ = _low_set;
-      alr.ch = ch;      
+      alr.chn = ch;      
     }
     hysPrev[ch] = 1;  
-  } else if ((Ang[ch] >= conf.anf[anf_lo_clr_i + ch]) && (Ang[ch] <= conf.anf[anf_hi_clr_i + ch])) {
+  } else if ((Ang[ch] >= conf.ana_f[_low_clear + ch * 8]) && (Ang[ch] <= conf.ana_f[_high_clear + ch * 8])) {
     if (hysPrev[ch] < 2) {
       alr.inp = _ang;
       alr.typ = _low_clear;
-      alr.ch = ch;        
+      alr.chn = ch;        
     } else if (hysPrev[ch] > 4) {
       alr.inp = _ang;
       alr.typ = _high_clear;
-      alr.ch = ch;      
+      alr.chn = ch;      
     }
     hysPrev[ch] = 3; 
-  } else if (Ang[ch] >= conf.anf[anf_hi_set_i + ch]) {
+  } else if (Ang[ch] >= conf.ana_f[_high_set + ch * 8]) {
     if (hysPrev[ch] < 4) {
       alr.inp = _ang;
       alr.typ = _high_set;
-      alr.ch = ch;       
+      alr.chn = ch;       
     }
     hysPrev[ch] = 5;    
   }
@@ -239,7 +246,13 @@ String lppGetBuffer() {
   return str;
 }
 void loadConf() {
-  EEPROM.get(0, conf);    
+  EEPROM.get(0, conf);
+  for (uint8_t ii = 0; ii < conf.alr_b.length; ii = ii + 6) {
+    if (!conf.conf.alr_b[ii]) {
+      alarms = ii;
+      break;
+    }    
+  }    
 }
 void setPins() {
   pinMode(BUTTON_PIN, INPUT);  
@@ -285,7 +298,7 @@ void digAlr0() {
     alr.typ = _low;
   }
   alr.inp = _dig;  
-  alr.ch = 0;
+  alr.chn = 0;
 }
 void digAlr1() {
   delayMicroseconds(digDly * 1000);
@@ -295,7 +308,7 @@ void digAlr1() {
     alr.typ = _low;
   }
   alr.inp = _dig;  
-  alr.ch = 1;
+  alr.chn = 1;
 }
 void setDS3231M() {
   /*
@@ -319,17 +332,29 @@ void calcTmAlr() {
   if (RTC.alarm(ALARM_1)) {
     alr.inp = _time;
     alr.typ = 0;
-    alr.ch = 0;    
+    alr.chn = 0;    
   } else if (RTC.alarm(ALARM_2)) {
     alr.inp = _time;
     alr.typ = 0;
-    alr.ch = 1;
+    alr.chn = 1;
   }  
 }
 void setRak() {
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
 }
+void doAction() {  
+  for (uint8_t ii = 0; ii < alarms; ii++) {
+    if (conf.alr_b[ii * 6 + _input] == alr.inp) {
+      if (conf.alr_b[ii * 6 + _type] == alr.typ) {        
+        if (conf.alr_b[ii * 6 + _channel] == alr.chn) {
+          
+        }
+      }        
+    }
+  }
+}
+/*
 void doAction() {  
   for (uint8_t ch = 0; ch < 2; ch++) {
     if (alrType == alr_an) {
@@ -352,18 +377,19 @@ void doAction() {
   alrType = 0;
   alrIndex = 0;  
 }
+*/
 void actRelay(const uint8_t ch, const uint8_t act) {
-  if (act == set_relay) {                  
+  if (act == _set) {                  
     setRelay(ch);
-  } else if (act == res_relay) {           
+  } else if (act == _res) {           
     resRelay(ch);    
-  } else if (act == set_pulse_relay) {       
+  } else if (act == _set_pulse) {       
     setRelay(ch); 
-    delay(conf.rlw[rlw_pulse_dur_i + ch]);
+    delay(conf.rly_w[_pulse_dur + ch]);
     resRelay(ch);
-  } else if (act == res_pulse_relay) {       
+  } else if (act == _res_pulse) {       
     resRelay(ch);
-    delay(conf.rlw[rlw_pulse_dur_i + ch]);
+    delay(conf.rly_w[_pulse_dur + ch]);
     setRelay(ch); 
   }  
 }
@@ -383,13 +409,13 @@ void uplink() {
     loraSend = false;      
     lpp.reset();  
     for (uint8_t ch = 0; ch < 2; ch++) {
-      if (conf.anb[anb_unit_i + ch] == unit_temp) {
+      if (conf.anu_b[anb_unit_i + ch] == _temp) {
         lpp.addTemperature(ch + 1, Ang[ch]);      
-      } else if (conf.anb[anb_unit_i + ch] == unit_hum) {
+      } else if (conf.anu_b[anb_unit_i + ch] == _hum) {
         lpp.addRelativeHumidity(ch + 1, Ang[ch]);
-      } else if (conf.anb[anb_unit_i + ch] == unit_bar) {
+      } else if (conf.anu_b[anb_unit_i + ch] == _bar) {
         lpp.addBarometricPressure(ch + 1, Ang[ch]);
-      } else if (conf.anb[anb_unit_i + ch] == unit_lum) {
+      } else if (conf.anu_b[anb_unit_i + ch] == _lum) {
         lpp.addLuminosity(ch + 1, Ang[ch]);
       } else {
       lpp.addAnalogInput(1 + ch, Ang[ch]);
