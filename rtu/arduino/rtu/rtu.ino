@@ -18,71 +18,62 @@ const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5,
 const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
 const uint8_t RANDOM_PIN        = A5;               // PF0/ADC0
 
-// lrb[]
-const uint8_t lrb_dr_i          = 0;
-const uint8_t lrb_port_i        = 1;
-// lrw[]
-const uint8_t lrw_report_i      = 0;
-// tmb[]
-const uint8_t tmb_alr_i         = 0;
-// rlw[]
-const uint8_t rlw_pulse_dur_i   = 0;
-// anb[]
-const uint8_t anb_alr_lo_set_i  = 0;
-const uint8_t anb_alr_lo_clr_i  = 6;
-const uint8_t anb_alr_hi_set_i  = 12;
-const uint8_t anb_alr_hi_clr_i  = 18;
-const uint8_t anb_unit_i        = 24;
-// anf[]
-const uint8_t anf_amp_min_i     = 0;
-const uint8_t anf_amp_max_i     = 2;
-const uint8_t anf_min_i         = 4;
-const uint8_t anf_max_i         = 6;
-const uint8_t anf_lo_set_i      = 8;
-const uint8_t anf_lo_clr_i      = 10;
-const uint8_t anf_hi_set_i      = 12;
-const uint8_t anf_hi_clr_i      = 14;
-// dgb[]
-const uint8_t dgb_alr_lo_i      = 0;
-const uint8_t dgb_alr_hi_i      = 6;
+const uint8_t _dr               = 0;
+const uint8_t _port             = 1;
+const uint8_t _report           = 0;
+const uint8_t _amp_min          = 0;
+const uint8_t _amp_max          = 1;
+const uint8_t _min              = 2;
+const uint8_t _max              = 3;
+const uint8_t _low_set          = 0;
+const uint8_t _low_clear        = 1;
+const uint8_t _high_set         = 2;
+const uint8_t _high_clear       = 3;
+const uint8_t _low              = 0;
+const uint8_t _high             = 1;
+const uint8_t _unit             = 0;
+const uint8_t _pulse_dur        = 0;
 
-const uint8_t alr_an            = 1;
-const uint8_t alr_dig           = 2;
-const uint8_t alr_time          = 3;
+const uint8_t _ang              = 1;
+const uint8_t _dig              = 2;
+const uint8_t _time             = 3;
+const uint8_t _temp             = 1;
+const uint8_t _hum              = 2;
+const uint8_t _bar              = 3;
+const uint8_t _lum              = 4;
+const uint8_t _set              = 1;
+const uint8_t _res              = 2;
+const uint8_t _set_pulse        = 3;
+const uint8_t _res_pulse        = 4;
 
-const uint8_t set_relay         = 1;
-const uint8_t res_relay         = 2;
-const uint8_t set_pulse_relay   = 3;
-const uint8_t res_pulse_relay   = 4;
+struct Conf {
+  uint8_t lor_b[2];
+  uint16_t lor_w[1];
+  uint16_t rly_w[2];  
+  float ans_f[8];
+  float ana_f[8];
+  uint8_t tma_b[4];    
+  uint8_t alr_b[26];  
+  
+};
 
-const uint8_t unit_temp         = 1;
-const uint8_t unit_hum          = 2;
-const uint8_t unit_bar          = 3;
-const uint8_t unit_lum          = 4;
+struct Alarm {
+  uint8_t inp;
+  uint8_t typ;
+  uint8_t ch;
+};
 
-
-
-float Amp, An[2];
+float Amp, Ang[2];
 uint8_t hysPrev[2] = {3, 3};
 const uint8_t digDly = 10; // ms, max 16ms
 bool dsIntPinPrev = HIGH;
-volatile uint8_t alrType = 0, alrIndex = 0;
 unsigned long tmrMillis, tmrMinutes;
 String strSerial, strRakSerial;
 bool loraJoin = false, loraSend = true;
 tmElements_t tm;
 
-struct Conf {
-  uint8_t lrb[2];
-  uint16_t lrw[1];
-  uint8_t tmb[10];
-  uint16_t rlw[2];
-  uint8_t anb[26];
-  float anf[16];
-  uint8_t dgb[12];
-};
-
 Conf conf;
+Alarm alr;
 AltSoftSerial rakSerial;
 CayenneLPP lpp(51);
 INA226 ina;
@@ -108,8 +99,8 @@ void setup() {
 void loop() {
   for (uint8_t ch = 0; ch < 2; ch++) {    
     while (INA_ALR_PIN[ch]);
-    readAn(ch);
-    calcAnAlr(ch);    
+    readAng(ch);
+    calcAngAlr(ch);    
   }  
   if (!DS_INT_PIN) {    
     if (dsIntPinPrev) {
@@ -119,7 +110,7 @@ void loop() {
   } else {
     dsIntPinPrev = HIGH;
   }  
-  if (alrType) {
+  if (alr.inp) {
     doAction();  
   }    
   chkMillis();
@@ -127,40 +118,44 @@ void loop() {
   chkSerial();
   wdt_reset();      
 }
-void readAn(const uint8_t ch) {
+void readAng(const uint8_t ch) {
   // wire.end();   
   ina.begin(0x40 + ch);
   Amp = ina.readShuntCurrent();
   if (ina.isAlert()) {}
-  An[ch] = (Amp - conf.anf[anf_amp_min_i + ch]) * (conf.anf[anf_max_i + ch] - conf.anf[anf_min_i + ch]) / (conf.anf[anf_amp_max_i + ch] - conf.anf[anf_amp_min_i + ch]) + conf.anf[anf_min_i + ch];  
+  Ang[ch] = (Amp - conf.ans_f[_amp_min + ch * 8]) * (conf.ans_f[_max + ch * 8] - conf.ans_f[_min + ch * 8]) / (conf.ans_f[_amp_max + ch * 8] - conf.ans_f[_amp_min + ch * 8]) + conf.ans_f[_min + ch * 8];  
   //(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;  
 }
-void calcAnAlr(const uint8_t ch) {  
-  if (An[ch] <= conf.anf[anf_lo_set_i + ch]) {
+void calcAngAlr(const uint8_t ch) {  
+  if (Ang[ch] <= conf.anf[anf_lo_set_i ]) {
     if (hysPrev[ch] > 2) {
-      alrType = alr_an;
-      alrIndex = anb_alr_lo_set_i + ch * 3;      
+      alr.inp = _ang;
+      alr.typ = _low_set;
+      alr.ch = ch;      
     }
     hysPrev[ch] = 1;  
-  } else if ((An[ch] >= conf.anf[anf_lo_clr_i + ch]) && (An[ch] <= conf.anf[anf_hi_clr_i + ch])) {
+  } else if ((Ang[ch] >= conf.anf[anf_lo_clr_i + ch]) && (Ang[ch] <= conf.anf[anf_hi_clr_i + ch])) {
     if (hysPrev[ch] < 2) {
-      alrType = alr_an;
-      alrIndex = anb_alr_lo_clr_i + ch * 3;
+      alr.inp = _ang;
+      alr.typ = _low_clear;
+      alr.ch = ch;        
     } else if (hysPrev[ch] > 4) {
-      alrType = alr_an;
-      alrIndex = anb_alr_hi_clr_i + ch * 3;
+      alr.inp = _ang;
+      alr.typ = _high_clear;
+      alr.ch = ch;      
     }
     hysPrev[ch] = 3; 
-  } else if (An[ch] >= conf.anf[anf_hi_set_i + ch]) {
+  } else if (Ang[ch] >= conf.anf[anf_hi_set_i + ch]) {
     if (hysPrev[ch] < 4) {
-      alrType = alr_an;
-      alrIndex = anb_alr_hi_set_i + ch * 3;
+      alr.inp = _ang;
+      alr.typ = _high_set;
+      alr.ch = ch;       
     }
     hysPrev[ch] = 5;    
   }
 }
 void chkMillis() {
-  if (millis() - tmrMillis >= conf.lrw[lrw_report_i] * 60000) {
+  if (millis() - tmrMillis >= conf.lor_w[lrw_report_i] * 60000) {
     tmrMillis = millis();
     uplink();
   }
@@ -177,8 +172,8 @@ void chkRakSerial() {
       if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
         rakSerial.print(F("at+set_config=lora:dr:")); 
-        rakSerial.println(conf.lrb[lrb_dr_i]);
-      } else if (strRakSerial.endsWith("DR" + String(conf.lrb[lrb_dr_i]) +" success")) { 
+        rakSerial.println(conf.lor_b[lrb_dr_i]);
+      } else if (strRakSerial.endsWith("DR" + String(conf.lor_b[lrb_dr_i]) +" success")) { 
         loraJoin = true; 
         digitalWrite(JOIN_LED_PIN, HIGH);       
       } else if (strRakSerial.endsWith(F("send success"))) { 
@@ -197,9 +192,9 @@ void chkSerial() {
       if (strSerial.startsWith(F("at"))) {
         rakSerial.println(strSerial);       
       } else if (strSerial.startsWith(F("&lrb"))) {
-        conf.lrb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
+        conf.lor_b[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
       } else if (strSerial.startsWith(F("&lrw"))) {
-        conf.lrw[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
+        conf.lor_w[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
       } else if (strSerial.startsWith(F("&tmb"))) {
         conf.tmb[strSerial.substring(4,6).toInt()] = strSerial.substring(6).toInt();
       } else if (strSerial.startsWith(F("&rlw"))) {
@@ -285,20 +280,22 @@ void setDigAlr() {
 void digAlr0() {
   delayMicroseconds(digDly * 1000);
   if (DIG_PIN[0]) {    
-    alrIndex = dgb_alr_hi_i; 
+    alr.typ = _high; 
   } else {
-    alrIndex = dgb_alr_lo_i;
+    alr.typ = _low;
   }
-  alrType = alr_dig;
+  alr.inp = _dig;  
+  alr.ch = 0;
 }
 void digAlr1() {
   delayMicroseconds(digDly * 1000);
   if (DIG_PIN[1]) {
-    alrIndex = dgb_alr_hi_i + 3; 
+    alr.typ = _high; 
   } else {
-    alrIndex = dgb_alr_lo_i + 3;
+    alr.typ = _low;
   }
-  alrType = alr_dig;
+  alr.inp = _dig;  
+  alr.ch = 1;
 }
 void setDS3231M() {
   /*
@@ -310,8 +307,8 @@ void setDS3231M() {
   RTC.alarmInterrupt(ALARM_2, false);
   RTC.squareWave(SQWAVE_NONE);
   */  
-  RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.tmb[tmb_alr_i + 4], conf.tmb[tmb_alr_i + 3], 0);
-  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.tmb[tmb_alr_i + 5 + 4], conf.tmb[tmb_alr_i + 5 + 3], 0);
+  RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.tma_b[1], conf.tma_b[0], 0);
+  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.tma_b[3], conf.tma_b[2], 0);
   RTC.alarm(ALARM_1);
   RTC.alarm(ALARM_2);
   RTC.squareWave(SQWAVE_NONE);
@@ -320,11 +317,13 @@ void setDS3231M() {
 }
 void calcTmAlr() {
   if (RTC.alarm(ALARM_1)) {
-    alrType = alr_time;
-    alrIndex = conf.tmb[tmb_alr_i];
+    alr.inp = _time;
+    alr.typ = 0;
+    alr.ch = 0;    
   } else if (RTC.alarm(ALARM_2)) {
-    alrType = alr_time;
-    alrIndex = conf.tmb[tmb_alr_i + 5];
+    alr.inp = _time;
+    alr.typ = 0;
+    alr.ch = 1;
   }  
 }
 void setRak() {
@@ -385,21 +384,21 @@ void uplink() {
     lpp.reset();  
     for (uint8_t ch = 0; ch < 2; ch++) {
       if (conf.anb[anb_unit_i + ch] == unit_temp) {
-        lpp.addTemperature(ch + 1, An[ch]);      
+        lpp.addTemperature(ch + 1, Ang[ch]);      
       } else if (conf.anb[anb_unit_i + ch] == unit_hum) {
-        lpp.addRelativeHumidity(ch + 1, An[ch]);
+        lpp.addRelativeHumidity(ch + 1, Ang[ch]);
       } else if (conf.anb[anb_unit_i + ch] == unit_bar) {
-        lpp.addBarometricPressure(ch + 1, An[ch]);
+        lpp.addBarometricPressure(ch + 1, Ang[ch]);
       } else if (conf.anb[anb_unit_i + ch] == unit_lum) {
-        lpp.addLuminosity(ch + 1, An[ch]);
+        lpp.addLuminosity(ch + 1, Ang[ch]);
       } else {
-      lpp.addAnalogInput(1 + ch, An[ch]);
+      lpp.addAnalogInput(1 + ch, Ang[ch]);
       }       
     } 
     for (uint8_t ch = 0; ch < 2; ch++) {      
       lpp.addDigitalInput(3 + ch, digitalRead(DIG_PIN[ch]));      
     } 
-    rakSerial.print("at+send=lora:" + String(conf.lrb[lrb_port_i]) + ':'); 
+    rakSerial.print("at+send=lora:" + String(conf.lor_b[lrb_port_i]) + ':'); 
     rakSerial.println(lppGetBuffer());
   } else {
     resetMe();
