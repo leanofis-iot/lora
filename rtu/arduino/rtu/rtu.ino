@@ -84,6 +84,8 @@ Alarm alr;
 AltSoftSerial rakSerial;
 CayenneLPP lpp(51);
 INA226 ina;
+//WebUSB WebUSBSerial(1 /* https:// */, "leanofis-iot.github.io/lora");
+//#define Serial WebUSBSerial
 
 void setup() {
   wdt_enable(WDTO_8S);
@@ -355,7 +357,8 @@ void doAction() {
           }    
           if (conf.alr_b[ii * 6 + _uplink]) {
             uplink();  
-          }          
+          }
+          // break; // ????????????????         
         }
       }        
     }
