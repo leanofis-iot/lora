@@ -14,8 +14,8 @@
 
   <form onsubmit="return false" id="configuration">
     <h5>LoRaWAN</h5>
-    <label for="&lrb00">Data Rate:</label>
-    <select class="form-control" id="&lrb00">
+    <label for="&lor_b00">Data Rate:</label>
+    <select class="form-control" id="&lor_b00">
       <option value = "0">0 - SF12BW125</option>
       <option value = "1">1 - SF11BW125</option>
       <option value = "2">2 - SF10BW125</option>
@@ -23,94 +23,94 @@
       <option value = "4">4 - SF8BW125</option>
       <option value = "5">5 - SF7BW125</option>
     </select>  
-    <label for="&lrb01">Port:</label>
-    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" id="&lrb01">
-    <label for="&lrw00">Report Interval Minute:</label>
-    <input type="number" required class="form-control" value="5" min="5" step="1" maxlength="5" id="&lrw00">
+    <label for="&lor_b01">Port:</label>
+    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" id="&lor_b01">
+    <label for="&lor_w00">Report Interval Minute:</label>
+    <input type="number" required class="form-control" value="5" min="5" step="1" maxlength="5" id="&lor_w00">
     <br> 
 
     <h5>Analog Input 1:</h5>
-    <label for="&anb24">Unit:</label>
-    <select class="form-control" id="&anb24">
+    <label for="&anu_b00">Unit:</label>
+    <select class="form-control" id="&anu_b00">
       <option value = "0">none</option>
       <option value = "1">Temperature - C</option>
       <option value = "2">Relative Humidity - %</option>
       <option value = "3">Barometer - hpa</option>
       <option value = "4">Luminosity - lux</option>    
     </select>      
-    <label for="&anf00">Min. Amp.:</label>
-    <input type="number" required class="form-control" value="0.004" min="0" step="any" maxlength="7" id="&anf00"> 
-    <label for="&anf02">Max. Amp.:</label>
-    <input type="number" required class="form-control" value="0.020" min="0" step="any" maxlength="7" id="&anf02"> 
-    <label for="&anf04">Min. Value:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&anf04"> 
-    <label for="&anf06">Max. Value:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&anf06">  
+    <label for="&ans_f00">Min. Amp.:</label>
+    <input type="number" required class="form-control" value="0.004" min="0" step="any" maxlength="7" id="&ans_f00"> 
+    <label for="&ans_f01">Max. Amp.:</label>
+    <input type="number" required class="form-control" value="0.020" min="0" step="any" maxlength="7" id="&ans_f01"> 
+    <label for="&ans_f02">Min. Value:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ans_f02"> 
+    <label for="&ans_f03">Max. Value:</label>
+    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ans_f03">  
     <br> 
 
     <h5>Analog Input 2:</h5>
-    <label for="&anb25">Unit:</label>
-    <select class="form-control" id="&anb25">
+    <label for="&anu_b01">Unit:</label>
+    <select class="form-control" id="&anu_b01">
       <option value = "0">none</option>
       <option value = "1">Temperature - C</option>
       <option value = "2">Relative Humidity - %</option>
       <option value = "3">Barometer - hpa</option>
       <option value = "4">Luminosity - lux</option>
     </select>      
-    <label for="&anf01">Min. Amp.:</label>
-    <input type="number" required class="form-control" value="0.004" min="0" step="any" maxlength="7" id="&anf01"> 
-    <label for="&anf03">Max. Amp.:</label>
-    <input type="number" required class="form-control" value="0.020" min="0" step="any" maxlength="7" id="&anf03"> 
-    <label for="&anf05">Min. Value:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&anf05"> 
-    <label for="&anf07">Max. Value:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&anf07">  
+    <label for="&ans_f04">Min. Amp.:</label>
+    <input type="number" required class="form-control" value="0.004" min="0" step="any" maxlength="7" id="&ans_f04"> 
+    <label for="&ans_f05">Max. Amp.:</label>
+    <input type="number" required class="form-control" value="0.020" min="0" step="any" maxlength="7" id="&ans_f05"> 
+    <label for="&ans_f06">Min. Value:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ans_f06"> 
+    <label for="&ans_f07">Max. Value:</label>
+    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ans_f07">  
     <br>
 
     <h5>Relay Output 1:</h5>
-    <label for="&rlw00">Pulse mSec:</label>
-    <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rlw00">
+    <label for="&rly_w00">Pulse mSec:</label>
+    <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w00">
     <br>
     
     <h5>Relay Output 2:</h5>
-    <label for="&rlw01">Pulse mSec:</label>
-    <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rlw01">
+    <label for="&rly_w01">Pulse mSec:</label>
+    <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w01">
     <br>
 
     <h5>Alarm Value, Analog Input 1:</h5>
-    <label for="&anf08">Low Set:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&anf08"> 
-    <label for="&anf10">Low Clear:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&anf10"> 
-    <label for="&anf12">High Set:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&anf12"> 
-    <label for="&anf14">High Clear:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&anf14">
+    <label for="&ana_f00">Low Set:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f00"> 
+    <label for="&ana_f01">Low Clear:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f01"> 
+    <label for="&ana_f02">High Set:</label>
+    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f02"> 
+    <label for="&ana_f03">High Clear:</label>
+    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f03">
     <br>
 
     <h5>Alarm Value, Analog Input 2:</h5>
-    <label for="&anf09">Low Set:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&anf09"> 
-    <label for="&anf11">Low Clear:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&anf11"> 
-    <label for="&anf13">High Set:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&anf13"> 
-    <label for="&anf15">High Clear:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&anf15">
+    <label for="&ana_f04">Low Set:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f04"> 
+    <label for="&ana_f05">Low Clear:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f05"> 
+    <label for="&ana_f06">High Set:</label>
+    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f06"> 
+    <label for="&ana_f07">High Clear:</label>
+    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f07">
     <br>
 
     <h5>Alarm Time 1:</h5>
-    <label for="&tmb03">Hour:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tmb03"> 
-    <label for="&tmb04">Minute:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tmb04">
+    <label for="&tma_b00">Hour:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tma_b00"> 
+    <label for="&tma_b01">Minute:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tma_b01">
     <br>
 
     <h5>Alarm Time 2:</h5>
-    <label for="&tmb08">Hour:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tmb08"> 
-    <label for="&tmb09">Minute:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tmb09">
+    <label for="&tma_b02">Hour:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tma_b02"> 
+    <label for="&tma_b03">Minute:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tma_b03">
     <br>
 
     <h5>IF Alarm, Low Set, Analog Input 1:</h5>
