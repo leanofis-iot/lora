@@ -114,87 +114,107 @@
     <br>
 
     <h5>Trigger & Action</h5>
+    <ol>
+      <li>
 
-    <div id="trigger-action">
+      </li>      
+    </ol>
+    <button type="button" class="btn btn-secondary" id="trg-act-add">Add</button>
+    <br>
+    
+  </form>
 
+  <h6 id="status">This is the message</h6>
+  <button type="button" class="btn btn-secondary" id="connect">Connect</button>
+  <button type="button" class="btn btn-secondary" id="time">Time</button>
+  <button type="button" class="btn btn-secondary"id ="read">Read</button>
+  <button type="submit" class="btn btn-secondary" form="configuration" id="save">Save</button>
+  <br>
+  <br>
+  <br>
+  <br>  
+
+</div>
+
+</body>
+</html>
+
+<template>
+  <div>
+    <label for="trg-inp">Trigger:</label>
+    <select class="form-control" id="trg-inp">
+      <option value = "1">Analog</option>
+      <option value = "2">Digital</option>
+      <option value = "3">Time</option>          
+    </select>       
+    <br>  
+  </div> 
+</template>
+
+<template>
+  <div>
+    <label for="trg-typ_an">Trigger:</label>
+    <select class="form-control" id="trigger-typ_an">
+      <option value = "1">Low Set</option>
+      <option value = "2">Low Clear</option>
+      <option value = "3">High Set</option>
+      <option value = "4">High Clear</option>          
+    </select>      
+    <br>
+  </div>
+</template>
+
+<template>
+  <div>
+    <label for="trigger-typ_dig">Trigger:</label>
+    <select class="form-control" id="trigger-typ_dig">
+      <option value = "0">High</option>
+      <option value = "1">Low</option>                 
+    </select> 
+    <button type="button" class="btn btn-secondary" id="trigger-typ-dig-but">Add</button>
+    <br>
+  </div>
+</template>
+
+<template>
+  <div>
+    <label for="trigger-ch">Trigger:</label>
+    <select class="form-control" id="trigger-ch">
+      <option value = "0">High</option>
+      <option value = "1">Low</option>                 
+    </select> 
+    <button type="button" class="btn btn-secondary" id="trigger-ch-but">Add</button>
+    <br>
+  </div>
+</template>
+
+<template>
+  <div>
+    <h5>IF Alarm, Low Set, Analog Channel 1:</h5>
+    <label for="&anb00">Relay Channel 1</label>
+    <select class="form-control" id="&anb00">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>    
+    </select> 
+    <label for="&anb01">Relay Channel 2</label>
+    <select class="form-control" id="&anb01">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Activate pulse</option>
+      <option value = "4">Deactivate pulse</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" checked id="&anb02">Uplink
+      </label>
     </div>
-
-    <div>
-      <label for="trigger-inp">Trigger:</label>
-      <select class="form-control" id="trigger-inp">
-        <option value = "1">Analog</option>
-        <option value = "2">Digital</option>
-        <option value = "3">Time</option>          
-      </select> 
-      <button type="button" class="btn btn-secondary" id="trigger-inp-but">Add</button>
-      <br>  
-    </div>    
-
-    <template>
-      <div>
-        <label for="trigger-typ_an">Trigger:</label>
-        <select class="form-control" id="trigger-typ_an">
-          <option value = "1">Low Set</option>
-          <option value = "2">Low Clear</option>
-          <option value = "3">High Set</option>
-          <option value = "4">High Clear</option>          
-        </select> 
-        <button type="button" class="btn btn-secondary" id="trigger-typ-an-but">Add</button>
-        <br>
-      </div>
-    </template>
-
-    <template>
-      <div>
-        <label for="trigger-typ_dig">Trigger:</label>
-        <select class="form-control" id="trigger-typ_dig">
-          <option value = "0">High</option>
-          <option value = "1">Low</option>                 
-        </select> 
-        <button type="button" class="btn btn-secondary" id="trigger-typ-dig-but">Add</button>
-        <br>
-      </div>
-    </template>
-
-    <template>
-      <div>
-        <label for="trigger-ch">Trigger:</label>
-        <select class="form-control" id="trigger-ch">
-          <option value = "0">High</option>
-          <option value = "1">Low</option>                 
-        </select> 
-        <button type="button" class="btn btn-secondary" id="trigger-ch-but">Add</button>
-        <br>
-      </div>
-    </template>
-
-    <template>
-      <div>
-        <h5>IF Alarm, Low Set, Analog Channel 1:</h5>
-        <label for="&anb00">Relay Channel 1</label>
-        <select class="form-control" id="&anb00">
-          <option value = "0">none</option>
-          <option value = "1">Activate</option>
-          <option value = "2">Deactivate</option>
-          <option value = "3">Activate pulse</option>
-          <option value = "4">Deactivate pulse</option>    
-        </select> 
-        <label for="&anb01">Relay Channel 2</label>
-        <select class="form-control" id="&anb01">
-          <option value = "0">none</option>
-          <option value = "1">Activate</option>
-          <option value = "2">Deactivate</option>
-          <option value = "3">Activate pulse</option>
-          <option value = "4">Deactivate pulse</option>   
-        </select> 
-        <div class="form-check">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" checked id="&anb02">Uplink
-          </label>
-        </div>
-        <br>
-      </div>      
-    </template>
+    <br>
+  </div>      
+</template>
 
     <!--
 
@@ -536,19 +556,4 @@
     <br>
 
     -->
-  </form>
-
-  <h6 id="status">This is the message</h6>
-  <button type="button" class="btn btn-secondary" id="connect">Connect</button>
-  <button type="button" class="btn btn-secondary" id="time">Time</button>
-  <button type="button" class="btn btn-secondary"id ="read">Read</button>
-  <button type="submit" class="btn btn-secondary" form="configuration" id="save">Save</button>
-  <br>
-  <br>
-  <br>
-  <br>  
-
-</div>
-
-</body>
-</html>
+  
