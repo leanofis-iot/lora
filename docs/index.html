@@ -29,7 +29,7 @@
     <input type="number" required class="form-control" value="5" min="5" step="1" maxlength="5" id="&lor_w00">
     <br> 
 
-    <h5>Analog Input 1:</h5>
+    <h5>Analog Channel 1:</h5>
     <label for="&anu_b00">Unit:</label>
     <select class="form-control" id="&anu_b00">
       <option value = "0">none</option>
@@ -48,7 +48,7 @@
     <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ans_f03">  
     <br> 
 
-    <h5>Analog Input 2:</h5>
+    <h5>Analog Channel 2:</h5>
     <label for="&anu_b01">Unit:</label>
     <select class="form-control" id="&anu_b01">
       <option value = "0">none</option>
@@ -67,17 +67,17 @@
     <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ans_f07">  
     <br>
 
-    <h5>Relay Output 1:</h5>
+    <h5>Relay Channel 1:</h5>
     <label for="&rly_w00">Pulse mSec:</label>
     <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w00">
     <br>
     
-    <h5>Relay Output 2:</h5>
+    <h5>Relay Channel 2:</h5>
     <label for="&rly_w01">Pulse mSec:</label>
     <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w01">
     <br>
 
-    <h5>Alarm Value, Analog Input 1:</h5>
+    <h5>Alarm Value, Analog Channel 1:</h5>
     <label for="&ana_f00">Low Set:</label>
     <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f00"> 
     <label for="&ana_f01">Low Clear:</label>
@@ -88,7 +88,7 @@
     <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f03">
     <br>
 
-    <h5>Alarm Value, Analog Input 2:</h5>
+    <h5>Alarm Value, Analog Channel 2:</h5>
     <label for="&ana_f04">Low Set:</label>
     <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f04"> 
     <label for="&ana_f05">Low Clear:</label>
@@ -113,8 +113,93 @@
     <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tma_b03">
     <br>
 
-    <h5>IF Alarm, Low Set, Analog Input 1:</h5>
-    <label for="&anb00">Relay Output 1</label>
+    <h5>Trigger & Action</h5>
+
+    <div id="trigger-action">
+
+    </div>
+
+    <div>
+      <label for="trigger-inp">Trigger:</label>
+      <select class="form-control" id="trigger-inp">
+        <option value = "1">Analog</option>
+        <option value = "2">Digital</option>
+        <option value = "3">Time</option>          
+      </select> 
+      <button type="button" class="btn btn-secondary" id="trigger-inp-but">Add</button>
+      <br>  
+    </div>    
+
+    <template>
+      <div>
+        <label for="trigger-typ_an">Trigger:</label>
+        <select class="form-control" id="trigger-typ_an">
+          <option value = "1">Low Set</option>
+          <option value = "2">Low Clear</option>
+          <option value = "3">High Set</option>
+          <option value = "4">High Clear</option>          
+        </select> 
+        <button type="button" class="btn btn-secondary" id="trigger-typ-an-but">Add</button>
+        <br>
+      </div>
+    </template>
+
+    <template>
+      <div>
+        <label for="trigger-typ_dig">Trigger:</label>
+        <select class="form-control" id="trigger-typ_dig">
+          <option value = "0">High</option>
+          <option value = "1">Low</option>                 
+        </select> 
+        <button type="button" class="btn btn-secondary" id="trigger-typ-dig-but">Add</button>
+        <br>
+      </div>
+    </template>
+
+    <template>
+      <div>
+        <label for="trigger-ch">Trigger:</label>
+        <select class="form-control" id="trigger-ch">
+          <option value = "0">High</option>
+          <option value = "1">Low</option>                 
+        </select> 
+        <button type="button" class="btn btn-secondary" id="trigger-ch-but">Add</button>
+        <br>
+      </div>
+    </template>
+
+    <template>
+      <div>
+        <h5>IF Alarm, Low Set, Analog Channel 1:</h5>
+        <label for="&anb00">Relay Channel 1</label>
+        <select class="form-control" id="&anb00">
+          <option value = "0">none</option>
+          <option value = "1">Activate</option>
+          <option value = "2">Deactivate</option>
+          <option value = "3">Activate pulse</option>
+          <option value = "4">Deactivate pulse</option>    
+        </select> 
+        <label for="&anb01">Relay Channel 2</label>
+        <select class="form-control" id="&anb01">
+          <option value = "0">none</option>
+          <option value = "1">Activate</option>
+          <option value = "2">Deactivate</option>
+          <option value = "3">Activate pulse</option>
+          <option value = "4">Deactivate pulse</option>   
+        </select> 
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" checked id="&anb02">Uplink
+          </label>
+        </div>
+        <br>
+      </div>      
+    </template>
+
+    <!--
+
+    <h5>IF Alarm, Low Set, Analog Channel 1:</h5>
+    <label for="&anb00">Relay Channel 1</label>
     <select class="form-control" id="&anb00">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -122,7 +207,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&anb01">Relay Output 2</label>
+    <label for="&anb01">Relay Channel 2</label>
     <select class="form-control" id="&anb01">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -137,8 +222,8 @@
     </div>
     <br>
 
-    <h5>IF Alarm, Low Clear, Analog Input 1:</h5>
-    <label for="&anb06">Relay Output 1</label>
+    <h5>IF Alarm, Low Clear, Analog Channel 1:</h5>
+    <label for="&anb06">Relay Channel 1</label>
     <select class="form-control" id="&anb06">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -146,7 +231,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&anb07">Relay Output 2</label>
+    <label for="&anb07">Relay Channel 2</label>
     <select class="form-control" id="&anb07">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -161,8 +246,8 @@
     </div>
     <br>
 
-    <h5>IF Alarm, High Set, Analog Input 1:</h5>
-    <label for="&anb12">Relay Output 1</label>
+    <h5>IF Alarm, High Set, Analog Channel 1:</h5>
+    <label for="&anb12">Relay Channel 1</label>
     <select class="form-control" id="&anb12">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -170,7 +255,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&anb13">Relay Output 2</label>
+    <label for="&anb13">Relay Channel 2</label>
     <select class="form-control" id="&anb13">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -185,8 +270,8 @@
     </div>
     <br>
 
-    <h5>IF Alarm, High Clear, Analog Input 1:</h5>
-    <label for="&anb18">Relay Output 1</label>
+    <h5>IF Alarm, High Clear, Analog Channel 1:</h5>
+    <label for="&anb18">Relay Channel 1</label>
     <select class="form-control" id="&anb18">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -194,7 +279,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>   
     </select> 
-    <label for="&anb19">Relay Output 2</label>
+    <label for="&anb19">Relay Channel 2</label>
     <select class="form-control" id="&anb19">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -209,8 +294,8 @@
     </div>
     <br>
 
-    <h5>IF Alarm, Low Set, Analog Input 2:</h5>
-    <label for="&anb03">Relay Output 1</label>
+    <h5>IF Alarm, Low Set, Analog Channel 2:</h5>
+    <label for="&anb03">Relay Channel 1</label>
     <select class="form-control" id="&anb03">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -218,7 +303,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&anb04">Relay Output 2</label>
+    <label for="&anb04">Relay Channel 2</label>
     <select class="form-control" id="&anb04">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -233,8 +318,8 @@
     </div>
     <br>  
 
-    <h5>IF Alarm, Low Clear, Analog Input 2:</h5>
-    <label for="&anb09">Relay Output 1</label>
+    <h5>IF Alarm, Low Clear, Analog Channel 2:</h5>
+    <label for="&anb09">Relay Channel 1</label>
     <select class="form-control" id="&anb09">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -242,7 +327,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>   
     </select> 
-    <label for="&anb10">Relay Output 2</label>
+    <label for="&anb10">Relay Channel 2</label>
     <select class="form-control" id="&anb10">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -257,8 +342,8 @@
     </div>
     <br>  
 
-    <h5>IF Alarm, High Set, Analog Input 2:</h5>
-    <label for="&anb15">Relay Output 1</label>
+    <h5>IF Alarm, High Set, Analog Channel 2:</h5>
+    <label for="&anb15">Relay Channel 1</label>
     <select class="form-control" id="&anb15">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -266,7 +351,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&anb16">Relay Output 2</label>
+    <label for="&anb16">Relay Channel 2</label>
     <select class="form-control" id="&anb16">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -281,8 +366,8 @@
     </div>
     <br>  
 
-    <h5>IF Alarm, High Clear, Analog Input 2:</h5>
-    <label for="&anb21">Relay Output 1</label>
+    <h5>IF Alarm, High Clear, Analog Channel 2:</h5>
+    <label for="&anb21">Relay Channel 1</label>
     <select class="form-control" id="&anb21">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -290,7 +375,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&anb22">Relay Output 2</label>
+    <label for="&anb22">Relay Channel 2</label>
     <select class="form-control" id="&anb22">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -305,8 +390,8 @@
     </div>
     <br>
 
-    <h5>IF Alarm, Low, Digital Input 1:</h5>
-    <label for="&dgb00">Relay Output 1</label>
+    <h5>IF Alarm, Low, Digital Channel 1:</h5>
+    <label for="&dgb00">Relay Channel 1</label>
     <select class="form-control" id="&dgb00">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -314,7 +399,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&dgb01">Relay Output 2</label>
+    <label for="&dgb01">Relay Channel 2</label>
     <select class="form-control" id="&dgb01">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -329,8 +414,8 @@
     </div>
     <br>
 
-    <h5>IF Alarm, High, Digital Input 1:</h5>
-    <label for="&dgb06">Relay Output 1</label>
+    <h5>IF Alarm, High, Digital Channel 1:</h5>
+    <label for="&dgb06">Relay Channel 1</label>
     <select class="form-control" id="&dgb06">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -338,7 +423,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&dgb07">Relay Output 2</label>
+    <label for="&dgb07">Relay Channel 2</label>
     <select class="form-control" id="&dgb07">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -353,8 +438,8 @@
     </div>
     <br>
 
-    <h5>IF Alarm, Low, Digital Input 2:</h5>
-    <label for="&dgb03">Relay Output 1</label>
+    <h5>IF Alarm, Low, Digital Channel 2:</h5>
+    <label for="&dgb03">Relay Channel 1</label>
     <select class="form-control" id="&dgb03">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -362,7 +447,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&dgb04">Relay Output 2</label>
+    <label for="&dgb04">Relay Channel 2</label>
     <select class="form-control" id="&dgb04">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -377,8 +462,8 @@
     </div>
     <br>  
 
-    <h5>IF Alarm, High, Digital Input 2:</h5>
-    <label for="&dgb09">Relay Output 1</label>
+    <h5>IF Alarm, High, Digital Channel 2:</h5>
+    <label for="&dgb09">Relay Channel 1</label>
     <select class="form-control" id="&dgb09">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -386,7 +471,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&dgb10">Relay Output 2</label>
+    <label for="&dgb10">Relay Channel 2</label>
     <select class="form-control" id="&dgb10">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -402,7 +487,7 @@
     <br>
 
     <h5>IF Alarm, Time 1:</h5>
-    <label for="&tmb00">Relay Output 1</label>
+    <label for="&tmb00">Relay Channel 1</label>
     <select class="form-control" id="&tmb00">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -410,7 +495,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&tmb01">Relay Output 2</label>
+    <label for="&tmb01">Relay Channel 2</label>
     <select class="form-control" id="&tmb01">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -426,7 +511,7 @@
     <br>
 
     <h5>IF Alarm, Time 2:</h5>
-    <label for="&tmb05">Relay Output 1</label>
+    <label for="&tmb05">Relay Channel 1</label>
     <select class="form-control" id="&tmb05">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -434,7 +519,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="&tmb06">Relay Output 2</label>
+    <label for="&tmb06">Relay Channel 2</label>
     <select class="form-control" id="&tmb06">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -449,6 +534,8 @@
     </div>
     <br>
     <br>
+
+    -->
   </form>
 
   <h6 id="status">This is the message</h6>
