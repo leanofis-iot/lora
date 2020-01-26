@@ -47,7 +47,7 @@ const uint8_t _set_pulse        = 3;
 const uint8_t _res_pulse        = 4;
 
 const uint8_t _input            = 0;
-const uint8_t _type             = 1;
+const uint8_t _level            = 1;
 const uint8_t _channel          = 2;
 const uint8_t _relay            = 3;
 const uint8_t _uplink           = 5;
@@ -65,7 +65,7 @@ struct Conf {
 
 struct Alarm {
   uint8_t inp;
-  uint8_t typ;
+  uint8_t lev;
   uint8_t chn;
 };
 
@@ -139,25 +139,25 @@ void calcAngAlr(const uint8_t ch) {
   if (Ang[ch] <= conf.ana_f[_low_set + ch * 8]) {
     if (hysPrev[ch] > 2) {
       alr.inp = _ang;
-      alr.typ = _low_set;
+      alr.lev = _low_set;
       alr.chn = ch;      
     }
     hysPrev[ch] = 1;  
   } else if ((Ang[ch] >= conf.ana_f[_low_clear + ch * 8]) && (Ang[ch] <= conf.ana_f[_high_clear + ch * 8])) {
     if (hysPrev[ch] < 2) {
       alr.inp = _ang;
-      alr.typ = _low_clear;
+      alr.lev = _low_clear;
       alr.chn = ch;        
     } else if (hysPrev[ch] > 4) {
       alr.inp = _ang;
-      alr.typ = _high_clear;
+      alr.lev = _high_clear;
       alr.chn = ch;      
     }
     hysPrev[ch] = 3; 
   } else if (Ang[ch] >= conf.ana_f[_high_set + ch * 8]) {
     if (hysPrev[ch] < 4) {
       alr.inp = _ang;
-      alr.typ = _high_set;
+      alr.lev = _high_set;
       alr.chn = ch;       
     }
     hysPrev[ch] = 5;    
@@ -297,9 +297,9 @@ void setDigAlr() {
 void digAlr0() {
   delayMicroseconds(digDly * 1000);
   if (DIG_PIN[0]) {    
-    alr.typ = _high; 
+    alr.lev = _high; 
   } else {
-    alr.typ = _low;
+    alr.lev = _low;
   }
   alr.inp = _dig;  
   alr.chn = 0;
@@ -307,9 +307,9 @@ void digAlr0() {
 void digAlr1() {
   delayMicroseconds(digDly * 1000);
   if (DIG_PIN[1]) {
-    alr.typ = _high; 
+    alr.lev = _high; 
   } else {
-    alr.typ = _low;
+    alr.lev = _low;
   }
   alr.inp = _dig;  
   alr.chn = 1;
@@ -335,11 +335,11 @@ void setDS3231M() {
 void calcTmAlr() {
   if (RTC.alarm(ALARM_1)) {
     alr.inp = _time;
-    alr.typ = 0;
+    alr.lev = 0;
     alr.chn = 0;    
   } else if (RTC.alarm(ALARM_2)) {
     alr.inp = _time;
-    alr.typ = 0;
+    alr.lev = 0;
     alr.chn = 1;
   }  
 }
@@ -350,7 +350,7 @@ void setRak() {
 void doAction() {  
   for (uint8_t ii = 0; ii < alarms; ii++) {
     if (conf.alr_b[ii * 6 + _input] == alr.inp) {
-      if (conf.alr_b[ii * 6 + _type] == alr.typ) {        
+      if (conf.alr_b[ii * 6 + _level] == alr.lev) {        
         if (conf.alr_b[ii * 6 + _channel] == alr.chn) {
           for (uint8_t ch = 0; ch < 2; ch++) {            
             actRelay(ch, conf.alr_b[ii * 6 + _relay + ch]);              
@@ -364,7 +364,7 @@ void doAction() {
     }
   }
   alr.inp = 0;
-  alr.typ = 0;  // ????????
+  alr.lev = 0;  // ????????
   alr.chn = 0;  // ????????
 }
 void actRelay(const uint8_t ch, const uint8_t act) {
