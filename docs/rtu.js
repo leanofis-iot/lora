@@ -4,10 +4,16 @@
   document.addEventListener('DOMContentLoaded', event => {
     let configurationForm = document.getElementById('configuration');
     let statusDisplay = document.getElementById('status');
+    let trgAddButton = document.getElementById("trg-add");    
     let connectButton = document.getElementById("connect");    
     let timeButton = document.getElementById('time');
     let readButton = document.getElementById('read');
     let saveButton = document.getElementById('save');
+
+    let trgActList = document.getElementById("trg-act");
+    let temp = document.getElementsByTagName("template")[0];
+    
+    
     let port;
 
     function connect() {
@@ -42,6 +48,19 @@
         });
       }
     });
+
+    trgAddButton.addEventListener('click', function() { 
+      let clon = temp.content.cloneNode(true);     
+      trgActList.appendChild(clon);
+    });
+    trgActList.addEventListener('click', function(e) { 
+      if (e.target.nodeName == "BUTTON") {
+        e.target.closest('li').remove();
+      }
+    });
+
+    
+    
 
     saveButton.addEventListener('click', function() {
       //if (!port) {

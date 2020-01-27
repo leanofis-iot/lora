@@ -67,17 +67,17 @@
     <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ans_f07">  
     <br>
 
-    <h5>Relay Channel 1:</h5>
+    <h5>Relay 1:</h5>
     <label for="&rly_w00">Pulse mSec:</label>
     <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w00">
     <br>
     
-    <h5>Relay Channel 2:</h5>
+    <h5>Relay 2:</h5>
     <label for="&rly_w01">Pulse mSec:</label>
     <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w01">
     <br>
 
-    <h5>Alarm Value, Analog Channel 1:</h5>
+    <h5>Level, Analog Channel 1:</h5>
     <label for="&ana_f00">Low Set:</label>
     <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f00"> 
     <label for="&ana_f01">Low Clear:</label>
@@ -88,7 +88,7 @@
     <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f03">
     <br>
 
-    <h5>Alarm Value, Analog Channel 2:</h5>
+    <h5>Level, Analog Channel 2:</h5>
     <label for="&ana_f04">Low Set:</label>
     <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f04"> 
     <label for="&ana_f05">Low Clear:</label>
@@ -99,14 +99,14 @@
     <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f07">
     <br>
 
-    <h5>Alarm Time 1:</h5>
+    <h5>Time 1:</h5>
     <label for="&tma_b00">Hour:</label>
     <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tma_b00"> 
     <label for="&tma_b01">Minute:</label>
     <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tma_b01">
     <br>
 
-    <h5>Alarm Time 2:</h5>
+    <h5>Time 2:</h5>
     <label for="&tma_b02">Hour:</label>
     <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tma_b02"> 
     <label for="&tma_b03">Minute:</label>
@@ -114,8 +114,9 @@
     <br>
 
     <h5>Trigger & Action</h5>
-    <ol></ol>
-    <button type="button" class="btn btn-secondary" id="trg-act-add">Add</button>
+    <ol id="trg-act">   
+    </ol>
+    <button type="button" class="btn btn-secondary" id="trg-add">Add</button>
     <br>
     
   </form>
@@ -137,6 +138,7 @@
 
 <template>
   <li>
+    <br>
     <label for="trg-inp">Input:</label>
     <select class="form-control" id="trg-inp">
       <option value = "1">Analog</option>
@@ -154,7 +156,7 @@
     </select>
     <label for="try-ch">Channel:</label>
     <input type="number" required class="form-control" value="1" min="1" max="8" step="1" maxlength="1" id="trg-ch">  
-    <label for="trg-rly-1">Relay Channel 1</label>
+    <label for="trg-rly-1">Relay 1</label>
     <select class="form-control" id="trg-rly-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
@@ -162,7 +164,7 @@
       <option value = "3">Activate pulse</option>
       <option value = "4">Deactivate pulse</option>    
     </select> 
-    <label for="trg-rly-2">Relay Channel 2</label>
+    <label for="trg-rly-2">Relay 2</label>
     <select class="form-control" id="trg-rly-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
