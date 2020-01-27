@@ -71,10 +71,28 @@
             }
             config += els[i].id + val + '\r\n';
           }                     
-        }                  
+        }
+        config += '&config' + '\r\n';                  
       }      
       statusDisplay.textContent = config;      
       //port.send(config);      
+    });
+
+    timeButton.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      let d = new Date();
+      let t = '';
+      t += '&ss' + d.getSeconds() + '\r\n';
+      t += '&mm' + d.getMinutes() + '\r\n';
+      t += '&hh' + d.getHours() + '\r\n';
+      t += '&dd' + d.getDay() + '\r\n';
+      t += '&mo' + String(d.getMonth() + 1) + '\r\n';
+      t += '&yy' + d.getFullYear() + '\r\n';
+      t += '&time' + '\r\n';
+      statusDisplay.textContent = t;      
+      //port.send(t);      
     });
 
     function connect() {
