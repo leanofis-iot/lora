@@ -13,10 +13,7 @@
     let port;
 
     trgActList.addEventListener('change', function(e) {       
-      if (e.target.id == 'trg-del') {
-        //e.target.closest('li').remove();
-        e.target.parentNode.remove();
-      } else if (e.target.id == 'trg-inp') { 
+      if (e.target.id == 'trg-inp') { 
         let temp = document.getElementsByTagName("template")[Number(e.target.value) - 1]; 
         let clon = temp.content.cloneNode(true);       
         e.target.parentNode.replaceWith(clon);                    
