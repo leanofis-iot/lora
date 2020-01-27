@@ -9,26 +9,43 @@
     let timeButton = document.getElementById('time');
     let readButton = document.getElementById('read');
     let saveButton = document.getElementById('save');
-    let trgActList = document.getElementById("trg-act");       
+    let trgList = document.getElementById("trg-list");       
     let port;
 
-    trgActList.addEventListener('change', function(e) {       
+    trgList.addEventListener('change', function(e) {       
       if (e.target.name == 'trg-inp') { 
         let temp = document.getElementsByTagName("template")[Number(e.target.value) - 1]; 
         let clon = temp.content.cloneNode(true);       
         e.target.parentNode.replaceWith(clon);                    
       }
     });
-    trgActList.addEventListener('click', function(e) {       
+    trgList.addEventListener('click', function(e) {       
       if (e.target.name == 'trg-del') {
         //e.target.closest('li').remove();
         e.target.parentNode.remove();
+        let lis = trgList.querySelectorAll('li');
+        if (lis.length < 99) {
+          trgAddButton.disabled = false;
+        }
       }      
     });
     trgAddButton.addEventListener('click', function() {
       let temp = document.getElementsByTagName("template")[0]; 
       let clon = temp.content.cloneNode(true);     
-      trgActList.appendChild(clon);
+      trgList.appendChild(clon);
+      
+      statusDisplay.textContent = '';
+      let lis = trgList.querySelectorAll('li');      
+      for (let i = 0; i < lis.length; i++) {
+        let els = lis[i].querySelectorAll('input,select');
+        for (let j = 0; j < els.length; j++) {
+          els[j].id = 'alr_b' + ('0' +  String(j + i * 6)).slice (-2);
+          statusDisplay.textContent += els[j].id;
+        }
+      }
+      if (lis.length >= 99) {
+        this.disabled = true;
+      }
     }); 
     
     saveButton.addEventListener('click', function() {

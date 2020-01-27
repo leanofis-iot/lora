@@ -60,7 +60,7 @@ struct Conf {
   float ans_f[8];
   float ana_f[8];
   uint8_t tma_b[4];    
-  uint8_t alr_b[360];   
+  uint8_t alr_b[594];   
 };
 
 struct Alarm {
