@@ -13,14 +13,14 @@
     let port;
 
     trgActList.addEventListener('change', function(e) {       
-      if (e.target.id == 'trg-inp') { 
+      if (e.target.name == 'trg-inp') { 
         let temp = document.getElementsByTagName("template")[Number(e.target.value) - 1]; 
         let clon = temp.content.cloneNode(true);       
         e.target.parentNode.replaceWith(clon);                    
       }
     });
     trgActList.addEventListener('click', function(e) {       
-      if (e.target.id == 'trg-del') {
+      if (e.target.name == 'trg-del') {
         //e.target.closest('li').remove();
         e.target.parentNode.remove();
       }      
@@ -37,7 +37,19 @@
       //}
       let config = '';      
       if (configurationForm.checkValidity()) {
-        statusDisplay.textContent = 'heyyy';
+        statusDisplay.textContent = 'validaion ok';
+
+        let els = document.body.querySelectorAll('input,select');
+        for (let i = 0; i < els.length; i++) {
+          if (els[i].id[0] == '&') {
+            if (els[i].id[5] == 'b') {              
+            } else if (els[i].id[5] == 'w') {
+            } else if (els[i].id[5] == 'f') {
+            }
+          }          
+        }
+
+
         for (let i = 0; i < 2; i++) {
           let ii = '&lrb';        
           ii += ('0' + i).slice (-2);      
@@ -214,4 +226,15 @@ saveButton.addEventListener('click', function() {
   statusDisplay.textContent = config;      
   //port.send(config);      
 });
+*/
+/*
+let els = document.body.querySelectorAll('input,select');
+for (let i = 0; i < els.length; i++) {
+  if (els[i].id[0] == '&') {
+    if (els[i].id[5] == 'b') {              
+    } else if (els[i].id[5] == 'w') {
+    } else if (els[i].id[5] == 'f') {
+    }
+  }          
+}
 */

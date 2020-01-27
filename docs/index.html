@@ -134,22 +134,22 @@
   <li>
     <br>
     <label for="trg-inp">Input:</label>
-    <select class="form-control" id="trg-inp">
+    <select class="form-control" name="trg-inp">
       <option value = "1" selected>Analog</option>
       <option value = "2">Digital</option>
       <option value = "3">Time</option>          
     </select>
     <label for="trg-lev">Level:</label>
-    <select class="form-control" id="trg-lev">
+    <select class="form-control" name="trg-lev">
       <option value = "1">Low Set</option>
       <option value = "2">Low Clear</option>
       <option value = "3">High Set</option>
       <option value = "4">High Clear</option>              
     </select>
-    <label for="try-ch">Channel:</label>
-    <input type="number" required class="form-control" value="1" min="1" max="8" step="1" maxlength="1" id="trg-ch">  
+    <label for="trg-ch">Channel:</label>
+    <input type="number" required class="form-control" value="1" min="1" max="8" step="1" maxlength="1" name="trg-ch">  
     <label for="trg-rly-1">Relay 1</label>
-    <select class="form-control" id="trg-rly-1">
+    <select class="form-control" name="trg-rly-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -157,7 +157,7 @@
       <option value = "4">Deactivate pulse</option>    
     </select> 
     <label for="trg-rly-2">Relay 2</label>
-    <select class="form-control" id="trg-rly-2">
+    <select class="form-control" name="trg-rly-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -166,10 +166,10 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input type="checkbox" class="form-check-input" checked id="trg-upl">Uplink
+        <input type="checkbox" class="form-check-input" checked name="trg-upl">Uplink
       </label>
     </div>
-    <button type="button" class="btn btn-secondary" id="trg-del">Delete</button>
+    <button type="button" class="btn btn-secondary" name="trg-del">Delete</button>
     <br>  
   </li> 
 </template>
@@ -178,20 +178,20 @@
   <li>
     <br>
     <label for="trg-inp">Input:</label>
-    <select class="form-control" id="trg-inp">
+    <select class="form-control" name="trg-inp">
       <option value = "1">Analog</option>
       <option value = "2" selected>Digital</option>
       <option value = "3">Time</option>          
     </select>
     <label for="trg-lev">Level:</label>
-    <select class="form-control" id="trg-lev">
+    <select class="form-control" name="trg-lev">
       <option value = "0">High</option>
       <option value = "1">Low</option>             
     </select>
     <label for="try-ch">Channel:</label>
-    <input type="number" required class="form-control" value="1" min="1" max="8" step="1" maxlength="1" id="trg-ch">  
+    <input type="number" required class="form-control" value="1" min="1" max="8" step="1" maxlength="1" name="trg-ch">  
     <label for="trg-rly-1">Relay 1</label>
-    <select class="form-control" id="trg-rly-1">
+    <select class="form-control" name="trg-rly-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -199,7 +199,7 @@
       <option value = "4">Deactivate pulse</option>    
     </select> 
     <label for="trg-rly-2">Relay 2</label>
-    <select class="form-control" id="trg-rly-2">
+    <select class="form-control" name="trg-rly-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -208,10 +208,10 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input type="checkbox" class="form-check-input" checked id="trg-upl">Uplink
+        <input type="checkbox" class="form-check-input" checked name="trg-upl">Uplink
       </label>
     </div>
-    <button type="button" class="btn btn-secondary" id="trg-del">Delete</button>
+    <button type="button" class="btn btn-secondary" name="trg-del">Delete</button>
     <br>  
   </li> 
 </template>
@@ -220,19 +220,19 @@
   <li>
     <br>
     <label for="trg-inp">Input:</label>
-    <select class="form-control" id="trg-inp">
+    <select class="form-control" name="trg-inp">
       <option value = "1">Analog</option>
       <option value = "2">Digital</option>
       <option value = "3" selected>Time</option>          
     </select>
     <label for="trg-lev" disabled>Level:</label>
-    <select class="form-control" disabled id="trg-lev">
+    <select class="form-control" disabled name="trg-lev">
       <option value = "0">none</option>              
     </select>
     <label for="try-ch">Channel:</label>
-    <input type="number" required class="form-control" value="1" min="1" max="8" step="1" maxlength="1" id="trg-ch">  
+    <input type="number" required class="form-control" value="1" min="1" max="8" step="1" maxlength="1" name="trg-ch">  
     <label for="trg-rly-1">Relay 1</label>
-    <select class="form-control" id="trg-rly-1">
+    <select class="form-control" name="trg-rly-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -240,7 +240,7 @@
       <option value = "4">Deactivate pulse</option>    
     </select> 
     <label for="trg-rly-2">Relay 2</label>
-    <select class="form-control" id="trg-rly-2">
+    <select class="form-control" name="trg-rly-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -249,10 +249,10 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label" disabled>
-        <input type="checkbox" class="form-check-input" disabled id="trg-upl">Uplink
+        <input type="checkbox" class="form-check-input" disabled name="trg-upl">Uplink
       </label>
     </div>
-    <button type="button" class="btn btn-secondary" id="trg-del">Delete</button>
+    <button type="button" class="btn btn-secondary" name="trg-del">Delete</button>
     <br>  
   </li> 
 </template>
