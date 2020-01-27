@@ -9,59 +9,25 @@
     let timeButton = document.getElementById('time');
     let readButton = document.getElementById('read');
     let saveButton = document.getElementById('save');
-
-    let trgActList = document.getElementById("trg-act");
-    let temp = document.getElementsByTagName("template")[0];
-    
-    
+    let trgActList = document.getElementById("trg-act");       
     let port;
 
-    function connect() {
-      port.connect().then(() => {
-        statusDisplay.textContent = '';
-        connectButton.textContent = 'Disconnect';
-
-        port.onReceive = data => {
-          let textDecoder = new TextDecoder();
-          console.log(textDecoder.decode(data));
-        }
-        port.onReceiveError = error => {
-          console.error(error);
-        };
-      }, error => {
-        statusDisplay.textContent = error;
-      });
-    }    
-    
-    connectButton.addEventListener('click', function() {
-      if (port) {
-        port.disconnect();
-        connectButton.textContent = 'Connect';
-        statusDisplay.textContent = '';
-        port = null;
-      } else {
-        serial.requestPort().then(selectedPort => {
-          port = selectedPort;
-          connect();
-        }).catch(error => {
-          statusDisplay.textContent = error;
-        });
+    trgActList.addEventListener('change', function(e) {       
+      if (e.target.id == 'trg-del') {
+        //e.target.closest('li').remove();
+        e.target.parentNode.remove();
+      } else if (e.target.id == 'trg-inp') { 
+        let temp = document.getElementsByTagName("template")[Number(e.target.value) - 1]; 
+        let clon = temp.content.cloneNode(true);       
+        e.target.parentNode.replaceWith(clon);                    
       }
     });
-
-    trgAddButton.addEventListener('click', function() { 
+    trgAddButton.addEventListener('click', function() {
+      let temp = document.getElementsByTagName("template")[0]; 
       let clon = temp.content.cloneNode(true);     
       trgActList.appendChild(clon);
-    });
-    trgActList.addEventListener('click', function(e) { 
-      if (e.target.nodeName == "BUTTON") {
-        e.target.closest('li').remove();
-      }
-    });
-
+    }); 
     
-    
-
     saveButton.addEventListener('click', function() {
       //if (!port) {
       //  return;
@@ -85,7 +51,7 @@
         for (let i = 0; i < 10; i++) {
           let ii = '&tmb';
           ii += ('0' + i).slice (-2);
-          if (document.getElementById(ii).type === 'checkbox') {
+          if (document.getElementById(ii).type === 'checkbox') { // if id ii = trg-upl
             tmb = document.getElementById(ii).checked ? 1 : 0;            
           } else {
             tmb = parseInt(document.getElementById(ii).value);
@@ -130,6 +96,39 @@
       statusDisplay.textContent = config;      
       //port.send(config);      
     });
+
+    function connect() {
+      port.connect().then(() => {
+        statusDisplay.textContent = '';
+        connectButton.textContent = 'Disconnect';
+
+        port.onReceive = data => {
+          let textDecoder = new TextDecoder();
+          console.log(textDecoder.decode(data));
+        }
+        port.onReceiveError = error => {
+          console.error(error);
+        };
+      }, error => {
+        statusDisplay.textContent = error;
+      });
+    }    
+    
+    connectButton.addEventListener('click', function() {
+      if (port) {
+        port.disconnect();
+        connectButton.textContent = 'Connect';
+        statusDisplay.textContent = '';
+        port = null;
+      } else {
+        serial.requestPort().then(selectedPort => {
+          port = selectedPort;
+          connect();
+        }).catch(error => {
+          statusDisplay.textContent = error;
+        });
+      }
+    });     
 
     serial.getPorts().then(ports => {
       if (ports.length == 0) {
