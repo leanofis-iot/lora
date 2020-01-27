@@ -22,6 +22,12 @@
         e.target.parentNode.replaceWith(clon);                    
       }
     });
+    trgActList.addEventListener('click', function(e) {       
+      if (e.target.id == 'trg-del') {
+        //e.target.closest('li').remove();
+        e.target.parentNode.remove();
+      }      
+    });
     trgAddButton.addEventListener('click', function() {
       let temp = document.getElementsByTagName("template")[0]; 
       let clon = temp.content.cloneNode(true);     
