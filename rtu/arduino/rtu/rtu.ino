@@ -215,8 +215,8 @@ void chkSerial() {
       } else if (strSerial.startsWith(F("&tma_b"))) {
         conf.tma_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();     
       } else if (strSerial.startsWith(F("&alr_b"))) {
-        conf.alr_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt(); 
-      } else if (strSerial.startsWith(F("&eof"))) {
+        conf.alr_b[strSerial.substring(6,9).toInt()] = strSerial.substring(9).toInt(); 
+      } else if (strSerial.startsWith(F("&save"))) {
         EEPROM.put(0, conf);
         resetMe();         
       } else if (strSerial.startsWith(F("&ss"))) {
@@ -231,7 +231,7 @@ void chkSerial() {
         tm.Month = strSerial.substring(3).toInt();
       } else if (strSerial.startsWith(F("&yy"))) {
         tm.Year = strSerial.substring(3).toInt() - 1970;
-      } else if (strSerial.startsWith(F("&tt"))) {
+      } else if (strSerial.startsWith(F("&time"))) {
         RTC.write(tm);
       }
       strSerial = "";

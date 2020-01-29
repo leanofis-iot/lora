@@ -38,7 +38,7 @@
       for (let i = 0; i < lis.length; i++) {
         let els = lis[i].querySelectorAll('input,select');
         for (let j = 0; j < els.length; j++) {
-          els[j].id = '&alr_b' + ('0' +  String(j + i * 6)).slice (-2);
+          els[j].id = '&alr_b' + ('00' +  String(j + i * 6)).slice (-3);
           statusDisplay.textContent += els[j].id;
         }
       }
@@ -72,10 +72,20 @@
             config += els[i].id + val + '\r\n';
           }                     
         }
-        config += '&config' + '\r\n';                  
+        config += '&save' + '\r\n';                  
       }      
       statusDisplay.textContent = config;      
       //port.send(config);      
+    });
+
+    readButton.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //} 
+      trgList.innerHTML = '';    
+      
+      statusDisplay.textContent = 'deleted';      
+      //port.send(t);      
     });
 
     timeButton.addEventListener('click', function() {
@@ -139,6 +149,20 @@
     });
   });
 })();
+
+serialport.parsers.readline('\n');
+parser: SerialPort.parsers.readline('\r')
+var serialPort = new SerialPort("/dev/ttyACM0", {
+  autoOpen: false,
+  parser: SerialPort.parsers.readline('\n'),
+  baudrate:115200
+}); 
+
+var myPort = new serialport(portName, {
+  baudRate: 9600,
+  parser: new serialport.parsers.Readline('\r\n')
+});
+
 
 /*
 saveButton.addEventListener('click', function() {
