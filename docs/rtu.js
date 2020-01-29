@@ -150,6 +150,7 @@
   });
 })();
 
+/*
 serialport.parsers.readline('\n');
 parser: SerialPort.parsers.readline('\r')
 var serialPort = new SerialPort("/dev/ttyACM0", {
@@ -162,7 +163,7 @@ var myPort = new serialport(portName, {
   baudRate: 9600,
   parser: new serialport.parsers.Readline('\r\n')
 });
-
+*/
 
 /*
 saveButton.addEventListener('click', function() {
