@@ -2,19 +2,19 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', event => {
-    let configurationForm = document.getElementById('configuration');
-    let statusDisplay = document.getElementById('status');
-    let trgAddButton = document.getElementById("trg-add");    
-    let connectButton = document.getElementById("connect");    
-    let timeButton = document.getElementById('time');
-    let readButton = document.getElementById('read');
-    let saveButton = document.getElementById('save');
-    let trgList = document.getElementById("trg-list");       
+    let configurationForm = document.querySelector('#configuration');
+    let statusDisplay = document.querySelector('#status');
+    let trgAddButton = document.querySelector("#trg-add");    
+    let connectButton = document.querySelector("#connect");    
+    let timeButton = document.querySelector('#time');
+    let readButton = document.querySelector('#read');
+    let saveButton = document.querySelector('#save');
+    let trgList = document.querySelector("#trg-list");       
     let port;
 
     trgList.addEventListener('change', function(e) {       
       if (e.target.name == 'trg-inp') { 
-        let temp = document.getElementsByTagName("template")[Number(e.target.value) - 1]; 
+        let temp = document.querySelectorAll('template')[Number(e.target.value) - 1]; 
         let clon = temp.content.cloneNode(true);       
         e.target.parentNode.replaceWith(clon);                    
       }
@@ -30,7 +30,7 @@
       }      
     });
     trgAddButton.addEventListener('click', function() {
-      let temp = document.getElementsByTagName("template")[0]; 
+      let temp = document.querySelectorAll('template')[0]; 
       let clon = temp.content.cloneNode(true);     
       trgList.appendChild(clon);      
       statusDisplay.textContent = '';
