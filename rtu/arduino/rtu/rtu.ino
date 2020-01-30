@@ -18,6 +18,19 @@ const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5,
 const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
 const uint8_t RANDOM_PIN        = A5;               // PF0/ADC0
 
+const uint8_t _use              = 0;
+const uint8_t _id               = 1;
+const uint8_t _type             = 2;
+const uint8_t _unit             = 3;
+const uint8_t _in_min           = 4;
+const uint8_t _in_max           = 5;
+const uint8_t _out_min          = 6;
+const uint8_t _out_max          = 7;
+const uint8_t _low_set          = 8;
+const uint8_t _low_clear        = 9;
+const uint8_t _high_set         = 10;
+const uint8_t _high_clear       = 11;
+
 const uint8_t _dr               = 0;
 const uint8_t _port             = 1;
 const uint8_t _report           = 0;
@@ -56,9 +69,12 @@ struct Conf {
   uint8_t lor_b[2];
   uint16_t lor_w[1];
   uint16_t rly_w[2];
+  uint8_t anc_b[2];
   uint8_t anu_b[2];  
   float ans_f[8];
   float ana_f[8];
+  uint8_t dgc_b[2];
+  uint8_t dgu_b[2];
   uint8_t tma_b[4];    
   uint8_t alr_b[594];   
 };
