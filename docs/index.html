@@ -29,83 +29,7 @@
     <input type="number" required class="form-control" value="5" min="5" step="1" maxlength="5" id="&lor_w00">
     <br> 
 
-    <h5>Analog Channel 1:</h5>
-    <label for="&anu_b00">Unit:</label>
-    <select class="form-control" id="&anu_b00">
-      <option value = "0">none</option>
-      <option value = "1">Temperature - C</option>
-      <option value = "2">Relative Humidity - %</option>
-      <option value = "3">Barometer - hpa</option>
-      <option value = "4">Luminosity - lux</option>    
-    </select>      
-    <label for="&ans_f00">Min. Amp.:</label>
-    <input type="number" required class="form-control" value="0.004" min="0" step="any" maxlength="7" id="&ans_f00"> 
-    <label for="&ans_f01">Max. Amp.:</label>
-    <input type="number" required class="form-control" value="0.020" min="0" step="any" maxlength="7" id="&ans_f01"> 
-    <label for="&ans_f02">Min.:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ans_f02"> 
-    <label for="&ans_f03">Max.:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ans_f03">  
-    <label for="&ana_f00">Low Set:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f00"> 
-    <label for="&ana_f01">Low Clear:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f01"> 
-    <label for="&ana_f02">High Set:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f02"> 
-    <label for="&ana_f03">High Clear:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f03">
-    <br> 
-
-    <h5>Analog Channel 2:</h5>
-    <label for="&anu_b01">Unit:</label>
-    <select class="form-control" id="&anu_b01">
-      <option value = "0">none</option>
-      <option value = "1">Temperature - C</option>
-      <option value = "2">Relative Humidity - %</option>
-      <option value = "3">Barometer - hpa</option>
-      <option value = "4">Luminosity - lux</option>
-    </select>      
-    <label for="&ans_f04">Min. Amp.:</label>
-    <input type="number" required class="form-control" value="0.004" min="0" step="any" maxlength="7" id="&ans_f04"> 
-    <label for="&ans_f05">Max. Amp.:</label>
-    <input type="number" required class="form-control" value="0.020" min="0" step="any" maxlength="7" id="&ans_f05"> 
-    <label for="&ans_f06">Min.:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ans_f06"> 
-    <label for="&ans_f07">Max.:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ans_f07">  
-    <label for="&ana_f04">Low Set:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f04"> 
-    <label for="&ana_f05">Low Clear:</label>
-    <input type="number" required class="form-control" value="0" min="0" step="any" maxlength="7" id="&ana_f05"> 
-    <label for="&ana_f06">High Set:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f06"> 
-    <label for="&ana_f07">High Clear:</label>
-    <input type="number" required class="form-control" value="1000" min="0" step="any" maxlength="7" id="&ana_f07">
-    <br>    
-
-    <h5>Time 1:</h5>
-    <label for="&tma_b00">Hour:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tma_b00"> 
-    <label for="&tma_b01">Minute:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tma_b01">
-    <br>
-
-    <h5>Time 2:</h5>
-    <label for="&tma_b02">Hour:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength="2" id="&tma_b02"> 
-    <label for="&tma_b03">Minute:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength="2" id="&tma_b03">
-    <br>
-
-    <h5>Relay 1:</h5>
-    <label for="&rly_w00">Pulse mSec:</label>
-    <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w00">
-    <br>
     
-    <h5>Relay 2:</h5>
-    <label for="&rly_w01">Pulse mSec:</label>
-    <input type="number" required class="form-control" value="1000" min="100" step="1" maxlength="10" id="&rly_w01">
-    <br>
 
     <h5>Trigger & Action</h5>
     <ol id="trg-list">   
@@ -132,136 +56,130 @@
 
 <template>
   <li>
-    <br>
-    <label for="trg-inp">Input:</label>
-    <select class="form-control" name="trg-inp">
-      <option value = "1" selected>Analog</option>
-      <option value = "2">Digital</option>
-      <option value = "3">Time</option>          
-    </select>
-    <label for="trg-lev">Level:</label>
-    <select class="form-control" name="trg-lev">
-      <option value = "1">Low Set</option>
-      <option value = "2">Low Clear</option>
-      <option value = "3">High Set</option>
-      <option value = "4">High Clear</option>              
-    </select>
-    <label for="trg-ch">Channel:</label>
-    <select class="form-control" name="trg-ch">
-      <option value = "0">1</option>
-      <option value = "1">2</option>                    
-    </select>      
-    <label for="trg-rly-1">Relay 1</label>
-    <select class="form-control" name="trg-rly-1">
-      <option value = "0">none</option>
-      <option value = "1">Activate</option>
-      <option value = "2">Deactivate</option>
-      <option value = "3">Activate pulse</option>
-      <option value = "4">Deactivate pulse</option>    
+    <label for="channel">Channel:</label>
+    <input type="number" required class="form-control" value="1" min="1" max="12" step="1" maxlength="2" name="channel">
+    <label for="input">Input:</label>
+    <select class="form-control" name="input">
+    <option value = "0">Analog</option>
+    <option value = "1">Digital</option>
+    <option value = "2">Modbus</option>
+    <option value = "3">Time</option>     
     </select> 
-    <label for="trg-rly-2">Relay 2</label>
-    <select class="form-control" name="trg-rly-2">
-      <option value = "0">none</option>
-      <option value = "1">Activate</option>
-      <option value = "2">Deactivate</option>
-      <option value = "3">Activate pulse</option>
-      <option value = "4">Deactivate pulse</option>   
-    </select> 
+    <label for="input-no">Input No:</label>
+    <input type="number" required class="form-control" value="1" min="1" max="2" step="1" maxlength="1" name="input-no"> 
+    <label for="unit">Unit:</label>
+    <select class="form-control" name="unit">    
+    <option value = "2">Analog</option>
+    <option value = "100">Generic</option>
+    <option value = "101">Luminosity</option>    
+    <option value = "103">Temperature</option>
+    <option value = "104">R.Humidity</option>
+    <option value = "115">Barometric</option>
+    <option value = "116">Voltage</option>
+    <option value = "117">Current</option> 
+    <option value = "118">Frequency</option>
+    <option value = "120">Percentage</option>
+    <option value = "121">Altitude</option>
+    <option value = "128">Power</option>   
+    <option value = "130">Distance</option>
+    <option value = "131">Energy</option>
+    <option value = "132">Direction</option>
+    <option value = "133">Unixtime</option>
+    <option value = "0">Digital</option>
+    <option value = "142">Switch</option>
+    <option value = "102">Presence</option>            
+    </select>
     <div class="form-check">
       <label class="form-check-label">
-        <input type="checkbox" class="form-check-input" checked name="trg-upl">Uplink
+        <input type="checkbox" class="form-check-input" name="scale">Scale
       </label>
     </div>
-    <button type="button" class="btn btn-secondary" name="trg-del">Delete</button>
-    <br>  
+    <label for="in-min">In Min.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="in-min">
+    <label for="in-max">In Max.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="in-max">
+    <label for="out-min">Out Min.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="out-min">
+    <label for="out-max">Out Max.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="out-max">
+    <label for="slave">Slave:</label>
+    <input type="number" required class="form-control" value="1" min="1" max="247" step="1" maxlength ="3" name="slave">
+    <label for="function">Function:</label>
+    <select class="form-control" name="function">
+    <option value = "0">Coils</option>
+    <option value = "1">Discrete</option>
+    <option value = "2">Holding</option>
+    <option value = "3">Input</option>     
+    </select> 
+    <label for="address">Address:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="address">
+    <label for="type">Type:</label>
+    <select class="form-control" name="type">
+    <option value = "0">Coils</option>
+    <option value = "1">Discrete</option>
+    <option value = "2">Holding</option>
+    <option value = "3">Input</option>     
+    </select>
+    <label for="quantity">Quantity:</label>
+    <input type="number" required disabled class="form-control" value="1" name="quantity">
+    <label for="decimal">Decimal:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="9" step="1" maxlength ="1" name="decimal"> 
+    <label for="coil-mask">Coil Mask:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="65535" step="1" maxlength ="5" name="coil-mask">
+</li> 
+</template>
+
+<template>
+  <li>
+    <label for="time-no">Time No:</label>
+    <select class="form-control" name="time-no">
+    <option value = "0">1</option>
+    <option value = "1">2</option>         
+    </select>
+    <label for="hour">Hour:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
+    <label for="minute">Minute:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
   </li> 
 </template>
 
 <template>
   <li>
-    <br>
-    <label for="trg-inp">Input:</label>
-    <select class="form-control" name="trg-inp">
-      <option value = "1">Analog</option>
-      <option value = "2" selected>Digital</option>
-      <option value = "3">Time</option>          
+    <label for="channel">Channel:</label>
+    <input type="number" required class="form-control" value="1" min="1" max="12" step="1" maxlength="2" name="channel">
+    <label for="set">Set:</label>
+    <select class="form-control" name="set">
+    <option value = "0">Low</option>
+    <option value = "1">High</option> 
+    <option value = "3">Change</option>
+    <option value = "4">Falling</option>
+    <option value = "5">Rising</option>        
     </select>
-    <label for="trg-lev">Level:</label>
-    <select class="form-control" name="trg-lev">
-      <option value = "0">High</option>
-      <option value = "1">Low</option>             
-    </select>
-    <label for="trg-ch">Channel:</label>
-    <select class="form-control" name="trg-ch">
-      <option value = "0">1</option>
-      <option value = "1">2</option>                    
-    </select>   
-    <label for="trg-rly-1">Relay 1</label>
-    <select class="form-control" name="trg-rly-1">
+    <label for="low-set">Low Set:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="low-set">
+    <label for="high-set">Hig Set:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="high-set">
+    <label for="delay">Delay:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="65535" step="1" maxlength ="5" name="delay">    
+    <label for="relay-1">Relay 1</label>
+    <select class="form-control" name="relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
-      <option value = "3">Activate pulse</option>
-      <option value = "4">Deactivate pulse</option>    
+      <option value = "3">Toggle</option>         
     </select> 
-    <label for="trg-rly-2">Relay 2</label>
-    <select class="form-control" name="trg-rly-2">
+    <label for="relay-2">Relay 2</label>
+    <select class="form-control" name="relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
-      <option value = "3">Activate pulse</option>
-      <option value = "4">Deactivate pulse</option>   
+      <option value = "3">Toggle</option>   
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input type="checkbox" class="form-check-input" checked name="trg-upl">Uplink
+        <input type="checkbox" class="form-check-input" name="uplink">Uplink
       </label>
     </div>
-    <button type="button" class="btn btn-secondary" name="trg-del">Delete</button>
-    <br>  
-  </li> 
-</template>
-
-<template>
-  <li>
-    <br>
-    <label for="trg-inp">Input:</label>
-    <select class="form-control" name="trg-inp">
-      <option value = "1">Analog</option>
-      <option value = "2">Digital</option>
-      <option value = "3" selected>Time</option>          
-    </select>
-    <label for="trg-lev" disabled>Level:</label>
-    <select class="form-control" disabled name="trg-lev">
-      <option value = "0">none</option>              
-    </select>
-    <label for="trg-ch">Time:</label>
-    <select class="form-control" name="trg-ch">
-      <option value = "0">1</option>
-      <option value = "1">2</option>                    
-    </select>   
-    <label for="trg-rly-1">Relay 1</label>
-    <select class="form-control" name="trg-rly-1">
-      <option value = "0">none</option>
-      <option value = "1">Activate</option>
-      <option value = "2">Deactivate</option>
-      <option value = "3">Activate pulse</option>
-      <option value = "4">Deactivate pulse</option>    
-    </select> 
-    <label for="trg-rly-2">Relay 2</label>
-    <select class="form-control" name="trg-rly-2">
-      <option value = "0">none</option>
-      <option value = "1">Activate</option>
-      <option value = "2">Deactivate</option>
-      <option value = "3">Activate pulse</option>
-      <option value = "4">Deactivate pulse</option>   
-    </select> 
-    <div class="form-check">
-      <label class="form-check-label" disabled>
-        <input type="checkbox" class="form-check-input" disabled name="trg-upl">Uplink
-      </label>
-    </div>
-    <button type="button" class="btn btn-secondary" name="trg-del">Delete</button>
-    <br>  
+    <button type="button" class="btn btn-secondary" name="delete">Delete</button>
   </li> 
 </template>
