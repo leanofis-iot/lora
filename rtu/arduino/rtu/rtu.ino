@@ -18,22 +18,57 @@ const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5,
 const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
 const uint8_t RANDOM_PIN        = A5;               // PF0/ADC0
 
-const uint8_t _use              = 0;
-const uint8_t _id               = 1;
-const uint8_t _type             = 2;
-const uint8_t _unit             = 3;
-const uint8_t _in_min           = 4;
-const uint8_t _in_max           = 5;
-const uint8_t _out_min          = 6;
-const uint8_t _out_max          = 7;
-const uint8_t _low_set          = 8;
-const uint8_t _low_clear        = 9;
-const uint8_t _high_set         = 10;
-const uint8_t _high_clear       = 11;
+// lr[] (4 bytes)
+const uint8_t _dr               = 0;          // 1 byte
+const uint8_t _port             = 1;          // 1 byte
+const uint8_t _report           = 2;          // 2 bytes
+// ch[] (12*29 = 348 bytes)
+const uint8_t _channel          = 0;          // 1 byte
+const uint8_t _input            = 1;          // 1 byte
+const uint8_t _no               = 2;          // 1 byte
+const uint8_t _unit             = 3;          // 1 byte
+const uint8_t _scale            = 4;          // 1 byte
+const uint8_t _in_min           = 5;          // 4 bytes
+const uint8_t _in_max           = 9;          // 4 bytes
+const uint8_t _out_min          = 13;         // 4 bytes
+const uint8_t _out_max          = 17;         // 4 bytes
+const uint8_t _slave            = 21;         // 1 byte
+const uint8_t _func             = 22;         // 1 byte
+const uint8_t _address          = 23;         // 1 byte
+const uint8_t _type             = 24;         // 1 byte
+const uint8_t _quantity         = 25;         // 1 byte
+const uint8_t _dec              = 26;         // 1 byte
+const uint8_t _coils            = 27;         // 2 bytes
+// tm[] (2*3 = 6 bytes)
+const uint8_t _no               = 0;          // 1 byte
+const uint8_t _hh               = 1;          // 1 byte
+const uint8_t _mm               = 2;          // 1 byte
+// vl[] (12*5 = 60 bytes)
+// const uint8_t _channel       = 0;          // 1 byte
+const uint8_t _vl               = 1;          // 4 byte  
+// al[] (20*12 = 240 bytes)
+// const uint8_t _channel       = 0;          // 1 byte
+const uint8_t _set              = 1;          // 1 byte
+const uint8_t _low_set          = 2;          // 4 bytes
+const uint8_t _high_set         = 6;          // 4 bytes
+const uint8_t _dly              = 10;         // 2 bytes
 
-const uint8_t _dr               = 0;
-const uint8_t _port             = 1;
-const uint8_t _report           = 0;
+const uint8_t _ang              = 1;
+const uint8_t _dig              = 2;
+const uint8_t _modbus           = 3;
+const uint8_t _time             = 4;
+
+const uint8_t _low              = 0;  ///???
+const uint8_t _high             = 1;  ///???
+const uint8_t _change           = 1;  ///???
+const uint8_t _falling          = 2;  ///???
+const uint8_t _rising           = 3;  ///???
+
+// type begin 1
+
+////////////////////////////
+
+
 const uint8_t _amp_min          = 0;
 const uint8_t _amp_max          = 1;
 const uint8_t _min              = 2;
@@ -47,9 +82,7 @@ const uint8_t _high             = 1;
 const uint8_t _unit             = 0;
 const uint8_t _pulse_dur        = 0;
 
-const uint8_t _ang              = 1;
-const uint8_t _dig              = 2;
-const uint8_t _time             = 3;
+
 const uint8_t _temp             = 1;
 const uint8_t _hum              = 2;
 const uint8_t _bar              = 3;
