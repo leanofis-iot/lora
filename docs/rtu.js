@@ -54,7 +54,9 @@
         //if (item.length < 99) {
         //  addChannelB.disabled = false;
         //}
-      }      
+      } else if (e.target.name == 'hide') {
+        e.target.parentNode.hidden = true;
+      }     
     });
 
     addChannelIfttB.addEventListener('click', function() {
