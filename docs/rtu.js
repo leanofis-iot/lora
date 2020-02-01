@@ -19,62 +19,109 @@
     let timeIfttL = document.querySelector("#time-iftt-list");       
     let port;
 
+    let numCh = 29;
+    let numIf = 15;
+    let numTm = 5;
+
+
     addChannelB.addEventListener('click', function() {
       let clon = channelTemp.content.cloneNode(true);     
       channelL.appendChild(clon);      
       statusD.textContent = '';
-      let skipindex = [6,7,8,10,11,12,14,15,16,18,19,20];
-      let lis = channelL.querySelectorAll('li');      
-      for (let i = 0; i < lis.length; i++) {
-        let els = lis[i].querySelectorAll('input,select');
-        for (let j = 0; j < els.length; j++) {
+      let skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,28];
+      let item = channelL.querySelectorAll('li');      
+      for (let i = 0; i < item.length; i++) {
+        let els = item[i].querySelectorAll('input,select');
+        let id = 0;
+        for (let j = 0; j < numCh; j++) {
           if (skipindex.indexOf(j) < 0) {
-            els[j].id = '&ch' + ('00' +  String(j + i * 29)).slice (-3);
-            statusD.textContent += els[j].id;
-          }          
+            els[id].id = '&ch' + ('00' +  String(j + i * 29)).slice (-3);            
+            statusD.textContent += els[id].id;
+            id++;
+          }        
         }
       }
-      //if (lis.length >= 99) {
+      //if (item.length >= 99) {
       //  this.disabled = true;
       //}
     }); 
+
+    channelL.addEventListener('click', function(e) {       
+      if (e.target.name == 'delete') {
+        //e.target.closest('li').remove();
+        e.target.parentNode.remove();
+        //let item = channelL.querySelectorAll('li');
+        //if (item.length < 99) {
+        //  addChannelB.disabled = false;
+        //}
+      }      
+    });
 
     addChannelIfttB.addEventListener('click', function() {
       let clon = channelIfttTemp.content.cloneNode(true);     
       channelIfttL.appendChild(clon);      
       statusD.textContent = '';
       let skipindex = [3,4,5,7,8,9,11,13];
-      let lis = channelIfttL.querySelectorAll('li');      
-      for (let i = 0; i < lis.length; i++) {
-        let els = lis[i].querySelectorAll('input,select');
-        for (let j = 0; j < els.length; j++) {
+      let item = channelIfttL.querySelectorAll('li');      
+      for (let i = 0; i < item.length; i++) {
+        let els = item[i].querySelectorAll('input,select');
+        let id = 0;
+        for (let j = 0; j < numIf; j++) {
           if (skipindex.indexOf(j) < 0) {
-            els[j].id = '&if' + ('00' +  String(j + i * 29)).slice (-3);
-            statusD.textContent += els[j].id;
-          }          
-        }
+            els[id].id = '&if' + ('00' +  String(j + i * 29)).slice (-3);            
+            statusD.textContent += els[id].id;
+            id++;
+          }        
+        }        
       }
-      //if (lis.length >= 99) {
+      //if (item.length >= 99) {
       //  this.disabled = true;
       //}
     }); 
 
+    channelIfttL.addEventListener('click', function(e) {       
+      if (e.target.name == 'delete') {
+        //e.target.closest('li').remove();
+        e.target.parentNode.remove();
+        //let item = channelIfttL.querySelectorAll('li');
+        //if (item.length < 99) {
+        //  addChannelIfttB.disabled = false;
+        //}
+      }      
+    });
+
     addTimeIfttB.addEventListener('click', function() {
       let clon = timeIfttTemp.content.cloneNode(true);     
       timeIfttL.appendChild(clon);      
-      statusD.textContent = '';      
-      let lis = timeIfttL.querySelectorAll('li');      
-      for (let i = 0; i < lis.length; i++) {
-        let els = lis[i].querySelectorAll('input,select');
-        for (let j = 0; j < els.length; j++) {          
-          els[j].id = '&if' + ('00' +  String(j + i * 29)).slice (-3);
-          statusD.textContent += els[j].id;                    
-        }
+      statusD.textContent = ''; 
+      let skipindex = [4];     
+      let item = timeIfttL.querySelectorAll('li');      
+      for (let i = 0; i < item.length; i++) {
+        let els = item[i].querySelectorAll('input,select');
+        let id = 0;
+        for (let j = 0; j < numTm; j++) {
+          if (skipindex.indexOf(j) < 0) {
+            els[id].id = '&tm' + ('00' +  String(j + i * 29)).slice (-3);            
+            statusD.textContent += els[id].id;
+            id++;
+          }        
+        }        
       }
-      //if (lis.length >= 99) {
+      //if (item.length >= 99) {
       //  this.disabled = true;
       //}
     }); 
+
+    timeIfttL.addEventListener('click', function(e) {       
+      if (e.target.name == 'delete') {
+        //e.target.closest('li').remove();
+        e.target.parentNode.remove();
+        //let item = timeIfttL.querySelectorAll('li');
+        //if (item.length < 99) {
+        //  addTimeIfttB.disabled = false;
+        //}
+      }      
+    });
 
     
 /*
@@ -89,8 +136,8 @@
       if (e.target.name == 'trg-del') {
         //e.target.closest('li').remove();
         e.target.parentNode.remove();
-        let lis = trgList.querySelectorAll('li');
-        if (lis.length < 99) {
+        let item = trgList.querySelectorAll('li');
+        if (item.length < 99) {
           trgAddButton.disabled = false;
         }
       }      
@@ -101,6 +148,8 @@
       //if (!port) {
       //  return;
       //}
+      //////////////////////////////var foo = parseInt('1111', 2);
+
       let config = '';      
       if (mainF.checkValidity()) {
         statusD.textContent = 'validaion ok';

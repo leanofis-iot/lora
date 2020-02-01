@@ -33,16 +33,19 @@
     </ul>
     <button type="button" class="btn btn-secondary" id="add-channel">Add Channel</button>
     <br>
+    <br>
 
     <ul id="channel-iftt-list">   
     </ul>
     <button type="button" class="btn btn-secondary" id="add-channel-iftt">Add Channel IFTT</button>
     <br>
+    <br>
 
     <ul id="time-iftt-list">   
     </ul>
     <button type="button" class="btn btn-secondary" id="add-time-iftt">Add Time IFTT</button>
-    <br>   
+    <br> 
+    <br>  
     
   </form>
 
@@ -61,10 +64,10 @@
 </body>
 </html>
 
-<template id="channel-temp">
+<template>
   <li>
     <label for="channel">Channel:</label>
-    <input type="number" required class="form-control" value="1" min="1" max="12" step="1" maxlength="2" name="channel">
+    <input type="number" required class="form-control" value="1" min="1" max="255" step="1" maxlength="3" name="channel">
     <label for="input">Input:</label>
     <select class="form-control" name="input">
     <option value = "0">Analog</option>
@@ -121,27 +124,28 @@
     <input type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="address">
     <label for="type">Type:</label>
     <select class="form-control" name="type">
-    <option value = "0">Coils</option>
-    <option value = "1">Discrete</option>
-    <option value = "2">Holding</option>
-    <option value = "3">Input</option>     
+    <option value = "0">uint16</option>
+    <option value = "1">int16</option>
+    <option value = "2">uint32</option>
+    <option value = "3">int32</option>
+    <option value = "3">float32</option>     
     </select>
     <label for="quantity">Quantity:</label>
     <input type="number" required disabled class="form-control" value="1" name="quantity">
     <label for="decimal">Decimal:</label>
     <input type="number" required class="form-control" value="0" min="0" max="9" step="1" maxlength ="1" name="decimal"> 
     <label for="coil-mask">Coil Mask:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="65535" step="1" maxlength ="5" name="coil-mask">
+    <input type="number" required class="form-control" pattern="[0-1]{16}" maxlength="16" name="coil-mask">
     <br>
     <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-  </li>
-  <br> 
+    <br> 
+  </li>  
 </template>
 
-<template id="channel-iftt-temp">
+<template>
   <li>
     <label for="channel">Channel:</label>
-    <input type="number" required class="form-control" value="1" min="1" max="12" step="1" maxlength="2" name="channel">
+    <input type="number" required class="form-control" value="1" min="1" max="255" step="1" maxlength="3" name="channel">
     <label for="set">Set:</label>
     <select class="form-control" name="set">
     <option value = "0">Low</option>
@@ -177,11 +181,11 @@
     </div>
     <br>
     <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-  </li>
-  <br>
+    <br>
+  </li>  
 </template id="temp-channel">
 
-<template id="time-iftt-temp">
+<template>
   <li>
     <label for="no">Time No:</label>
     <select class="form-control" name="no">
@@ -208,6 +212,6 @@
     </select> 
     <br>
     <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-  </li>
-  <br> 
-</template id="temp-channel">
+    <br>
+  </li>   
+</template>
