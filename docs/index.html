@@ -4,16 +4,23 @@
   <title>LoRa Wireless RTU</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <!--
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  -->
+  
   <script src="serial.js"></script>
   <script src="rtu.js"></script>  
 </head>
 <body>
 
-<div class="container">
+<div class="container">  
 
   <form onsubmit="return false" id="main-form">
-    <h5>KEREMMMM</h5>
+    <h5>LoRaWAN</h5>
     <label for="&lr000">Data Rate:</label>
     <select class="form-control" id="&lr000">
       <option value = "0">0 - SF12BW125</option>
@@ -45,9 +52,16 @@
     </ul>
     <button type="button" class="btn btn-secondary" id="add-time-iftt">Add Time IFTT</button>
     <br> 
-    <br>  
+    <br>    
     
   </form>
+
+  <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#dmo">Collapsible</button>
+  <div id="dmo" class="collapse">
+    heyyy
+  </div>
+  
+    
 
   <h6 id="status">This is the message</h6>
   <button type="button" class="btn btn-secondary" id="connect">Connect</button>
@@ -61,6 +75,9 @@
 
 </div>
 
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </body>
 </html>
 
