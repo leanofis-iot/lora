@@ -133,9 +133,7 @@
     <label for="quantity">Quantity:</label>
     <input type="number" required disabled class="form-control" value="1" name="quantity">
     <label for="decimal">Decimal:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="9" step="1" maxlength ="1" name="decimal"> 
-    <label for="coil-mask">Coil Mask:</label>
-    <input type="number" required class="form-control" pattern="[0-1]{16}" maxlength="16" name="coil-mask">
+    <input type="number" required class="form-control" value="0" min="0" max="9" step="1" maxlength ="1" name="decimal">     
     <br>
     <button type="button" class="btn btn-secondary" name="delete">Delete</button>
     <br> 
@@ -160,6 +158,8 @@
     <input type="number" required class="form-control" value="0" step="any" name="high-set">
     <label for="delay">Delay:</label>
     <input type="number" required class="form-control" value="0" min="0" max="65535" step="1" maxlength ="5" name="delay">    
+    <label for="coil-mask">Coil Mask:</label>
+    <input type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="coil-mask">
     <label for="relay-1">Relay 1</label>
     <select class="form-control" name="relay-1">
       <option value = "0">none</option>
@@ -178,7 +178,7 @@
       <label class="form-check-label">
         <input type="checkbox" class="form-check-input" name="uplink">Uplink
       </label>
-    </div>
+    </div>    
     <br>
     <button type="button" class="btn btn-secondary" name="delete">Delete</button>
     <br>
