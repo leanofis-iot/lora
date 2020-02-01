@@ -12,10 +12,10 @@
 
 <div class="container">
 
-  <form onsubmit="return false" id="configuration">
+  <form onsubmit="return false" id="main-form">
     <h5>LoRaWAN</h5>
-    <label for="&lor_b00">Data Rate:</label>
-    <select class="form-control" id="&lor_b00">
+    <label for="&lr000">Data Rate:</label>
+    <select class="form-control" id="&lr000">
       <option value = "0">0 - SF12BW125</option>
       <option value = "1">1 - SF11BW125</option>
       <option value = "2">2 - SF10BW125</option>
@@ -23,19 +23,26 @@
       <option value = "4">4 - SF8BW125</option>
       <option value = "5">5 - SF7BW125</option>
     </select>  
-    <label for="&lor_b01">Port:</label>
-    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" id="&lor_b01">
-    <label for="&lor_w00">Report Interval Minute:</label>
-    <input type="number" required class="form-control" value="5" min="5" step="1" maxlength="5" id="&lor_w00">
+    <label for="&lr001">Port:</label>
+    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" id="&lr001">
+    <label for="&lr002">Report Interval Minute:</label>
+    <input type="number" required class="form-control" value="5" min="5" step="1" maxlength="5" id="&lr002">
     <br> 
-
     
-
-    <h5>Trigger & Action</h5>
-    <ol id="trg-list">   
-    </ol>
-    <button type="button" class="btn btn-secondary" id="trg-add">Add</button>
+    <ul id="channel-list">   
+    </ul>
+    <button type="button" class="btn btn-secondary" id="add-channel">Add Channel</button>
     <br>
+
+    <ul id="channel-iftt-list">   
+    </ul>
+    <button type="button" class="btn btn-secondary" id="add-channel-iftt">Add Channel IFTT</button>
+    <br>
+
+    <ul id="time-iftt-list">   
+    </ul>
+    <button type="button" class="btn btn-secondary" id="add-time-iftt">Add Time IFTT</button>
+    <br>   
     
   </form>
 
@@ -43,7 +50,7 @@
   <button type="button" class="btn btn-secondary" id="connect">Connect</button>
   <button type="button" class="btn btn-secondary" id="time">Time</button>
   <button type="button" class="btn btn-secondary"id ="read">Read</button>
-  <button type="submit" class="btn btn-secondary" form="configuration" id="save">Save</button>
+  <button type="submit" class="btn btn-secondary" form="main-form" id="save">Save</button>
   <br>
   <br>
   <br>
@@ -54,7 +61,7 @@
 </body>
 </html>
 
-<template>
+<template id="channel-temp">
   <li>
     <label for="channel">Channel:</label>
     <input type="number" required class="form-control" value="1" min="1" max="12" step="1" maxlength="2" name="channel">
@@ -63,7 +70,6 @@
     <option value = "0">Analog</option>
     <option value = "1">Digital</option>
     <option value = "2">Modbus</option>
-    <option value = "3">Time</option>     
     </select> 
     <label for="input-no">Input No:</label>
     <input type="number" required class="form-control" value="1" min="1" max="2" step="1" maxlength="1" name="input-no"> 
@@ -126,26 +132,13 @@
     <input type="number" required class="form-control" value="0" min="0" max="9" step="1" maxlength ="1" name="decimal"> 
     <label for="coil-mask">Coil Mask:</label>
     <input type="number" required class="form-control" value="0" min="0" max="65535" step="1" maxlength ="5" name="coil-mask">
+    <br>
     <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-  </li> 
+  </li>
+  <br> 
 </template>
 
-<template>
-  <li>
-    <label for="time-no">Time No:</label>
-    <select class="form-control" name="time-no">
-    <option value = "0">1</option>
-    <option value = "1">2</option>         
-    </select>
-    <label for="hour">Hour:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
-    <label for="minute">Minute:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
-    <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-  </li> 
-</template>
-
-<template>
+<template id="channel-iftt-temp">
   <li>
     <label for="channel">Channel:</label>
     <input type="number" required class="form-control" value="1" min="1" max="12" step="1" maxlength="2" name="channel">
@@ -182,6 +175,39 @@
         <input type="checkbox" class="form-check-input" name="uplink">Uplink
       </label>
     </div>
+    <br>
     <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-  </li> 
-</template>
+  </li>
+  <br>
+</template id="temp-channel">
+
+<template id="time-iftt-temp">
+  <li>
+    <label for="no">Time No:</label>
+    <select class="form-control" name="no">
+    <option value = "1">1</option>
+    <option value = "2">2</option>         
+    </select>
+    <label for="hour">Hour:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
+    <label for="minute">Minute:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
+    <label for="relay-1">Relay 1</label>
+    <select class="form-control" name="relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="relay-2">Relay 2</label>
+    <select class="form-control" name="relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <br>
+    <button type="button" class="btn btn-secondary" name="delete">Delete</button>
+  </li>
+  <br> 
+</template id="temp-channel">

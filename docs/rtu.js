@@ -2,16 +2,82 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', event => {
-    let configurationForm = document.querySelector('#configuration');
-    let statusDisplay = document.querySelector('#status');
-    let trgAddButton = document.querySelector("#trg-add");    
-    let connectButton = document.querySelector("#connect");    
-    let timeButton = document.querySelector('#time');
-    let readButton = document.querySelector('#read');
-    let saveButton = document.querySelector('#save');
-    let trgList = document.querySelector("#trg-list");       
+    let mainF = document.querySelector('#main-form');
+    let statusD = document.querySelector('#status');
+    let channelTemp = document.querySelectorAll('template')[0]; 
+    let channelIfttTemp = document.querySelectorAll('template')[1]; 
+    let timeIfttTemp = document.querySelectorAll('template')[2]; 
+    let addChannelB = document.querySelector("#add-channel");
+    let addChannelIfttB = document.querySelector("#add-channel-iftt");
+    let addTimeIfttB = document.querySelector("#add-time-iftt");        
+    let connectB = document.querySelector("#connect");    
+    let timeB = document.querySelector('#time');
+    let readB = document.querySelector('#read');
+    let saveB = document.querySelector('#save');
+    let channelL = document.querySelector("#channel-list");
+    let channelIfttL = document.querySelector("#channel-iftt-list");
+    let timeIfttL = document.querySelector("#time-iftt-list");       
     let port;
 
+    addChannelB.addEventListener('click', function() {
+      let clon = channelTemp.content.cloneNode(true);     
+      channelL.appendChild(clon);      
+      statusD.textContent = '';
+      let skipindex = [6,7,8,10,11,12,14,15,16,18,19,20];
+      let lis = channelL.querySelectorAll('li');      
+      for (let i = 0; i < lis.length; i++) {
+        let els = lis[i].querySelectorAll('input,select');
+        for (let j = 0; j < els.length; j++) {
+          if (skipindex.indexOf(j) < 0) {
+            els[j].id = '&ch' + ('00' +  String(j + i * 29)).slice (-3);
+            statusD.textContent += els[j].id;
+          }          
+        }
+      }
+      //if (lis.length >= 99) {
+      //  this.disabled = true;
+      //}
+    }); 
+
+    addChannelIfttB.addEventListener('click', function() {
+      let clon = channelIfttTemp.content.cloneNode(true);     
+      channelIfttL.appendChild(clon);      
+      statusD.textContent = '';
+      let skipindex = [3,4,5,7,8,9,11,13];
+      let lis = channelIfttL.querySelectorAll('li');      
+      for (let i = 0; i < lis.length; i++) {
+        let els = lis[i].querySelectorAll('input,select');
+        for (let j = 0; j < els.length; j++) {
+          if (skipindex.indexOf(j) < 0) {
+            els[j].id = '&if' + ('00' +  String(j + i * 29)).slice (-3);
+            statusD.textContent += els[j].id;
+          }          
+        }
+      }
+      //if (lis.length >= 99) {
+      //  this.disabled = true;
+      //}
+    }); 
+
+    addTimeIfttB.addEventListener('click', function() {
+      let clon = timeIfttTemp.content.cloneNode(true);     
+      timeIfttL.appendChild(clon);      
+      statusD.textContent = '';      
+      let lis = timeIfttL.querySelectorAll('li');      
+      for (let i = 0; i < lis.length; i++) {
+        let els = lis[i].querySelectorAll('input,select');
+        for (let j = 0; j < els.length; j++) {          
+          els[j].id = '&if' + ('00' +  String(j + i * 29)).slice (-3);
+          statusD.textContent += els[j].id;                    
+        }
+      }
+      //if (lis.length >= 99) {
+      //  this.disabled = true;
+      //}
+    }); 
+
+    
+/*
     trgList.addEventListener('change', function(e) {       
       if (e.target.name == 'trg-inp') { 
         let temp = document.querySelectorAll('template')[Number(e.target.value) - 1]; 
@@ -29,32 +95,16 @@
         }
       }      
     });
-    trgAddButton.addEventListener('click', function() {
-      let temp = document.querySelectorAll('template')[0]; 
-      let clon = temp.content.cloneNode(true);     
-      trgList.appendChild(clon);      
-      statusDisplay.textContent = '';
-      let lis = trgList.querySelectorAll('li');      
-      for (let i = 0; i < lis.length; i++) {
-        let els = lis[i].querySelectorAll('input,select');
-        for (let j = 0; j < els.length; j++) {
-          els[j].id = '&alr_b' + ('00' +  String(j + i * 6)).slice (-3);
-          statusDisplay.textContent += els[j].id;
-        }
-      }
-      if (lis.length >= 99) {
-        this.disabled = true;
-      }
-    }); 
     
-    saveButton.addEventListener('click', function() {
+    
+    saveB.addEventListener('click', function() {
       //if (!port) {
       //  return;
       //}
       let config = '';      
-      if (configurationForm.checkValidity()) {
-        statusDisplay.textContent = 'validaion ok';
-        let els = configurationForm.querySelectorAll('input,select');
+      if (mainF.checkValidity()) {
+        statusD.textContent = 'validaion ok';
+        let els = mainF.querySelectorAll('input,select');
         for (let i = 0; i < els.length; i++) {
           if (els[i].id[0] == '&') {
             let val = 0;
@@ -74,21 +124,21 @@
         }
         config += '&save' + '\r\n';                  
       }      
-      statusDisplay.textContent = config;      
+      statusD.textContent = config;      
       //port.send(config);      
     });
 
-    readButton.addEventListener('click', function() {
+    readB.addEventListener('click', function() {
       //if (!port) {
       //  return;
       //} 
       trgList.innerHTML = '';    
       
-      statusDisplay.textContent = 'deleted';      
+      statusD.textContent = 'deleted';      
       //port.send(t);      
     });
 
-    timeButton.addEventListener('click', function() {
+    timeB.addEventListener('click', function() {
       //if (!port) {
       //  return;
       //}      
@@ -101,14 +151,16 @@
       t += '&mo' + String(d.getMonth() + 1) + '\r\n';
       t += '&yy' + d.getFullYear() + '\r\n';
       t += '&time' + '\r\n';
-      statusDisplay.textContent = t;      
+      statusD.textContent = t;      
       //port.send(t);      
     });
 
+    */
+
     function connect() {
       port.connect().then(() => {
-        statusDisplay.textContent = '';
-        connectButton.textContent = 'Disconnect';
+        statusD.textContent = '';
+        connectB.textContent = 'Disconnect';
 
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
@@ -118,31 +170,31 @@
           console.error(error);
         };
       }, error => {
-        statusDisplay.textContent = error;
+        statusD.textContent = error;
       });
     }    
     
-    connectButton.addEventListener('click', function() {
+    connectB.addEventListener('click', function() {
       if (port) {
         port.disconnect();
-        connectButton.textContent = 'Connect';
-        statusDisplay.textContent = '';
+        connectB.textContent = 'Connect';
+        statusD.textContent = '';
         port = null;
       } else {
         serial.requestPort().then(selectedPort => {
           port = selectedPort;
           connect();
         }).catch(error => {
-          statusDisplay.textContent = error;
+          statusD.textContent = error;
         });
       }
     });     
 
     serial.getPorts().then(ports => {
       if (ports.length == 0) {
-        statusDisplay.textContent = 'No device found.';
+        statusD.textContent = 'No device found.';
       } else {
-        statusDisplay.textContent = 'Connecting...';
+        statusD.textContent = 'Connecting...';
         port = ports[0];
         connect();
       }
@@ -166,13 +218,13 @@ var myPort = new serialport(portName, {
 */
 
 /*
-saveButton.addEventListener('click', function() {
+saveB.addEventListener('click', function() {
   //if (!port) {
   //  return;
   //}
   let config = '';      
-  if (configurationForm.checkValidity()) {
-    statusDisplay.textContent = 'heyyy';
+  if (mainF.checkValidity()) {
+    statusD.textContent = 'heyyy';
     for (let i = 0; i < 2; i++) {
       let ii = '&lrb';        
       ii += ('0' + i).slice (-2);      
@@ -231,7 +283,7 @@ saveButton.addEventListener('click', function() {
       config += ii + dgb + '\r\n';
     }        
   }      
-  statusDisplay.textContent = config;      
+  statusD.textContent = config;      
   //port.send(config);      
 });
 */
