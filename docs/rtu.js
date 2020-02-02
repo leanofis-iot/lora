@@ -91,27 +91,41 @@
     create();
 
     channelsDiv.addEventListener('change', function(e) {             
-      if (e.target.name == 'input') {        
-        if (e.target.value == '0') {
-          query = 
-            '[name="slave"],[name="function"],[name="register"],[name="type"],[name="quantity"],' +
-            '[name="decimal"],[name="coil-mask"],[name="discrete-mask"],' + 
-            '[for="slave"],[for="function"],[for="register"],[for="type"],[for="quantity"],' +
-            '[for="decimal"],[for="coil-mask"],[for="discrete-mask"]'                    
-        } else if (e.target.value == '1') {
-          query = 
+      if (e.target.name == 'input') { 
+        items = e.target.parentNode.querySelectorAll('*');
+        for (let i = 0; i < items.length; i++) {
+          items[i].hidden = false; 
+        }        
+        if (e.target.value == '0') {            
+          items = e.target.parentNode.querySelectorAll(
             '[name="slave"],[name="function"],[name="register"],[name="type"],[name="quantity"],' +
             '[name="decimal"],[name="coil-mask"],[name="discrete-mask"],' + 
             '[for="slave"],[for="function"],[for="register"],[for="type"],[for="quantity"],' +
             '[for="decimal"],[for="coil-mask"],[for="discrete-mask"]'
-          
-
+          );
+          for (let i = 0; i < items.length; i++) {
+            items[i].hidden = true; 
+          }                                
+        } else if (e.target.value == '1') {
+          items = e.target.parentNode.querySelectorAll(
+            '[name="div-scale"],[name="in-min"],[name="in-max"],[name="out-min"],[name="out-max"],' +
+            '[name="low-set"],[name="high-set"],[name="slave"],[name="function"],[name="register"],' +
+            '[name="type"],[name="quantity"],[name="decimal"],[name="coil-mask"],[name="discrete-mask"],' +             
+            '[for="scale"],[for="in-min"],[for="in-max"],[for="out-min"],[for="out-max"],' +
+            '[for="low-set"],[for="high-set"],[for="slave"],[for="function"],[for="register"],' +
+            '[for="type"],[for="quantity"],[for="decimal"],[for="coil-mask"],[for="discrete-mask"]'
+          );
+          for (let i = 0; i < items.length; i++) {
+            items[i].hidden = true; 
+          } 
         } else if (e.target.value == '2') {
-
-        }
-        items = e.target.parentNode.querySelectorAll(query);
-        for (let i = 0; i < items.length; i++) {
-          items[i].hidden = true; 
+          items = e.target.parentNode.querySelectorAll(
+            '[name="no"],' +
+            '[for="no"]'
+          );
+          for (let i = 0; i < items.length; i++) {
+            items[i].hidden = true; 
+          }       
         }                         
       }
     });  
