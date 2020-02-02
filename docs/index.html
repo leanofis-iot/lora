@@ -47,7 +47,8 @@
   <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#general" aria-expanded="true" aria-controls="general">
   General
   </button> 
-  <div id="general" class="collapse" data-parent="#main-form">    
+  <div id="general" class="collapse" data-parent="#main-form">
+    <br>    
     <label for="lora-dr">LoraWAN Data Rate:</label>
     <select class="form-control" name="lora-dr">
       <option value = "0">0 - SF12BW125</option>
@@ -89,7 +90,8 @@
       <option value = "0">none</option>
       <option value = "1">Even</option>
       <option value = "2">Odd</option>      
-    </select>      
+    </select> 
+    <br>     
   </div>
 </template>
 
@@ -98,6 +100,7 @@
   Channel
   </button> 
   <div id="channel" class="collapse" data-parent="#main-form">
+    <br>
     <div class="form-check">
       <label class="form-check-label">
         <input type="checkbox" class="form-check-input" name="enable">Enable
@@ -246,6 +249,7 @@
         <input type="checkbox" class="form-check-input" name="rising-uplink">If Rising Than Uplink
       </label>
     </div>
+    <br>
   </div>
 </template>
 
@@ -254,6 +258,7 @@
   Time
   </button> 
   <div id="time" class="collapse" data-parent="#main-form">
+    <br>
     <div class="form-check">
       <label class="form-check-label">
         <input type="checkbox" class="form-check-input" name="enable">Enable
@@ -277,6 +282,7 @@
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>   
     </select>
+    <br>
   </div>     
 </template>
 

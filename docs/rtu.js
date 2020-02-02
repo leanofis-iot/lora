@@ -21,6 +21,8 @@
     function create() {
       statusDisp.textContent = "";
       let clon;
+      let buts;
+      let divs;
       let skipindex = [];
       let items;
       let id;  
@@ -42,11 +44,12 @@
         clon = channelTemp.content.cloneNode(true);        
         channelsDiv.appendChild(clon); 
       } 
-      let buts = channelsDiv.querySelectorAll('button');
-      let divs = channelsDiv.querySelectorAll('#channel');
+      buts = channelsDiv.querySelectorAll('button');
+      divs = channelsDiv.querySelectorAll('#channel');
       for (let i = 0; i < numCh; i++) {
         buts[i].setAttribute('data-target', '#channel' + i);
         buts[i].setAttribute('aria-controls', 'channel' + i);
+        buts[i].innerText += ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'channel' + i);      
       }            
       skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41,43,46,49];      
@@ -60,33 +63,38 @@
             id++;
           }        
         } 
-      }     
-      /*
-      clon = timeTemp.content.cloneNode(true);
-      for (let i = 0; i < numTm; i++) {
-        timesDiv.appendChild(clon); 
       }       
+      for (let i = 0; i < numTm; i++) {
+        clon = timeTemp.content.cloneNode(true);        
+        timesDiv.appendChild(clon); 
+      } 
+      buts = timesDiv.querySelectorAll('button');
+      divs = timesDiv.querySelectorAll('#time');
+      for (let i = 0; i < numTm; i++) {
+        buts[i].setAttribute('data-target', '#time' + i);
+        buts[i].setAttribute('aria-controls', 'time' + i);
+        buts[i].innerText += ' ' + String(i + 1);
+        divs[i].setAttribute('id', 'time' + i);      
+      }            
       skipindex = [4];      
       items = timesDiv.querySelectorAll('input,select');
-      id = 0;
-      for (let j = 0; j < numTmBytes; j++) {
-        if (skipindex.indexOf(j) < 0) {
-          items[id].id = '&tm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
-          statusDisp.textContent += items[id].id + '\r\n';
-          id++;
-        }        
-      } 
-      */                      
+      for (let i = 0; i < numTm; i++) {
+        id = 0;
+        for (let j = 0; j < numTmBytes; j++) {
+          if (skipindex.indexOf(j) < 0) {
+            items[id].id = '&tm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
+            statusDisp.textContent += items[id].id + '\r\n';
+            id++;
+          }        
+        } 
+      }                  
     }
-
-    
-
+    create();
 
     function connect() {
       port.connect().then(() => {
         statusDisp.textContent = '';
         connectBut.textContent = 'Disconnect';
-
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
           console.log(textDecoder.decode(data));
@@ -124,7 +132,7 @@
         connect();
       }
     });
-    create();
+    
   });
 })();
 
@@ -136,9 +144,6 @@
         e.target.parentNode.replaceWith(clon);                    
       }
     });   
-    
-    
-    
 
     readBut.addEventListener('click', function() {
       //if (!port) {
@@ -166,49 +171,6 @@
       //port.send(t);      
     });
 
-    */
-    
- /*
-      let clon = channelTemp.content.cloneNode(true);
-      for (let i = 0; i < numCh; i++) {
-        channelsDiv.appendChild(clon); 
-      }
-       
-        let skipindex = [4,6];      
-        let items = channelsDiv.querySelectorAll('input,select');
-        let id = 0;
-        for (let j = 0; j < numChBytes; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            items[id].id = '&ch' + ('00' +  String(j + i * numChBytes)).slice (-3);            
-            statusDisp.textContent += items[id].id + '\r\n';
-            id++;
-          }        
-        }
-          */    
-
-    /*
-    addChannelB.addEventListener('click', function() {
-      let clon = channelTemp.content.cloneNode(true);     
-      channelL.appendChild(clon);      
-      statusDisp.textContent = '';
-      let skipindex = [6,7,8,10,11,12,14,15,16,18,19,20];
-      let item = channelL.querySelectorAll('li');      
-      for (let i = 0; i < item.length; i++) {
-        let els = item[i].querySelectorAll('input,select');
-        let id = 0;
-        for (let j = 0; j < numChBytes; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            els[id].id = '&ch' + ('00' +  String(j + i * numChBytes)).slice (-3);            
-            statusDisp.textContent += els[id].id + '\r\n';
-            id++;
-          }        
-        }
-      }
-      //if (item.length >= 99) {
-      //  this.disabled = true;
-      //}
-    }); 
-
     channelL.addEventListener('click', function(e) {       
       if (e.target.name == 'delete') {
         //e.target.closest('li').remove();
@@ -221,29 +183,7 @@
         e.target.parentNode.hidden = true;
       }     
     });
-
-    addChannelIfttB.addEventListener('click', function() {
-      let clon = channelIfttTemp.content.cloneNode(true);     
-      channelIfttL.appendChild(clon);      
-      statusDisp.textContent = '';
-      let skipindex = [3,4,5,7,8,9,11,13,15];
-      let item = channelIfttL.querySelectorAll('li');      
-      for (let i = 0; i < item.length; i++) {
-        let els = item[i].querySelectorAll('input,select');
-        let id = 0;
-        for (let j = 0; j < numIf; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            els[id].id = '&if' + ('00' +  String(j + i * numIf)).slice (-3);            
-            statusDisp.textContent += els[id].id + '\r\n';
-            id++;
-          }        
-        }        
-      }
-      //if (item.length >= 99) {
-      //  this.disabled = true;
-      //}
-    }); 
-
+    
     channelIfttL.addEventListener('click', function(e) {       
       if (e.target.name == 'delete') {
         //e.target.closest('li').remove();
@@ -253,29 +193,7 @@
         //  addChannelIfttB.disabled = false;
         //}
       }      
-    });
-
-    addTimeIfttB.addEventListener('click', function() {
-      let clon = timeIfttTemp.content.cloneNode(true);     
-      timeIfttL.appendChild(clon);      
-      statusDisp.textContent = ''; 
-      let skipindex = [4];     
-      let item = timeIfttL.querySelectorAll('li');      
-      for (let i = 0; i < item.length; i++) {
-        let els = item[i].querySelectorAll('input,select');
-        let id = 0;
-        for (let j = 0; j < numTmBytes; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            els[id].id = '&tm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
-            statusDisp.textContent += els[id].id + '\r\n';
-            id++;
-          }        
-        }        
-      }
-      if (item.length >= 2) {
-        this.disabled = true;
-      }
-    }); 
+    });    
 
     timeIfttL.addEventListener('click', function(e) {       
       if (e.target.name == 'delete') {
@@ -316,7 +234,7 @@
       statusDisp.textContent = config;
       //port.send(config);      
     });
-*/  
+  */
 
 /*
 serialport.parsers.readline('\n');
