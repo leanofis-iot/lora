@@ -116,6 +116,23 @@
       //port.send(config);      
     });
 
+    timeBut.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      let d = new Date();
+      let t = '';
+      t += '&ss' + d.getSeconds() + '\r\n';
+      t += '&mm' + d.getMinutes() + '\r\n';
+      t += '&hh' + d.getHours() + '\r\n';
+      t += '&dd' + d.getDay() + '\r\n';
+      t += '&mo' + String(d.getMonth() + 1) + '\r\n';
+      t += '&yy' + d.getFullYear() + '\r\n';
+      t += '&time' + '\r\n';
+      statusDisp.textContent = t;      
+      //port.send(t);      
+    });
+
     function connect() {
       port.connect().then(() => {
         statusDisp.textContent = '';
@@ -175,24 +192,7 @@
       trgList.innerHTML = '';      
       statusDisp.textContent = 'deleted';      
       //port.send(t);      
-    });
-
-    timeBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}      
-      let d = new Date();
-      let t = '';
-      t += '&ss' + d.getSeconds() + '\r\n';
-      t += '&mm' + d.getMinutes() + '\r\n';
-      t += '&hh' + d.getHours() + '\r\n';
-      t += '&dd' + d.getDay() + '\r\n';
-      t += '&mo' + String(d.getMonth() + 1) + '\r\n';
-      t += '&yy' + d.getFullYear() + '\r\n';
-      t += '&time' + '\r\n';
-      statusDisp.textContent = t;      
-      //port.send(t);      
-    });
+    });    
 
     channelL.addEventListener('click', function(e) {       
       if (e.target.name == 'delete') {
@@ -229,34 +229,7 @@
       }      
     });
 
-    saveBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}
-      //////////////////////////////var foo = parseInt('1111', 2);
-
-      let config = '';      
-      if (mainForm.checkValidity()) {
-        statusDisp.textContent = 'validaion ok';
-        let els = mainForm.querySelectorAll('input,select');
-        let val = 0;
-        for (let i = 0; i < els.length; i++) {
-          if (els[i].id[0] == '&') {
-            if (els[i].type === 'checkbox') {
-              val = els[i].checked ? 1 : 0; 
-            } else if (els[i].name == 'coil-mask') {
-              val = parseInt(els[i].value, 2);           
-            } else {
-              val = Number(els[i].value);
-            }
-            config += els[i].id + val + '\r\n';            
-          }                                 
-        }
-        config += '&save' + '\r\n';                  
-      }      
-      statusDisp.textContent = config;
-      //port.send(config);      
-    });
+    
   */
 
 /*
@@ -274,84 +247,3 @@ var myPort = new serialport(portName, {
 });
 */
 
-/*
-saveBut.addEventListener('click', function() {
-  //if (!port) {
-  //  return;
-  //}
-  let config = '';      
-  if (mainForm.checkValidity()) {
-    statusDisp.textContent = 'heyyy';
-    for (let i = 0; i < 2; i++) {
-      let ii = '&lrb';        
-      ii += ('0' + i).slice (-2);      
-      let lrb = parseInt(document.getElementById(ii).value);
-      config += ii + lrb + '\r\n';
-    }
-    for (let i = 0; i < 1; i++) {
-      let ii = '&lrw';        
-      ii += ('0' + i).slice (-2);      
-      let lrw = parseInt(document.getElementById(ii).value);
-      config += ii + lrw + '\r\n';
-    }
-    let tmb = 0;                  
-    for (let i = 0; i < 10; i++) {
-      let ii = '&tmb';
-      ii += ('0' + i).slice (-2);
-      if (document.getElementById(ii).type === 'checkbox') { // if id ii = trg-upl
-        tmb = document.getElementById(ii).checked ? 1 : 0;            
-      } else {
-        tmb = parseInt(document.getElementById(ii).value);
-      }           
-      config += ii + tmb + '\r\n';
-    }
-    for (let i = 0; i < 2; i++) {
-      let ii = '&rlw';        
-      ii += ('0' + i).slice (-2);      
-      let rlw = parseInt(document.getElementById(ii).value);
-      config += ii + rlw + '\r\n';
-    }
-    let anb = 0;                  
-    for (let i = 0; i < 26; i++) {
-      let ii = '&anb';
-      ii += ('0' + i).slice (-2);
-      if (document.getElementById(ii).type === 'checkbox') {
-        anb = document.getElementById(ii).checked ? 1 : 0;            
-      } else {
-        anb = parseInt(document.getElementById(ii).value);
-      }           
-      config += ii + anb + '\r\n';
-    }
-    for (let i = 0; i < 16; i++) {
-      let ii = '&anf';        
-      ii += ('0' + i).slice (-2);      
-      let anf = parseFloat(document.getElementById(ii).value);
-      config += ii + anf + '\r\n';
-    }
-    let dgb = 0;                  
-    for (let i = 0; i < 12; i++) {
-      let ii = '&dgb';
-      ii += ('0' + i).slice (-2);
-      if (document.getElementById(ii).type === 'checkbox') {
-        dgb = document.getElementById(ii).checked ? 1 : 0;            
-      } else {
-        dgb = parseInt(document.getElementById(ii).value);
-      }           
-      config += ii + dgb + '\r\n';
-    }        
-  }      
-  statusDisp.textContent = config;      
-  //port.send(config);      
-});
-*/
-/*
-let els = document.body.querySelectorAll('input,select');
-for (let i = 0; i < els.length; i++) {
-  if (els[i].id[0] == '&') {
-    if (els[i].id[5] == 'b') {              
-    } else if (els[i].id[5] == 'w') {
-    } else if (els[i].id[5] == 'f') {
-    }
-  }          
-}
-*/
