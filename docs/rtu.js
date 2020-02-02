@@ -17,14 +17,14 @@
     let statusDisp = document.querySelector('#status');
 
     let numCh = 12, numTm = 2, numGenBytes = 10, numChBytes = 51, numTmBytes = 5;
+    let items;
 
     function create() {
       statusDisp.textContent = "";
       let clon;
       let buts;
       let divs;
-      let skipindex = [];
-      let items;
+      let skipindex = [];      
       let id;  
 
       clon = generalTemp.content.cloneNode(true);     
@@ -52,10 +52,10 @@
         buts[i].innerText += ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'channel' + i);      
       }            
-      skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41,43,46,49];      
+      skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41];      
       items = channelsDiv.querySelectorAll('input,select');
+      id = 0;
       for (let i = 0; i < numCh; i++) {
-        id = 0;
         for (let j = 0; j < numChBytes; j++) {
           if (skipindex.indexOf(j) < 0) {
             items[id].id = '&ch' + ('00' +  String(j + i * numChBytes)).slice (-3);            
@@ -63,7 +63,8 @@
             id++;
           }        
         } 
-      }       
+      } 
+
       for (let i = 0; i < numTm; i++) {
         clon = timeTemp.content.cloneNode(true);        
         timesDiv.appendChild(clon); 
@@ -75,21 +76,45 @@
         buts[i].setAttribute('aria-controls', 'time' + i);
         buts[i].innerText += ' ' + String(i + 1);
         divs[i].setAttribute('id', 'time' + i);      
-      }            
-      skipindex = [4];      
+      }           
       items = timesDiv.querySelectorAll('input,select');
-      for (let i = 0; i < numTm; i++) {
-        id = 0;
-        for (let j = 0; j < numTmBytes; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            items[id].id = '&tm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
-            statusDisp.textContent += items[id].id + '\r\n';
-            id++;
-          }        
+      id = 0;
+      for (let i = 0; i < numTm; i++) {        
+        for (let j = 0; j < numTmBytes; j++) {         
+          items[id].id = '&tm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
+          statusDisp.textContent += items[id].id + '\r\n';
+          id++;                 
         } 
       }                  
     }
     create();
+    
+    saveBut.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      let config = '';          
+      if (mainForm.checkValidity()) {
+        statusDisp.textContent = 'validaion ok';
+        items = mainForm.querySelectorAll('input,select');
+        let val = 0;        
+        for (let i = 0; i < items.length; i++) {          
+          if (items[i].id[0] == '&') {             
+            if (items[i].type === 'checkbox') {
+              val = items[i].checked ? 1 : 0; 
+            } else if (items[i].name == 'coil-mask') {
+              val = parseInt(items[i].value, 2);           
+            } else {
+              val = Number(items[i].value);
+            }
+            config += items[i].id + val + '\r\n';                        
+          }                                 
+        }
+        config += '&save' + '\r\n';                                 
+      }            
+      statusDisp.textContent = config;
+      //port.send(config);      
+    });
 
     function connect() {
       port.connect().then(() => {
@@ -106,7 +131,6 @@
         statusDisp.textContent = error;
       });
     }    
-    
     connectBut.addEventListener('click', function() {
       if (port) {
         port.disconnect();
@@ -121,8 +145,7 @@
           statusDisp.textContent = error;
         });
       }
-    });     
-
+    }); 
     serial.getPorts().then(ports => {
       if (ports.length == 0) {
         //statusDisp.textContent = 'No device found.';
