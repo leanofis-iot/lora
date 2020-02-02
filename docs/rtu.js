@@ -18,6 +18,7 @@
 
     let numCh = 12, numTm = 2, numGenBytes = 10, numChBytes = 51, numTmBytes = 5;
     let items;
+    let query;
 
     function create() {
       statusDisp.textContent = "";
@@ -88,6 +89,33 @@
       }                  
     }
     create();
+
+    channelsDiv.addEventListener('change', function(e) {             
+      if (e.target.name == 'input') {        
+        if (e.target.value == '0') {
+          query = 
+            '[name="slave"],[name="function"],[name="register"],[name="type"],[name="quantity"],' +
+            '[name="decimal"],[name="coil-mask"],[name="discrete-mask"],' + 
+            '[for="slave"],[for="function"],[for="register"],[for="type"],[for="quantity"],' +
+            '[for="decimal"],[for="coil-mask"],[for="discrete-mask"]'                    
+        } else if (e.target.value == '1') {
+          query = 
+            '[name="slave"],[name="function"],[name="register"],[name="type"],[name="quantity"],' +
+            '[name="decimal"],[name="coil-mask"],[name="discrete-mask"],' + 
+            '[for="slave"],[for="function"],[for="register"],[for="type"],[for="quantity"],' +
+            '[for="decimal"],[for="coil-mask"],[for="discrete-mask"]'
+          
+
+        } else if (e.target.value == '2') {
+
+        }
+        items = e.target.parentNode.querySelectorAll(query);
+        for (let i = 0; i < items.length; i++) {
+          items[i].hidden = true; 
+        }                         
+      }
+    });  
+
     
     saveBut.addEventListener('click', function() {
       //if (!port) {
