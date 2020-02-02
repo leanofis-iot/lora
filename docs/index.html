@@ -19,55 +19,14 @@
 
 <div class="container">  
 
-  <form onsubmit="return false" id="main-form">
-    <h5>LoRaWAN</h5>
-    <label for="&lr000">Data Rate:</label>
-    <select class="form-control" id="&lr000">
-      <option value = "0">0 - SF12BW125</option>
-      <option value = "1">1 - SF11BW125</option>
-      <option value = "2">2 - SF10BW125</option>
-      <option value = "3">3 - SF9BW125</option>
-      <option value = "4">4 - SF8BW125</option>
-      <option value = "5">5 - SF7BW125</option>
-    </select>  
-    <label for="&lr001">Port:</label>
-    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" id="&lr001">
-    <label for="&lr002">Report Interval Minute:</label>
-    <input type="number" required class="form-control" value="5" min="5" step="1" maxlength="5" id="&lr002">
-    <br> 
-    
-    <ul id="channel-list">   
-    </ul>
-    <button type="button" class="btn btn-secondary" id="add-channel">Add Channel</button>
-    <br>
-    <br>
-
-    <ul id="channel-iftt-list">   
-    </ul>
-    <button type="button" class="btn btn-secondary" id="add-channel-iftt">Add Channel IFTT</button>
-    <br>
-    <br>
-
-    <ul id="time-iftt-list">   
-    </ul>
-    <button type="button" class="btn btn-secondary" id="add-time-iftt">Add Time IFTT</button>
-    <br> 
-    <br>    
-    
+  <form class="accordion" onsubmit="return false" id="main-form">    
   </form>
-
-  <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#dmo">Collapsible</button>
-  <div id="dmo" class="collapse">
-    heyyy
-  </div>
   
-    
-
-  <h6 id="status">This is the message</h6>
   <button type="button" class="btn btn-secondary" id="connect">Connect</button>
   <button type="button" class="btn btn-secondary" id="time">Time</button>
   <button type="button" class="btn btn-secondary"id ="read">Read</button>
   <button type="submit" class="btn btn-secondary" form="main-form" id="save">Save</button>
+  <h6 id="status">This is the message</h6>
   <br>
   <br>
   <br>
@@ -80,6 +39,56 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+<template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#general" aria-expanded="true" aria-controls="general">
+  General
+  </button> 
+  <div id="general" class="collapse" data-parent="#main-form">    
+    <label for="&ge000">LoraWAN Data Rate:</label>
+    <select class="form-control" id="&ge000">
+      <option value = "0">0 - SF12BW125</option>
+      <option value = "1">1 - SF11BW125</option>
+      <option value = "2">2 - SF10BW125</option>
+      <option value = "3">3 - SF9BW125</option>
+      <option value = "4" selected>4 - SF8BW125</option>
+      <option value = "5">5 - SF7BW125</option>
+    </select>  
+    <label for="&ge001">LoRaWAN Port:</label>
+    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" id="&ge001">
+    <label for="&ge002">Poll Interval (Seconds min:1 max:60):</label>
+    <input type="number" required class="form-control" value="1" min="1" max="60" step="1" maxlength="2" id="&ge002">
+    <label for="&ge003">Report Interval (Minutes min:5 max:1440):</label>
+    <input type="number" required class="form-control" value="5" min="5" max="1440" step="1" maxlength="4" id="&ge003">
+    <label for="&ge005">Modbus Baud Rate:</label>
+    <select class="form-control" id="&ge005">
+      <option value = "2400">2400</option>
+      <option value = "4800">4800</option>
+      <option value = "9600" selected>9600</option>
+      <option value = "19200">19200</option>
+      <option value = "38400">38400</option>
+      <option value = "57600">57600</option>
+      <option value = "115200">115200</option>
+    </select>  
+    <label for="&ge007">Modbus Data Bits:</label>
+    <select class="form-control" id="&ge007">
+      <option value = "5">5</option>
+      <option value = "7">7</option>
+      <option value = "8" selected>8</option>      
+    </select> 
+    <label for="&ge008">Modbus Stop Bits:</label>
+    <select class="form-control" id="&ge008">
+      <option value = "1">1</option>
+      <option value = "2">2</option>           
+    </select> 
+    <label for="&ge009">Modbus Parity Bits:</label>
+    <select class="form-control" id="&ge009">
+      <option value = "0">none</option>
+      <option value = "1">Even</option>
+      <option value = "2">Odd</option>      
+    </select>      
+  </div>
+</template>
 
 <template>
   <li>
@@ -233,3 +242,22 @@
     <br>
   </li>   
 </template>
+
+<!--
+  <div class="accordion" id="accordionExample">        
+    <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+      Collapsible Group Item #1
+    </button> 
+    <div id="collapseOne" class="collapse" data-parent="#accordionExample">
+      <p for="i in 10">heyyyy</p>
+    </div>
+    <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
+      Collapsible Group Item #1
+    </button> 
+    <div id="collapseTwo" class="collapse" data-parent="#accordionExample">
+      <div>
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+      </div>
+    </div>    
+  </div>
+-->
