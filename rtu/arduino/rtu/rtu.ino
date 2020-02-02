@@ -26,7 +26,7 @@ const uint8_t _report           = 3;          // 2 bytes  input
 const uint8_t _modbus_br        = 5;          // 2 byte   select
 const uint8_t _modbus_data_bit  = 7;          // 1 byte   select
 const uint8_t _modbus_stop_bit  = 8;          // 1 byte   select
-const uint8_t _modbus_parity    = 9;          // 1 byte   select
+const uint8_t _modbus_par_bit   = 9;          // 1 byte   select
 
 // ch[] (12*51 = 612 bytes)
 const uint8_t i_enable          = 0;          // 1 byte   checkbox

@@ -19,11 +19,14 @@
 
 <div class="container">  
 
-  <form class="accordion" onsubmit="return false" id="main-form">    
+  <form class="accordion" onsubmit="return false" id="main-form">
+    <div id="generals"></div>
+    <div id="channels"></div>
+    <div id="times"></div>    
   </form>
   
   <button type="button" class="btn btn-secondary" id="connect">Connect</button>
-  <button type="button" class="btn btn-secondary" id="time">Time</button>
+  <button type="button" class="btn btn-secondary" id="set-time">Time</button>
   <button type="button" class="btn btn-secondary"id ="read">Read</button>
   <button type="submit" class="btn btn-secondary" form="main-form" id="save">Save</button>
   <h6 id="status">This is the message</h6>
@@ -45,8 +48,8 @@
   General
   </button> 
   <div id="general" class="collapse" data-parent="#main-form">    
-    <label for="&ge000">LoraWAN Data Rate:</label>
-    <select class="form-control" id="&ge000">
+    <label for="lora-dr">LoraWAN Data Rate:</label>
+    <select class="form-control" name="lora-dr">
       <option value = "0">0 - SF12BW125</option>
       <option value = "1">1 - SF11BW125</option>
       <option value = "2">2 - SF10BW125</option>
@@ -54,14 +57,14 @@
       <option value = "4" selected>4 - SF8BW125</option>
       <option value = "5">5 - SF7BW125</option>
     </select>  
-    <label for="&ge001">LoRaWAN Port:</label>
-    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" id="&ge001">
-    <label for="&ge002">Poll Interval (Seconds 1-60):</label>
-    <input type="number" required class="form-control" value="1" min="1" max="60" step="1" maxlength="2" id="&ge002">
-    <label for="&ge003">Report Interval (Minutes 5-1440):</label>
-    <input type="number" required class="form-control" value="5" min="5" max="1440" step="1" maxlength="4" id="&ge003">
-    <label for="&ge005">Modbus Baud Rate:</label>
-    <select class="form-control" id="&ge005">
+    <label for="lora-port">LoRaWAN Port:</label>
+    <input type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" name="lora-port">
+    <label for="poll">Poll Interval (Seconds 1-60):</label>
+    <input type="number" required class="form-control" value="1" min="1" max="60" step="1" maxlength="2" name="poll">
+    <label for="report">Report Interval (Minutes 5-1440):</label>
+    <input type="number" required class="form-control" value="5" min="5" max="1440" step="1" maxlength="4" name="report">
+    <label for="modbus-br">Modbus Baud Rate:</label>
+    <select class="form-control" name="modbus-br">
       <option value = "2400">2400</option>
       <option value = "4800">4800</option>
       <option value = "9600" selected>9600</option>
@@ -70,19 +73,19 @@
       <option value = "57600">57600</option>
       <option value = "115200">115200</option>
     </select>  
-    <label for="&ge007">Modbus Data Bits:</label>
-    <select class="form-control" id="&ge007">
+    <label for="modbus-data-bit">Modbus Data Bits:</label>
+    <select class="form-control" name="modbus-data-bit">
       <option value = "5">5</option>
       <option value = "7">7</option>
       <option value = "8" selected>8</option>      
     </select> 
-    <label for="&ge008">Modbus Stop Bits:</label>
-    <select class="form-control" id="&ge008">
+    <label for="modbus-stop-bit">Modbus Stop Bits:</label>
+    <select class="form-control" name="modbus-stop-bit">
       <option value = "1">1</option>
       <option value = "2">2</option>           
     </select> 
-    <label for="&ge009">Modbus Parity Bits:</label>
-    <select class="form-control" id="&ge009">
+    <label for="modbus-par-bit">Modbus Parity Bits:</label>
+    <select class="form-control" name="modbus-par-bit">
       <option value = "0">none</option>
       <option value = "1">Even</option>
       <option value = "2">Odd</option>      
@@ -91,128 +94,110 @@
 </template>
 
 <template>
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" name="enable">Enable
-    </label>
-  </div>   
-  <label for="input">Input:</label>
-  <select class="form-control" name="input">
-  <option value = "0">Analog</option>
-  <option value = "1">Digital</option>
-  <option value = "2">Modbus</option>
-  </select>
-  <label for="no">No:</label>
-  <select class="form-control" name="no">
-  <option value = "0">1</option>
-  <option value = "1">2</option>  
-  </select>   
-  <label for="unit">Unit:</label>
-  <select class="form-control" name="unit">    
-  <option value = "2">Analog</option>
-  <option value = "100">Generic</option>
-  <option value = "101">Luminosity</option>    
-  <option value = "103">Temperature</option>
-  <option value = "104">R.Humidity</option>
-  <option value = "115">Barometric</option>
-  <option value = "116">Voltage</option>
-  <option value = "117">Current</option> 
-  <option value = "118">Frequency</option>
-  <option value = "120">Percentage</option>
-  <option value = "121">Altitude</option>
-  <option value = "128">Power</option>   
-  <option value = "130">Distance</option>
-  <option value = "131">Energy</option>
-  <option value = "132">Direction</option>
-  <option value = "133">Unixtime</option>
-  <option value = "0">Digital</option>
-  <option value = "142">Switch</option>
-  <option value = "102">Presence</option>            
-  </select>
-  <div class="form-check">
-    <label class="form-check-label">
-      <input type="checkbox" class="form-check-input" name="scale">Scale
-    </label>
-  </div>
-  <label for="in-min">In Min.:</label>
-  <input type="number" required class="form-control" value="0" step="any" name="in-min">
-  <label for="in-max">In Max.:</label>
-  <input type="number" required class="form-control" value="0" step="any" name="in-max">
-  <label for="out-min">Out Min.:</label>
-  <input type="number" required class="form-control" value="0" step="any" name="out-min">
-  <label for="out-max">Out Max.:</label>
-  <input type="number" required class="form-control" value="0" step="any" name="out-max">
-  <label for="slave">Slave Address (1-247):</label>
-  <input type="number" required class="form-control" value="1" min="1" max="247" step="1" maxlength ="3" name="slave">
-  <label for="function">Function:</label>
-  <select class="form-control" name="function">
-  <option value = "0">Coils</option>
-  <option value = "1">Discrete</option>
-  <option value = "2">Holding</option>
-  <option value = "3">Input</option>     
-  </select> 
-  <label for="register">Register Address:</label>
-  <input type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="register">
-  <label for="type">Type:</label>
-  <select class="form-control" name="type">
-  <option value = "0">uint16</option>
-  <option value = "1">int16</option>
-  <option value = "2">uint32</option>
-  <option value = "3">int32</option>
-  <option value = "4">float32</option>     
-  </select>
-  <label for="quantity">Quantity:</label>
-  <input type="number" required disabled class="form-control" value="1" name="quantity">
-  <label for="decimal">Decimal Places:</label>
-  <select class="form-control" name="decimal">
-  <option value = "0">0</option>
-  <option value = "1">1</option>
-  <option value = "2">2</option>
-  <option value = "3">3</option>
-  <option value = "4">4</option>
-  <option value = "5">5</option>     
-  </select> 
-  <label for="coil-mask">Coil Mask:</label>
-  <input type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="coil-mask">
-  <label for="discrete-mask">Discrete Mask:</label>
-  <input type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="discrete-mask">
-  <label for="low-set">Low Set:</label>
-  <input type="number" required class="form-control" value="0" step="any" name="low-set">
-  <label for="high-set">High Set:</label>
-  <input type="number" required class="form-control" value="0" step="any" name="high-set">
-
-
-</template>
-
-<template>
-  <li>
-    <label for="channel">Channel:</label>
-    <input type="number" required class="form-control" value="1" min="1" max="255" step="1" maxlength="3" name="channel">
-    <label for="set">Set:</label>
-    <select class="form-control" name="set">
-    <option value = "0">Low</option>
-    <option value = "1">High</option> 
-    <option value = "3">Change</option>
-    <option value = "4">Falling</option>
-    <option value = "5">Rising</option>        
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#channel" aria-expanded="true" aria-controls="channel">
+  Channel
+  </button> 
+  <div id="channel" class="collapse" data-parent="#main-form">
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>   
+    <label for="input">Input:</label>
+    <select class="form-control" name="input">
+    <option value = "0">Analog</option>
+    <option value = "1">Digital</option>
+    <option value = "2">Modbus</option>
     </select>
-    <label for="low-set">Low Set:</label>
-    <input type="number" required class="form-control" value="0" step="any" name="low-set">
-    <label for="high-set">Hig Set:</label>
-    <input type="number" required class="form-control" value="0" step="any" name="high-set">
-    <label for="delay">Delay:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="65535" step="1" maxlength ="5" name="delay">    
+    <label for="no">No:</label>
+    <select class="form-control" name="no">
+    <option value = "0">1</option>
+    <option value = "1">2</option>  
+    </select>   
+    <label for="unit">Unit:</label>
+    <select class="form-control" name="unit">    
+    <option value = "2">Analog</option>
+    <option value = "100">Generic</option>
+    <option value = "101">Luminosity</option>    
+    <option value = "103">Temperature</option>
+    <option value = "104">R.Humidity</option>
+    <option value = "115">Barometric</option>
+    <option value = "116">Voltage</option>
+    <option value = "117">Current</option> 
+    <option value = "118">Frequency</option>
+    <option value = "120">Percentage</option>
+    <option value = "121">Altitude</option>
+    <option value = "128">Power</option>   
+    <option value = "130">Distance</option>
+    <option value = "131">Energy</option>
+    <option value = "132">Direction</option>
+    <option value = "133">Unixtime</option>
+    <option value = "0">Digital</option>
+    <option value = "142">Switch</option>
+    <option value = "102">Presence</option>            
+    </select>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="scale">Scale
+      </label>
+    </div>
+    <label for="in-min">In Min.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="in-min">
+    <label for="in-max">In Max.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="in-max">
+    <label for="out-min">Out Min.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="out-min">
+    <label for="out-max">Out Max.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="out-max">
+    <label for="slave">Slave Address (1-247):</label>
+    <input type="number" required class="form-control" value="1" min="1" max="247" step="1" maxlength ="3" name="slave">
+    <label for="function">Function:</label>
+    <select class="form-control" name="function">
+    <option value = "0">Coils</option>
+    <option value = "1">Discrete</option>
+    <option value = "2">Holding</option>
+    <option value = "3">Input</option>     
+    </select> 
+    <label for="register">Register Address:</label>
+    <input type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="register">
+    <label for="type">Type:</label>
+    <select class="form-control" name="type">
+    <option value = "0">uint16</option>
+    <option value = "1">int16</option>
+    <option value = "2">uint32</option>
+    <option value = "3">int32</option>
+    <option value = "4">float32</option>     
+    </select>
+    <label for="quantity">Quantity:</label>
+    <input type="number" required disabled class="form-control" value="1" name="quantity">
+    <label for="decimal">Decimal Places:</label>
+    <select class="form-control" name="decimal">
+    <option value = "0">0</option>
+    <option value = "1">1</option>
+    <option value = "2">2</option>
+    <option value = "3">3</option>
+    <option value = "4">4</option>
+    <option value = "5">5</option>     
+    </select> 
     <label for="coil-mask">Coil Mask:</label>
     <input type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="coil-mask">
-    <label for="relay-1">Relay 1</label>
-    <select class="form-control" name="relay-1">
+    <label for="discrete-mask">Discrete Mask:</label>
+    <input type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="discrete-mask">
+    <label for="low-set">Low Set:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="low-set">
+    <label for="high-set">High Set:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="high-set">
+    <label for="delay">Delay (Miliseconds 0-65535):</label>
+    <input type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
+    <label for="change-relay-1">If Change Than Relay 1</label>
+    <select class="form-control" name="change-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
-    <label for="relay-2">Relay 2</label>
-    <select class="form-control" name="relay-2">
+    <label for="change-relay-2">If Change Than Relay 2</label>
+    <select class="form-control" name="change-relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -220,44 +205,79 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input type="checkbox" class="form-check-input" name="uplink">Uplink
+        <input type="checkbox" class="form-check-input" name="change-uplink">If Change Than Uplink
       </label>
-    </div>    
-    <br>
-    <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-    <br>
-  </li>  
-</template id="temp-channel">
-
-<template>
-  <li>
-    <label for="no">Time No:</label>
-    <select class="form-control" name="no">
-    <option value = "1">1</option>
-    <option value = "2">2</option>         
-    </select>
-    <label for="hour">Hour:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
-    <label for="minute">Minute:</label>
-    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
-    <label for="relay-1">Relay 1</label>
-    <select class="form-control" name="relay-1">
+    </div>
+    <label for="falling-relay-1">If Falling Than Relay 1</label>
+    <select class="form-control" name="falling-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
-    <label for="relay-2">Relay 2</label>
-    <select class="form-control" name="relay-2">
+    <label for="falling-relay-2">If Falling Than Relay 2</label>
+    <select class="form-control" name="falling-relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>   
     </select> 
-    <br>
-    <button type="button" class="btn btn-secondary" name="delete">Delete</button>
-    <br>
-  </li>   
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="falling-uplink">If Falling Than Uplink
+      </label>
+    </div> 
+    <label for="rising-relay-1">If Rising Than Relay 1</label>
+    <select class="form-control" name="rising-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="rising-relay-2">If Rising Than Relay 2</label>
+    <select class="form-control" name="rising-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="rising-uplink">If Rising Than Uplink
+      </label>
+    </div>
+  </div>
+</template>
+
+<template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time" aria-expanded="true" aria-controls="time">
+  Time
+  </button> 
+  <div id="time" class="collapse" data-parent="#main-form">
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>  
+    <label for="hour">Hour:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
+    <label for="minute">Minute:</label>
+    <input type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
+    <label for="time-relay-1">If Time Than Relay 1</label>
+    <select class="form-control" name="time-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="time-relay-2">If Time Than Relay 2</label>
+    <select class="form-control" name="time-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select>
+  </div>     
 </template>
 
 <!--

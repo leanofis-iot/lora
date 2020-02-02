@@ -2,32 +2,29 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', event => {
-    let mainF = document.querySelector('#main-form');
-    let statusD = document.querySelector('#status');
-    let channelTemp = document.querySelectorAll('template')[0]; 
-    let channelIfttTemp = document.querySelectorAll('template')[1]; 
-    let timeIfttTemp = document.querySelectorAll('template')[2]; 
-    let addChannelB = document.querySelector("#add-channel");
-    let addChannelIfttB = document.querySelector("#add-channel-iftt");
-    let addTimeIfttB = document.querySelector("#add-time-iftt");        
-    let connectB = document.querySelector("#connect");    
-    let timeB = document.querySelector('#time');
-    let readB = document.querySelector('#read');
-    let saveB = document.querySelector('#save');
-    let channelL = document.querySelector("#channel-list");
-    let channelIfttL = document.querySelector("#channel-iftt-list");
-    let timeIfttL = document.querySelector("#time-iftt-list");       
+    let mainForm = document.querySelector('#main-form');    
+    let generalTemp = document.querySelectorAll('template')[0];
+    let channelTemp = document.querySelectorAll('template')[1];
+    let timeTemp = document.querySelectorAll('template')[2];
+    let generalsDiv = document.querySelector("#generals");
+    let channelsDiv = document.querySelector("#channels");
+    let timesDiv = document.querySelector("#times");           
+    let connectBut = document.querySelector("#connect");    
+    let timeBut = document.querySelector('#set-time');
+    let readBut = document.querySelector('#read');
+    let saveBut = document.querySelector('#save');     
     let port;
+    let statusDisp = document.querySelector('#status');
 
-    let numCh = 27;
-    let numIf = 17;
+    let numGen = 10;
+    let numCh = 51;
     let numTm = 5;
 
-
+    /*
     addChannelB.addEventListener('click', function() {
       let clon = channelTemp.content.cloneNode(true);     
       channelL.appendChild(clon);      
-      statusD.textContent = '';
+      statusDisp.textContent = '';
       let skipindex = [6,7,8,10,11,12,14,15,16,18,19,20];
       let item = channelL.querySelectorAll('li');      
       for (let i = 0; i < item.length; i++) {
@@ -36,7 +33,7 @@
         for (let j = 0; j < numCh; j++) {
           if (skipindex.indexOf(j) < 0) {
             els[id].id = '&ch' + ('00' +  String(j + i * numCh)).slice (-3);            
-            statusD.textContent += els[id].id + '\r\n';
+            statusDisp.textContent += els[id].id + '\r\n';
             id++;
           }        
         }
@@ -62,7 +59,7 @@
     addChannelIfttB.addEventListener('click', function() {
       let clon = channelIfttTemp.content.cloneNode(true);     
       channelIfttL.appendChild(clon);      
-      statusD.textContent = '';
+      statusDisp.textContent = '';
       let skipindex = [3,4,5,7,8,9,11,13,15];
       let item = channelIfttL.querySelectorAll('li');      
       for (let i = 0; i < item.length; i++) {
@@ -71,7 +68,7 @@
         for (let j = 0; j < numIf; j++) {
           if (skipindex.indexOf(j) < 0) {
             els[id].id = '&if' + ('00' +  String(j + i * numIf)).slice (-3);            
-            statusD.textContent += els[id].id + '\r\n';
+            statusDisp.textContent += els[id].id + '\r\n';
             id++;
           }        
         }        
@@ -95,7 +92,7 @@
     addTimeIfttB.addEventListener('click', function() {
       let clon = timeIfttTemp.content.cloneNode(true);     
       timeIfttL.appendChild(clon);      
-      statusD.textContent = ''; 
+      statusDisp.textContent = ''; 
       let skipindex = [4];     
       let item = timeIfttL.querySelectorAll('li');      
       for (let i = 0; i < item.length; i++) {
@@ -104,7 +101,7 @@
         for (let j = 0; j < numTm; j++) {
           if (skipindex.indexOf(j) < 0) {
             els[id].id = '&tm' + ('00' +  String(j + i * numTm)).slice (-3);            
-            statusD.textContent += els[id].id + '\r\n';
+            statusDisp.textContent += els[id].id + '\r\n';
             id++;
           }        
         }        
@@ -125,16 +122,16 @@
       }      
     });
 
-    saveB.addEventListener('click', function() {
+    saveBut.addEventListener('click', function() {
       //if (!port) {
       //  return;
       //}
       //////////////////////////////var foo = parseInt('1111', 2);
 
       let config = '';      
-      if (mainF.checkValidity()) {
-        statusD.textContent = 'validaion ok';
-        let els = mainF.querySelectorAll('input,select');
+      if (mainForm.checkValidity()) {
+        statusDisp.textContent = 'validaion ok';
+        let els = mainForm.querySelectorAll('input,select');
         let val = 0;
         for (let i = 0; i < els.length; i++) {
           if (els[i].id[0] == '&') {
@@ -150,9 +147,36 @@
         }
         config += '&save' + '\r\n';                  
       }      
-      statusD.textContent = config;
+      statusDisp.textContent = config;
       //port.send(config);      
     });
+*/  create();
+    function create() {
+      let clon = generalTemp.content.cloneNode(true);     
+      generalsDiv.appendChild(clon);      
+      let skipindex = [4,6];      
+      let items = generalsDiv.querySelectorAll('input,select');
+      let id = 0;
+      for (let j = 0; j < numGen; j++) {
+        if (skipindex.indexOf(j) < 0) {
+          items[id].id = '&ge' + ('00' +  String(j + i * numGen)).slice (-3);            
+          statusDisp.textContent += items[id].id + '\r\n';
+          id++;
+        }        
+      }
+      let clon = channelTemp.content.cloneNode(true);     
+      channelsDiv.appendChild(clon);      
+      let skipindex = [4,6];      
+      let items = channelsDiv.querySelectorAll('input,select');
+      let id = 0;
+      for (let j = 0; j < numCh; j++) {
+        if (skipindex.indexOf(j) < 0) {
+          items[id].id = '&ch' + ('00' +  String(j + i * numCh)).slice (-3);            
+          statusDisp.textContent += items[id].id + '\r\n';
+          id++;
+        }        
+      }        
+    }
 
     
 /*
@@ -167,16 +191,16 @@
     
     
 
-    readB.addEventListener('click', function() {
+    readBut.addEventListener('click', function() {
       //if (!port) {
       //  return;
       //} 
       trgList.innerHTML = '';      
-      statusD.textContent = 'deleted';      
+      statusDisp.textContent = 'deleted';      
       //port.send(t);      
     });
 
-    timeB.addEventListener('click', function() {
+    timeBut.addEventListener('click', function() {
       //if (!port) {
       //  return;
       //}      
@@ -189,16 +213,17 @@
       t += '&mo' + String(d.getMonth() + 1) + '\r\n';
       t += '&yy' + d.getFullYear() + '\r\n';
       t += '&time' + '\r\n';
-      statusD.textContent = t;      
+      statusDisp.textContent = t;      
       //port.send(t);      
     });
 
     */
+    
 
     function connect() {
       port.connect().then(() => {
-        statusD.textContent = '';
-        connectB.textContent = 'Disconnect';
+        statusDisp.textContent = '';
+        connectBut.textContent = 'Disconnect';
 
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
@@ -208,31 +233,31 @@
           console.error(error);
         };
       }, error => {
-        statusD.textContent = error;
+        statusDisp.textContent = error;
       });
     }    
     
-    connectB.addEventListener('click', function() {
+    connectBut.addEventListener('click', function() {
       if (port) {
         port.disconnect();
-        connectB.textContent = 'Connect';
-        statusD.textContent = '';
+        connectBut.textContent = 'Connect';
+        statusDisp.textContent = '';
         port = null;
       } else {
         serial.requestPort().then(selectedPort => {
           port = selectedPort;
           connect();
         }).catch(error => {
-          statusD.textContent = error;
+          statusDisp.textContent = error;
         });
       }
     });     
 
     serial.getPorts().then(ports => {
       if (ports.length == 0) {
-        statusD.textContent = 'No device found.';
+        statusDisp.textContent = 'No device found.';
       } else {
-        statusD.textContent = 'Connecting...';
+        statusDisp.textContent = 'Connecting...';
         port = ports[0];
         connect();
       }
@@ -256,13 +281,13 @@ var myPort = new serialport(portName, {
 */
 
 /*
-saveB.addEventListener('click', function() {
+saveBut.addEventListener('click', function() {
   //if (!port) {
   //  return;
   //}
   let config = '';      
-  if (mainF.checkValidity()) {
-    statusD.textContent = 'heyyy';
+  if (mainForm.checkValidity()) {
+    statusDisp.textContent = 'heyyy';
     for (let i = 0; i < 2; i++) {
       let ii = '&lrb';        
       ii += ('0' + i).slice (-2);      
@@ -321,7 +346,7 @@ saveB.addEventListener('click', function() {
       config += ii + dgb + '\r\n';
     }        
   }      
-  statusD.textContent = config;      
+  statusDisp.textContent = config;      
   //port.send(config);      
 });
 */
