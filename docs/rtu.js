@@ -128,9 +128,8 @@
           }       
         }                         
       }
-    });  
-
-    
+    }); 
+        
     saveBut.addEventListener('click', function() {
       //if (!port) {
       //  return;
