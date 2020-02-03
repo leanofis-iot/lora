@@ -20,32 +20,23 @@
     let port;
     let statusDisp = document.querySelector('#status');
 
-    let numAn = 2, numDg = 2, numMo = 8, numTm = 2, numGenBytes = 10, numAnBytes = 35, numDgBytes = 10, numMoBytes = 29, numTmBytes = 5;
+    let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
+    let numgeub = 6, numgeus = 2;
     let items;
+    let item;
     
     function create() {
       statusDisp.textContent = "";
       let clon;
       let buts;
       let divs;
-      let skipindex = [];      
-      let id;  
+              
       // Generals
       clon = generalTemp.content.cloneNode(true);     
-      generalsDiv.appendChild(clon);      
-      skipindex = [4,6];      
-      items = generalsDiv.querySelectorAll('input,select');
-      id = 0;
-      for (let j = 0; j < numGenBytes; j++) {
-        if (skipindex.indexOf(j) < 0) {
-          items[id].id = '&ge' + ('00' +  String(j)).slice (-3);            
-          statusDisp.textContent += items[id].id + '\r\n';
-          id++;
-        }        
-      }
+      generalsDiv.appendChild(clon);       
       // Analogs
       for (let i = 0; i < numAn; i++) {
-        clon = analogTemp.content.cloneNode(true);        
+        clon = analogTemp.content.cloneNode(true);
         analogsDiv.appendChild(clon); 
       }      
       buts = analogsDiv.querySelectorAll('button');
@@ -55,18 +46,101 @@
         buts[i].setAttribute('aria-controls', 'analog' + i);
         buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'analog' + i);      
-      }            
-      skipindex = [4,5,6,8,9,10,12,13,14,16,17,18,20,21,22,24,25,26,28];      
+      } 
+      // Digitals
+      for (let i = 0; i < numDg; i++) {
+        clon = digitalTemp.content.cloneNode(true);
+        digitalsDiv.appendChild(clon); 
+      }      
+      buts = digitalsDiv.querySelectorAll('button');
+      divs = digitalsDiv.querySelectorAll('#digital');
+      for (let i = 0; i < numDg; i++) {
+        buts[i].setAttribute('data-target', '#digital' + i);
+        buts[i].setAttribute('aria-controls', 'digital' + i);
+        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        divs[i].setAttribute('id', 'digital' + i);      
+      }   
+      // Modbuses
+      for (let i = 0; i < numMo; i++) {
+        clon = modbusTemp.content.cloneNode(true);
+        modbusesDiv.appendChild(clon); 
+      }      
+      buts = modbusesDiv.querySelectorAll('button');
+      divs = modbusesDiv.querySelectorAll('#modbus');
+      for (let i = 0; i < numMo; i++) {
+        buts[i].setAttribute('data-target', '#modbus' + i);
+        buts[i].setAttribute('aria-controls', 'modbus' + i);
+        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        divs[i].setAttribute('id', 'modbus' + i);      
+      }
+      // Times
+      for (let i = 0; i < numTm; i++) {
+        clon = timeTemp.content.cloneNode(true);
+        timesDiv.appendChild(clon); 
+      }      
+      buts = timesDiv.querySelectorAll('button');
+      divs = timesDiv.querySelectorAll('#time');
+      for (let i = 0; i < numTm; i++) {
+        buts[i].setAttribute('data-target', '#time' + i);
+        buts[i].setAttribute('aria-controls', 'time' + i);
+        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        divs[i].setAttribute('id', 'time' + i);      
+      }
+      
+      let datas = 
+      ['ge_ub','ge_us','an_ub','an_us','an_ff','dg_ub','dg_us','mo_ub','mo_us','mo_ff','tm_ub']; 
+      for (let i = 0; i < datas.length; i++) {        
+        items = mainForm.querySelectorAll('#x' + datas[i]);        
+        for (let j = 0; j < items.length; j++) {
+          items[j].id += ('0' + j).slice(-2);
+          statusDisp.textContent += items[j].id + '\r\n';
+        }        
+      }
+
+      /*    
+      for (let i = 1; i < numAn; i++) {
+        item = analogsDiv.querySelector('#analog' + i);
+        
+        
+        items = item.querySelectorAll('[id^="xan_ub"]');
+        statusDisp.textContent += items.length + '\r\n';
+        
+        for (let j = 0; j < items.length; j++) {
+          let id = Number(items[j].id.slice(-2)) + i * numgeub;
+          items[j].id = items[j].id.slice(0, 6) + id;
+          statusDisp.textContent += 'qqqqq' + '\r\n'; 
+        }
+        
+           
+      } 
+      */
+
+      //
+      /*  
+      for (let j = 0; j < items.length; j++) {
+        //let id = Number(items[j].id.slice(-2)) + i * numgeub;
+        //items[j].id = items[j].id.slice(0, 6) + id;
+        statusDisp.textContent += 'hrrrrrrrr' + '\r\n';
+      }
+      */
+      /*
+      items = clon.querySelectorAll('[id^="xge_us"]');
+      for (let j = 0; j < items.length; j++) {
+        let id = Number(items[j].id.slice(-2)) + i * numgeus;
+        items[j].id = items[j].id.slice(0, 6) + id;
+        statusDisp.textContent += items[j].id + '\r\n';
+      }
+      */
+      /*           
       items = analogsDiv.querySelectorAll('input,select');
-      id = 0;
       for (let i = 0; i < numAn; i++) {
-        for (let j = 0; j < numAnBytes; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            items[id].id = '&an' + ('00' +  String(j + i * numAnBytes)).slice (-3);            
+        
+          
+            items[id].id = 'xan' + ('00' +  String(j + i * numAnBytes)).slice (-3);            
             statusDisp.textContent += items[id].id + '\r\n';
             id++;
-          }        
-        } 
+                 
+        
       } 
       // Digitals
       for (let i = 0; i < numDg; i++) {
@@ -87,7 +161,7 @@
       for (let i = 0; i < numDg; i++) {
         for (let j = 0; j < numDgBytes; j++) {
           if (skipindex.indexOf(j) < 0) {
-            items[id].id = '&dg' + ('00' +  String(j + i * numDgBytes)).slice (-3);            
+            items[id].id = 'xdg' + ('00' +  String(j + i * numDgBytes)).slice (-3);            
             statusDisp.textContent += items[id].id + '\r\n';
             id++;
           }        
@@ -112,7 +186,7 @@
       for (let i = 0; i < numMo; i++) {
         for (let j = 0; j < numMoBytes; j++) {
           if (skipindex.indexOf(j) < 0) {
-            items[id].id = '&mo' + ('00' +  String(j + i * numMoBytes)).slice (-3);            
+            items[id].id = 'xmo' + ('00' +  String(j + i * numMoBytes)).slice (-3);            
             statusDisp.textContent += items[id].id + '\r\n';
             id++;
           }        
@@ -135,11 +209,12 @@
       id = 0;
       for (let i = 0; i < numTm; i++) {        
         for (let j = 0; j < numTmBytes; j++) {         
-          items[id].id = '&tm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
+          items[id].id = 'xtm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
           statusDisp.textContent += items[id].id + '\r\n';
           id++;                 
         } 
-      }                  
+      } 
+      */                 
     }
     create();    
         
@@ -153,7 +228,7 @@
         items = mainForm.querySelectorAll('input,select');
         let val = 0;        
         for (let i = 0; i < items.length; i++) {          
-          if (items[i].id[0] == '&') {             
+          if (items[i].id[0] == 'x') {             
             if (items[i].type === 'checkbox') {
               val = items[i].checked ? 1 : 0; 
             } else if (items[i].name == 'coil-mask') {
@@ -164,7 +239,7 @@
             config += items[i].id + val + '\r\n';                        
           }                                 
         }
-        config += '&save' + '\r\n';                                 
+        config += 'xsave' + '\r\n';                                 
       }            
       statusDisp.textContent = config;
       //port.send(config);      
@@ -176,13 +251,13 @@
       //}      
       let d = new Date();
       let t = '';
-      t += '&ss' + d.getSeconds() + '\r\n';
-      t += '&mm' + d.getMinutes() + '\r\n';
-      t += '&hh' + d.getHours() + '\r\n';
-      t += '&dd' + d.getDay() + '\r\n';
-      t += '&mo' + String(d.getMonth() + 1) + '\r\n';
-      t += '&yy' + d.getFullYear() + '\r\n';
-      t += '&time' + '\r\n';
+      t += 'xss' + d.getSeconds() + '\r\n';
+      t += 'xmm' + d.getMinutes() + '\r\n';
+      t += 'xhh' + d.getHours() + '\r\n';
+      t += 'xdd' + d.getDay() + '\r\n';
+      t += 'xmo' + String(d.getMonth() + 1) + '\r\n';
+      t += 'xyy' + d.getFullYear() + '\r\n';
+      t += 'xtime' + '\r\n';
       statusDisp.textContent = t;      
       //port.send(t);      
     });

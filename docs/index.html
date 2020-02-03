@@ -40,7 +40,7 @@
   <div id="general" class="collapse" data-parent="#main-form">
     <br>    
     <label for="lora-dr">LoraWAN Data Rate:</label>
-    <select id="&ge_ub00" class="form-control" name="lora-dr">
+    <select id="xge_ub" class="form-control" name="lora-dr">
       <option value = "0">0 - SF12BW125</option>
       <option value = "1">1 - SF11BW125</option>
       <option value = "2">2 - SF10BW125</option>
@@ -49,13 +49,13 @@
       <option value = "5">5 - SF7BW125</option>
     </select>  
     <label for="lora-port">LoRaWAN Port:</label>
-    <input  id="&ge_ub01" type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" name="lora-port">
+    <input  id="xge_ub" type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" name="lora-port">
     <label for="poll">Poll Interval (Seconds 1-60):</label>
-    <input id="&ge_ub02" type="number" required class="form-control" value="1" min="1" max="60" step="1" maxlength="2" name="poll">
+    <input id="xge_ub" type="number" required class="form-control" value="1" min="1" max="60" step="1" maxlength="2" name="poll">
     <label for="report">Report Interval (Minutes 5-1440):</label>
-    <input id="&ge_us00" type="number" required class="form-control" value="5" min="5" max="1440" step="1" maxlength="4" name="report">
+    <input id="xge_us" type="number" required class="form-control" value="5" min="5" max="1440" step="1" maxlength="4" name="report">
     <label for="mod-baud">Modbus Baud Rate:</label>
-    <select id="&ge_us01" class="form-control" name="mod-baud">
+    <select id="xge_us" class="form-control" name="mod-baud">
       <option value = "2400">2400</option>
       <option value = "4800">4800</option>
       <option value = "9600" selected>9600</option>
@@ -65,18 +65,18 @@
       <option value = "115200">115200</option>
     </select>  
     <label for="mod-data-bit">Modbus Data Bits:</label>
-    <select id="&ge_ub03" class="form-control" name="mod-data-bit">
+    <select id="xge_ub" class="form-control" name="mod-data-bit">
       <option value = "5">5</option>
       <option value = "7">7</option>
       <option value = "8" selected>8</option>      
     </select> 
     <label for="mod-stop-bit">Modbus Stop Bits:</label>
-    <select id="&ge_ub04" class="form-control" name="mod-stop-bit">
+    <select id="xge_ub" class="form-control" name="mod-stop-bit">
       <option value = "1">1</option>
       <option value = "2">2</option>           
     </select> 
     <label for="mod-par-bit">Modbus Parity Bits:</label>
-    <select id="&ge_ub05" class="form-control" name="mod-par-bit">
+    <select id="xge_ub" class="form-control" name="mod-par-bit">
       <option value = "0">none</option>
       <option value = "1">Even</option>
       <option value = "2">Odd</option>      
@@ -95,11 +95,11 @@
     <br>
     <div class="form-check">
       <label class="form-check-label">
-        <input id="&an_ub00" type="checkbox" class="form-check-input" name="enable">Enable
+        <input id="xan_ub" type="checkbox" class="form-check-input" name="enable">Enable
       </label>
     </div>    
     <label for="unit">Unit:</label>
-    <select id="&an_ub01" class="form-control" name="unit">    
+    <select id="xan_ub" class="form-control" name="unit">    
     <option value = "2">Analog</option>
     <option value = "100">Generic</option>
     <option value = "101">Luminosity</option>    
@@ -119,35 +119,35 @@
     </select>
     <div class="form-check" name="div-scale">
       <label class="form-check-label">
-        <input id="&an_ub02" type="checkbox" class="form-check-input" name="scale">Scale
+        <input id="xan_ub" type="checkbox" class="form-check-input" name="scale">Scale
       </label>
     </div>
     <label for="in-min">In Min.:</label>
-    <input id="&an_ff00" type="number" required class="form-control" value="0" step="any" name="in-min">
+    <input id="xan_ff" type="number" required class="form-control" value="0" step="any" name="in-min">
     <label for="in-max">In Max.:</label>
-    <input id="&an_ff01" type="number" required class="form-control" value="0" step="any" name="in-max">
+    <input id="xan_ff" type="number" required class="form-control" value="0" step="any" name="in-max">
     <label for="out-min">Out Min.:</label>
-    <input id="&an_ff02" type="number" required class="form-control" value="0" step="any" name="out-min">
+    <input id="xan_ff" type="number" required class="form-control" value="0" step="any" name="out-min">
     <label for="out-max">Out Max.:</label>
-    <input id="&an_ff03" type="number" required class="form-control" value="0" step="any" name="out-max">    
+    <input id="xan_ff" type="number" required class="form-control" value="0" step="any" name="out-max">    
     <label for="low-set">Low Set:</label>
-    <input id="&an_ff04" type="number" required class="form-control" value="0" step="any" name="low-set">
+    <input id="xan_ff" type="number" required class="form-control" value="0" step="any" name="low-set">
     <label for="high-set">High Set:</label>
-    <input id="&an_ff05" type="number" required class="form-control" value="0" step="any" name="high-set">
+    <input id="xan_ff" type="number" required class="form-control" value="0" step="any" name="high-set">
     <label for="delay">Delay (Miliseconds 0-65535):</label>
-    <input id="&an_us00" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
+    <input id="xan_us" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
     <br>
     <h6>IFTT:</h6>
     <br>    
     <label for="fall-relay-1">If Falling Than Relay 1</label>
-    <select id="&an_ub03" class="form-control" name="fall-relay-1">
+    <select id="xan_ub" class="form-control" name="fall-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
     <label for="fall_relay-2">If Falling Than Relay 2</label>
-    <select id="&an_ub04" class="form-control" name="fall_relay-2">
+    <select id="xan_ub" class="form-control" name="fall_relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -155,19 +155,19 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input id="&an_ub05" type="checkbox" class="form-check-input" name="fall_report">If Falling Than Report
+        <input id="xan_ub" type="checkbox" class="form-check-input" name="fall_report">If Falling Than Report
       </label>
     </div> 
     <br>
     <label for="rise-relay-1">If Rising Than Relay 1</label>
-    <select id="&an_ub06" class="form-control" name="rise-relay-1">
+    <select id="xan_ub" class="form-control" name="rise-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
     <label for="rise_relay-2">If Rising Than Relay 2</label>
-    <select id="&an_ub07" class="form-control" name="rise_relay-2">
+    <select id="xan_ub" class="form-control" name="rise_relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -175,7 +175,7 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input id="&an_ub08" type="checkbox" class="form-check-input" name="rise_report">If Rising Than Report
+        <input id="xan_ub" type="checkbox" class="form-check-input" name="rise_report">If Rising Than Report
       </label>
     </div>
     <br>
@@ -192,29 +192,29 @@
     <br>
     <div class="form-check">
       <label class="form-check-label">
-        <input id="dg_ub00" type="checkbox" class="form-check-input" name="enable">Enable
+        <input id="xdg_ub" type="checkbox" class="form-check-input" name="enable">Enable
       </label>
     </div>     
     <label for="unit">Unit:</label>
-    <select id="dg_ub01" class="form-control" name="unit">    
+    <select id="xdg_ub" class="form-control" name="unit">    
     <option value = "0">Digital</option>
     <option value = "142">Switch</option>
     <option value = "102">Presence</option>            
     </select>    
     <label for="delay">Delay (Miliseconds 0-65535):</label>
-    <input id="dg_us00" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
+    <input id="xdg_us" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
     <br>
     <h6>IFTT:</h6>
     <br>    
     <label for="fall-relay-1">If Falling Than Relay 1</label>
-    <select id="dg_ub02" class="form-control" name="fall-relay-1">
+    <select id="xdg_ub" class="form-control" name="fall-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
     <label for="fall_relay-2">If Falling Than Relay 2</label>
-    <select id="dg_ub03" class="form-control" name="fall_relay-2">
+    <select id="xdg_ub" class="form-control" name="fall_relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -222,19 +222,19 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input id="dg_ub04" type="checkbox" class="form-check-input" name="fall_report">If Falling Than Report
+        <input id="xdg_ub" type="checkbox" class="form-check-input" name="fall_report">If Falling Than Report
       </label>
     </div> 
     <br>
     <label for="rise-relay-1">If Rising Than Relay 1</label>
-    <select id="dg_ub05" class="form-control" name="rise-relay-1">
+    <select id="xdg_ub" class="form-control" name="rise-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
     <label for="rise_relay-2">If Rising Than Relay 2</label>
-    <select id="dg_ub06" class="form-control" name="rise_relay-2">
+    <select id="xdg_ub" class="form-control" name="rise_relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -242,7 +242,7 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input id="dg_ub07" type="checkbox" class="form-check-input" name="rise_report">If Rising Than Report
+        <input id="xdg_ub" type="checkbox" class="form-check-input" name="rise_report">If Rising Than Report
       </label>
     </div>
     <br>
@@ -259,11 +259,11 @@
     <br>
     <div class="form-check">
       <label class="form-check-label">
-        <input id="mo_ub00" type="checkbox" class="form-check-input" name="enable">Enable
+        <input id="xmo_ub" type="checkbox" class="form-check-input" name="enable">Enable
       </label>
     </div>     
     <label for="unit">Unit:</label>
-    <select id="mo_ub01" class="form-control" name="unit">    
+    <select id="xmo_ub" class="form-control" name="unit">    
       <option value = "2">Analog</option>
       <option value = "100">Generic</option>
       <option value = "101">Luminosity</option>    
@@ -285,18 +285,18 @@
       <option value = "102">Presence</option>            
     </select>
     <label for="slave">Slave Address (1-247):</label>
-    <input id="mo_ub02" type="number" required class="form-control" value="1" min="1" max="247" step="1" maxlength ="3" name="slave">
+    <input id="xmo_ub" type="number" required class="form-control" value="1" min="1" max="247" step="1" maxlength ="3" name="slave">
     <label for="function">Function:</label>
-    <select id="mo_ub03" class="form-control" name="function">
+    <select id="xmo_ub" class="form-control" name="function">
       <option value = "0">Coils</option>
       <option value = "1">Discrete</option>
       <option value = "2">Holding</option>
       <option value = "3">Input</option>     
     </select> 
     <label for="register">Register Address:</label>
-    <input id="mo_us00" type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="register">
+    <input id="xmo_us" type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="register">
     <label for="type">Type:</label>
-    <select id="mo_ub04" class="form-control" name="type">
+    <select id="xmo_ub" class="form-control" name="type">
       <option value = "0">uint16</option>
       <option value = "1">int16</option>
       <option value = "2">uint32</option>
@@ -304,9 +304,9 @@
       <option value = "4">float32</option>     
     </select>
     <label for="quantity">Quantity:</label>
-    <input id="mo_ub05" type="number" required disabled class="form-control" value="1" name="quantity">
+    <input id="xmo_ub" type="number" required disabled class="form-control" value="1" name="quantity">
     <label for="decimal">Decimal Places:</label>
-    <select id="mo_ub06" class="form-control" name="decimal">
+    <select id="xmo_ub" class="form-control" name="decimal">
       <option value = "0">0</option>
       <option value = "1">1</option>
       <option value = "2">2</option>
@@ -315,31 +315,31 @@
       <option value = "5">5</option>     
     </select> 
     <label for="coils-fall">Coils Mask Falling:</label>
-    <input id="mo_us01" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="coils-fall">
+    <input id="xmo_us" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="coils-fall">
     <label for="coils-rise">Coils Mask Rising:</label>
-    <input id="mo_us02" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="coils-rise">
+    <input id="xmo_us" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="coils-rise">
     <label for="discs-fall">Discretes Mask Falling:</label>
-    <input id="mo_us03" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="discs-fall">
+    <input id="xmo_us" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="discs-fall">
     <label for="discs-rise">Discretes Mask Rising:</label>
-    <input id="mo_us04" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="discs-rise">
+    <input id="xmo_us" type="text" required class="form-control" value="0000000000000000" pattern="[0-1]{16}" maxlength="16" name="discs-rise">
     <label for="low-set">Low Set:</label>
-    <input id="mo_ffb00"type="number" required class="form-control" value="0" step="any" name="low-set">
+    <input id="xmo_ffb"type="number" required class="form-control" value="0" step="any" name="low-set">
     <label for="high-set">High Set:</label>
-    <input id="mo_ff01"type="number" required class="form-control" value="0" step="any" name="high-set">
+    <input id="xmo_ff"type="number" required class="form-control" value="0" step="any" name="high-set">
     <label for="delay">Delay (Miliseconds 0-65535):</label>
-    <input id="mo_us05" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
+    <input id="xmo_us" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
     <br>
     <h6>IFTT:</h6>
     <br>    
     <label for="fall-relay-1">If Falling Than Relay 1</label>
-    <select id="mo_ub07" class="form-control" name="fall-relay-1">
+    <select id="xmo_ub" class="form-control" name="fall-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
     <label for="fall_relay-2">If Falling Than Relay 2</label>
-    <select id="mo_ub08" class="form-control" name="fall_relay-2">
+    <select id="xmo_ub" class="form-control" name="fall_relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -347,19 +347,19 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input id="mo_ub09" type="checkbox" class="form-check-input" name="fall_report">If Falling Than Report
+        <input id="xmo_ub" type="checkbox" class="form-check-input" name="fall_report">If Falling Than Report
       </label>
     </div>
     <br> 
     <label for="rise-relay-1">If Rising Than Relay 1</label>
-    <select id="mo_ub10" class="form-control" name="rise-relay-1">
+    <select id="xmo_ub" class="form-control" name="rise-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
     <label for="rise_relay-2">If Rising Than Relay 2</label>
-    <select id="mo_ub11" class="form-control" name="rise_relay-2">
+    <select id="xmo_ub" class="form-control" name="rise_relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
@@ -367,17 +367,13 @@
     </select> 
     <div class="form-check">
       <label class="form-check-label">
-        <input id="mo_ub12" type="checkbox" class="form-check-input" name="rise_report">If Rising Than Report
+        <input id="xmo_ub" type="checkbox" class="form-check-input" name="rise_report">If Rising Than Report
       </label>
     </div>
     <br>
   </div>
 </template>
-const uint8_t tm_ub_enable      = 0;  // checkbox
-const uint8_t tm_ub_hour        = 1;  // input
-const uint8_t tm_ub_minute      = 2;  // input
-const uint8_t tm_ub_time-relay_1= 3;  // select
-const uint8_t tm_ub_time-relay_2= 4;  // select
+
 <template>
   <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time" aria-expanded="true" aria-controls="time">
   Time
@@ -386,22 +382,22 @@ const uint8_t tm_ub_time-relay_2= 4;  // select
     <br>
     <div class="form-check">
       <label class="form-check-label">
-        <input id="tm_ub00" type="checkbox" class="form-check-input" name="enable">Enable
+        <input id="xtm_ub" type="checkbox" class="form-check-input" name="enable">Enable
       </label>
     </div>  
     <label for="hour">Hour:</label>
-    <input id="tm_ub01" type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
+    <input id="xtm_ub" type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
     <label for="minute">Minute:</label>
-    <input id="tm_ub02" type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
+    <input id="xtm_ub" type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
     <label for="time-relay-1">If Time Than Relay 1</label>
-    <select id="tm_ub03" class="form-control" name="time-relay-1">
+    <select id="xtm_ub" class="form-control" name="time-relay-1">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
       <option value = "3">Toggle</option>         
     </select> 
     <label for="time-relay-2">If Time Than Relay 2</label>
-    <select id="tm_ub04" class="form-control" name="time-relay-2">
+    <select id="xtm_ub" class="form-control" name="time-relay-2">
       <option value = "0">none</option>
       <option value = "1">Activate</option>
       <option value = "2">Deactivate</option>
