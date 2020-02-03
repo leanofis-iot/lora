@@ -20,7 +20,7 @@
     let port;
     let statusDisp = document.querySelector('#status');
 
-    let numAn = 2, numDg = 2, numMo = 8, numTm = 2, numGenBytes = 10, numAnBytes = 38, numDgBytes = 13, numMoBytes = 49, numTmBytes = 5;
+    let numAn = 2, numDg = 2, numMo = 8, numTm = 2, numGenBytes = 10, numAnBytes = 35, numDgBytes = 10, numMoBytes = 46, numTmBytes = 5;
     let items;
     
     function create() {

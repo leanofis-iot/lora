@@ -39,31 +39,25 @@ const uint8_t i_out_max         = 15;         // 4 bytes  input
 const uint8_t i_low_set         = 19;         // 4 bytes  input
 const uint8_t i_high_set        = 23;         // 4 bytes  input
 const uint8_t i_delay           = 27;         // 2 bytes  input
-const uint8_t i_change_relay_1  = 29;         // 1 bytes  select
-const uint8_t i_change_relay_2  = 30;         // 1 bytes  select 
-const uint8_t i_change_report   = 31;         // 1 bytes  checkbox
-const uint8_t i_falling_relay_1 = 32;         // 1 bytes  select
-const uint8_t i_falling_relay_2 = 33;         // 1 bytes  select 
-const uint8_t i_falling_report  = 34;         // 1 bytes  checkbox
-const uint8_t i_rising_relay_1  = 35;         // 1 bytes  select
-const uint8_t i_rising_relay_2  = 36;         // 1 bytes  select 
-const uint8_t i_rising_report   = 37;         // 1 bytes  checkbox
+const uint8_t i_falling_relay_1 = 29;         // 1 bytes  select
+const uint8_t i_falling_relay_2 = 30;         // 1 bytes  select 
+const uint8_t i_falling_report  = 31;         // 1 bytes  checkbox
+const uint8_t i_rising_relay_1  = 32;         // 1 bytes  select
+const uint8_t i_rising_relay_2  = 33;         // 1 bytes  select 
+const uint8_t i_rising_report   = 34;         // 1 bytes  checkbox
 
-// dg[] (13, 12) (26, 24)
+// dg[] 
 const uint8_t i_enable          = 0;          // 1 byte   checkbox
 const uint8_t i_unit            = 1;          // 1 byte   select
 const uint8_t i_delay           = 2;          // 2 bytes  input
-const uint8_t i_change_relay_1  = 4;          // 1 bytes  select
-const uint8_t i_change_relay_2  = 5;          // 1 bytes  select 
-const uint8_t i_change_report   = 6;          // 1 bytes  checkbox
-const uint8_t i_falling_relay_1 = 7;          // 1 bytes  select
-const uint8_t i_falling_relay_2 = 8;          // 1 bytes  select 
-const uint8_t i_falling_report  = 9;          // 1 bytes  checkbox
-const uint8_t i_rising_relay_1  = 10;         // 1 bytes  select
-const uint8_t i_rising_relay_2  = 11;         // 1 bytes  select 
-const uint8_t i_rising_report   = 12;         // 1 bytes  checkbox
+const uint8_t i_falling_relay_1 = 4;          // 1 bytes  select
+const uint8_t i_falling_relay_2 = 5;          // 1 bytes  select 
+const uint8_t i_falling_report  = 6;          // 1 bytes  checkbox
+const uint8_t i_rising_relay_1  = 7;          // 1 bytes  select
+const uint8_t i_rising_relay_2  = 8;          // 1 bytes  select 
+const uint8_t i_rising_report   = 9;          // 1 bytes  checkbox
 
-// mo[] (49, 27) (392, 216)
+// mo[] 
 const uint8_t i_enable          = 0;          // 1 byte   checkbox
 const uint8_t i_unit            = 1;          // 1 byte   select
 const uint8_t i_scale           = 2;          // 1 byte   checkbox
@@ -82,15 +76,12 @@ const uint8_t i_discrete_mask   = 28;         // 2 bytes  input
 const uint8_t i_low_set         = 30;         // 4 bytes  input
 const uint8_t i_high_set        = 34;         // 4 bytes  input
 const uint8_t i_delay           = 38;         // 2 bytes  input
-const uint8_t i_change_relay_1  = 40;         // 1 bytes  select
-const uint8_t i_change_relay_2  = 41;         // 1 bytes  select 
-const uint8_t i_change_report   = 42;         // 1 bytes  checkbox
-const uint8_t i_falling_relay_1 = 43;         // 1 bytes  select
-const uint8_t i_falling_relay_2 = 44;         // 1 bytes  select 
-const uint8_t i_falling_report  = 45;         // 1 bytes  checkbox
-const uint8_t i_rising_relay_1  = 46;         // 1 bytes  select
-const uint8_t i_rising_relay_2  = 47;         // 1 bytes  select 
-const uint8_t i_rising_report   = 48;         // 1 bytes  checkbox
+const uint8_t i_falling_relay_1 = 40;         // 1 bytes  select
+const uint8_t i_falling_relay_2 = 41;         // 1 bytes  select 
+const uint8_t i_falling_report  = 42;         // 1 bytes  checkbox
+const uint8_t i_rising_relay_1  = 43;         // 1 bytes  select
+const uint8_t i_rising_relay_2  = 44;         // 1 bytes  select 
+const uint8_t i_rising_report   = 45;         // 1 bytes  checkbox
 
 // tm[] (5, 5) (10, 10)
 //const uint8_t i_enable        = 0;          // 1 byte   checkbox
