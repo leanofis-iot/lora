@@ -20,7 +20,7 @@
     let port;
     let statusDisp = document.querySelector('#status');
 
-    let numAn = 2, numDg = 2, numMo = 8, numTm = 2, numGenBytes = 10, numAnBytes = 35, numDgBytes = 10, numMoBytes = 46, numTmBytes = 5;
+    let numAn = 2, numDg = 2, numMo = 8, numTm = 2, numGenBytes = 10, numAnBytes = 35, numDgBytes = 10, numMoBytes = 29, numTmBytes = 5;
     let items;
     
     function create() {
@@ -106,7 +106,7 @@
         buts[i].innerText = '(' + String(i + 5) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1);
         divs[i].setAttribute('id', 'modbus' + i);      
       }            
-      skipindex = [4,5,6,8,9,10,12,13,14,16,17,18,22,27,29,31,32,33,35,36,37,39];      
+      skipindex = [5,10,12,14,15,16,18,19,20,22];      
       items = modbusesDiv.querySelectorAll('input,select');
       id = 0;
       for (let i = 0; i < numMo; i++) {
