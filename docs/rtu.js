@@ -230,63 +230,15 @@
   });
 })();
 
-  /*
-    trgList.addEventListener('change', function(e) {       
-      if (e.target.name == 'trg-inp') { 
-        let temp = document.querySelectorAll('template')[Number(e.target.value) - 1]; 
-        let clon = temp.content.cloneNode(true);       
-        e.target.parentNode.replaceWith(clon);                    
-      }
-    });   
+/*    
+readBut.addEventListener('click', function() {
+  //if (!port) {
+  //  return;
+  //}           
+  statusDisp.textContent = 'deleted';      
+  //port.send(t);      
+});    
 
-    readBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //} 
-      trgList.innerHTML = '';      
-      statusDisp.textContent = 'deleted';      
-      //port.send(t);      
-    });    
-
-    channelL.addEventListener('click', function(e) {       
-      if (e.target.name == 'delete') {
-        //e.target.closest('li').remove();
-        e.target.parentNode.remove();
-        //let item = this.querySelectorAll('li');
-        //if (item.length < 99) {
-        //  addChannelB.disabled = false;
-        //}
-      } else if (e.target.name == 'hide') {
-        e.target.parentNode.hidden = true;
-      }     
-    });
-    
-    channelIfttL.addEventListener('click', function(e) {       
-      if (e.target.name == 'delete') {
-        //e.target.closest('li').remove();
-        e.target.parentNode.remove();
-        //let item = this.querySelectorAll('li');
-        //if (item.length < 99) {
-        //  addChannelIfttB.disabled = false;
-        //}
-      }      
-    });    
-
-    timeIfttL.addEventListener('click', function(e) {       
-      if (e.target.name == 'delete') {
-        //e.target.closest('li').remove();
-        e.target.parentNode.remove();
-        let item = this.querySelectorAll('li');
-        if (item.length < 2) {
-          addTimeIfttB.disabled = false;
-        }
-      }      
-    });
-
-    
-  */
-
-/*
 serialport.parsers.readline('\n');
 parser: SerialPort.parsers.readline('\r')
 var serialPort = new SerialPort("/dev/ttyACM0", {
