@@ -10,7 +10,9 @@
 <div class="container"> 
   <form class="accordion" onsubmit="return false" id="main-form">
     <div id="generals"></div>
-    <div id="channels"></div>
+    <div id="analogs"></div>
+    <div id="digitals"></div>
+    <div id="modbuses"></div>
     <div id="times"></div>    
   </form>  
   <button type="button" class="btn btn-secondary" id="connect">Connect</button>
@@ -84,27 +86,206 @@
 </template>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#channel" aria-expanded="true" aria-controls="channel">
-  Channel
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#analog" aria-expanded="true" aria-controls="analog">
+  Analog
   </button> 
-  <div id="channel" class="collapse" data-parent="#main-form">
+  <div id="analog" class="collapse" data-parent="#main-form">
     <br>
     <div class="form-check">
       <label class="form-check-label">
         <input type="checkbox" class="form-check-input" name="enable">Enable
       </label>
-    </div>   
-    <label for="input">Input:</label>
-    <select class="form-control" name="input">
-    <option value = "0">Analog</option>
-    <option value = "1">Digital</option>
-    <option value = "2">Modbus</option>
+    </div>    
+    <label for="unit">Unit:</label>
+    <select class="form-control" name="unit">    
+    <option value = "2">Analog</option>
+    <option value = "100">Generic</option>
+    <option value = "101">Luminosity</option>    
+    <option value = "103">Temperature</option>
+    <option value = "104">R.Humidity</option>
+    <option value = "115">Barometric</option>
+    <option value = "116">Voltage</option>
+    <option value = "117">Current</option> 
+    <option value = "118">Frequency</option>
+    <option value = "120">Percentage</option>
+    <option value = "121">Altitude</option>
+    <option value = "128">Power</option>   
+    <option value = "130">Distance</option>
+    <option value = "131">Energy</option>
+    <option value = "132">Direction</option>
+    <option value = "133">Unixtime</option>                
     </select>
-    <label for="no">No:</label>
-    <select class="form-control" name="no">
-    <option value = "0">1</option>
-    <option value = "1">2</option>  
-    </select>   
+    <div class="form-check" name="div-scale">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="scale">Scale
+      </label>
+    </div>
+    <label for="in-min">In Min.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="in-min">
+    <label for="in-max">In Max.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="in-max">
+    <label for="out-min">Out Min.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="out-min">
+    <label for="out-max">Out Max.:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="out-max">    
+    <label for="low-set">Low Set:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="low-set">
+    <label for="high-set">High Set:</label>
+    <input type="number" required class="form-control" value="0" step="any" name="high-set">
+    <label for="delay">Delay (Miliseconds 0-65535):</label>
+    <input type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
+    <label for="change-relay-1">If Change Than Relay 1</label>
+    <select class="form-control" name="change-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="change-relay-2">If Change Than Relay 2</label>
+    <select class="form-control" name="change-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="change-uplink">If Change Than Uplink
+      </label>
+    </div>
+    <label for="falling-relay-1">If Falling Than Relay 1</label>
+    <select class="form-control" name="falling-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="falling-relay-2">If Falling Than Relay 2</label>
+    <select class="form-control" name="falling-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="falling-uplink">If Falling Than Uplink
+      </label>
+    </div> 
+    <label for="rising-relay-1">If Rising Than Relay 1</label>
+    <select class="form-control" name="rising-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="rising-relay-2">If Rising Than Relay 2</label>
+    <select class="form-control" name="rising-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="rising-uplink">If Rising Than Uplink
+      </label>
+    </div>
+    <br>
+  </div>
+</template>
+
+<template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#digital" aria-expanded="true" aria-controls="digital">
+  Digital
+  </button> 
+  <div id="digital" class="collapse" data-parent="#main-form">
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>     
+    <label for="unit">Unit:</label>
+    <select class="form-control" name="unit">    
+    <option value = "0">Digital</option>
+    <option value = "142">Switch</option>
+    <option value = "102">Presence</option>            
+    </select>    
+    <label for="delay">Delay (Miliseconds 0-65535):</label>
+    <input type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
+    <label for="change-relay-1">If Change Than Relay 1</label>
+    <select class="form-control" name="change-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="change-relay-2">If Change Than Relay 2</label>
+    <select class="form-control" name="change-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="change-uplink">If Change Than Uplink
+      </label>
+    </div>
+    <label for="falling-relay-1">If Falling Than Relay 1</label>
+    <select class="form-control" name="falling-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="falling-relay-2">If Falling Than Relay 2</label>
+    <select class="form-control" name="falling-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="falling-uplink">If Falling Than Uplink
+      </label>
+    </div> 
+    <label for="rising-relay-1">If Rising Than Relay 1</label>
+    <select class="form-control" name="rising-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>         
+    </select> 
+    <label for="rising-relay-2">If Rising Than Relay 2</label>
+    <select class="form-control" name="rising-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>
+      <option value = "3">Toggle</option>   
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="rising-uplink">If Rising Than Uplink
+      </label>
+    </div>
+    <br>
+  </div>
+</template>
+
+<template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#modbus" aria-expanded="true" aria-controls="modbus">
+  Modbus
+  </button> 
+  <div id="modbus" class="collapse" data-parent="#main-form">
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>     
     <label for="unit">Unit:</label>
     <select class="form-control" name="unit">    
     <option value = "2">Analog</option>

@@ -4,10 +4,14 @@
   document.addEventListener('DOMContentLoaded', event => {
     let mainForm = document.querySelector('#main-form');    
     let generalTemp = document.querySelectorAll('template')[0];
-    let channelTemp = document.querySelectorAll('template')[1];
-    let timeTemp = document.querySelectorAll('template')[2];
+    let analogTemp = document.querySelectorAll('template')[1];
+    let digitalTemp = document.querySelectorAll('template')[2];
+    let modbusTemp = document.querySelectorAll('template')[3];
+    let timeTemp = document.querySelectorAll('template')[4];
     let generalsDiv = document.querySelector("#generals");
-    let channelsDiv = document.querySelector("#channels");
+    let analogsDiv = document.querySelector("#analogs");
+    let digitalsDiv = document.querySelector("#digitals");
+    let modbusesDiv = document.querySelector("#modbuses");
     let timesDiv = document.querySelector("#times");           
     let connectBut = document.querySelector("#connect");    
     let timeBut = document.querySelector('#set-time');
@@ -16,10 +20,9 @@
     let port;
     let statusDisp = document.querySelector('#status');
 
-    let numCh = 12, numTm = 2, numGenBytes = 10, numChBytes = 51, numTmBytes = 5;
+    let numAn = 2, numDg = 2, numMo = 8, numTm = 2, numGenBytes = 10, numAnBytes = 38, numDgBytes = 13, numMoBytes = 49, numTmBytes = 5;
     let items;
-    let query;
-
+    
     function create() {
       statusDisp.textContent = "";
       let clon;
@@ -27,7 +30,7 @@
       let divs;
       let skipindex = [];      
       let id;  
-
+      // Generals
       clon = generalTemp.content.cloneNode(true);     
       generalsDiv.appendChild(clon);      
       skipindex = [4,6];      
@@ -40,32 +43,82 @@
           id++;
         }        
       }
-
-      for (let i = 0; i < numCh; i++) {
-        clon = channelTemp.content.cloneNode(true);        
-        channelsDiv.appendChild(clon); 
-      } 
-      buts = channelsDiv.querySelectorAll('button');
-      divs = channelsDiv.querySelectorAll('#channel');
-      for (let i = 0; i < numCh; i++) {
-        buts[i].setAttribute('data-target', '#channel' + i);
-        buts[i].setAttribute('aria-controls', 'channel' + i);
+      // Analogs
+      for (let i = 0; i < numAn; i++) {
+        clon = analogTemp.content.cloneNode(true);        
+        analogsDiv.appendChild(clon); 
+      }      
+      buts = analogsDiv.querySelectorAll('button');
+      divs = analogsDiv.querySelectorAll('#analog');
+      for (let i = 0; i < numAn; i++) {
+        buts[i].setAttribute('data-target', '#analog' + i);
+        buts[i].setAttribute('aria-controls', 'analog' + i);
         buts[i].innerText += ' ' + String(i + 1); 
-        divs[i].setAttribute('id', 'channel' + i);      
+        divs[i].setAttribute('id', 'analog' + i);      
       }            
       skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41];      
-      items = channelsDiv.querySelectorAll('input,select');
+      items = analogsDiv.querySelectorAll('input,select');
       id = 0;
-      for (let i = 0; i < numCh; i++) {
-        for (let j = 0; j < numChBytes; j++) {
+      for (let i = 0; i < numAn; i++) {
+        for (let j = 0; j < numAnBytes; j++) {
           if (skipindex.indexOf(j) < 0) {
-            items[id].id = '&ch' + ('00' +  String(j + i * numChBytes)).slice (-3);            
+            items[id].id = '&an' + ('00' +  String(j + i * numAnBytes)).slice (-3);            
             statusDisp.textContent += items[id].id + '\r\n';
             id++;
           }        
         } 
       } 
-
+      // Digitals
+      for (let i = 0; i < numDg; i++) {
+        clon = digitalTemp.content.cloneNode(true);        
+        digitalsDiv.appendChild(clon); 
+      }      
+      buts = digitalsDiv.querySelectorAll('button');
+      divs = digitalsDiv.querySelectorAll('#digital');
+      for (let i = 0; i < numDg; i++) {
+        buts[i].setAttribute('data-target', '#digital' + i);
+        buts[i].setAttribute('aria-controls', 'digital' + i);
+        buts[i].innerText += ' ' + String(i + 1); 
+        divs[i].setAttribute('id', 'digital' + i);      
+      }            
+      skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41];      
+      items = digitalsDiv.querySelectorAll('input,select');
+      id = 0;
+      for (let i = 0; i < numDg; i++) {
+        for (let j = 0; j < numDgBytes; j++) {
+          if (skipindex.indexOf(j) < 0) {
+            items[id].id = '&dg' + ('00' +  String(j + i * numDgBytes)).slice (-3);            
+            statusDisp.textContent += items[id].id + '\r\n';
+            id++;
+          }        
+        } 
+      } 
+      // Modbuses
+      for (let i = 0; i < numMo; i++) {
+        clon = modbusTemp.content.cloneNode(true);        
+        modbusesDiv.appendChild(clon); 
+      }      
+      buts = modbusesDiv.querySelectorAll('button');
+      divs = modbusesDiv.querySelectorAll('#modbus');
+      for (let i = 0; i < numMo; i++) {
+        buts[i].setAttribute('data-target', '#modbus' + i);
+        buts[i].setAttribute('aria-controls', 'modbus' + i);
+        buts[i].innerText += ' ' + String(i + 1); 
+        divs[i].setAttribute('id', 'modbus' + i);      
+      }            
+      skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41];      
+      items = modbusesDiv.querySelectorAll('input,select');
+      id = 0;
+      for (let i = 0; i < numMo; i++) {
+        for (let j = 0; j < numMoBytes; j++) {
+          if (skipindex.indexOf(j) < 0) {
+            items[id].id = '&mo' + ('00' +  String(j + i * numMoBytes)).slice (-3);            
+            statusDisp.textContent += items[id].id + '\r\n';
+            id++;
+          }        
+        } 
+      } 
+      // Times
       for (let i = 0; i < numTm; i++) {
         clon = timeTemp.content.cloneNode(true);        
         timesDiv.appendChild(clon); 
@@ -88,47 +141,7 @@
         } 
       }                  
     }
-    create();
-
-    channelsDiv.addEventListener('change', function(e) {             
-      if (e.target.name == 'input') { 
-        items = e.target.parentNode.querySelectorAll('*');
-        for (let i = 0; i < items.length; i++) {
-          items[i].hidden = false; 
-        }        
-        if (e.target.value == '0') {            
-          items = e.target.parentNode.querySelectorAll(
-            '[name="slave"],[name="function"],[name="register"],[name="type"],[name="quantity"],' +
-            '[name="decimal"],[name="coil-mask"],[name="discrete-mask"],' + 
-            '[for="slave"],[for="function"],[for="register"],[for="type"],[for="quantity"],' +
-            '[for="decimal"],[for="coil-mask"],[for="discrete-mask"]'
-          );
-          for (let i = 0; i < items.length; i++) {
-            items[i].hidden = true; 
-          }                                
-        } else if (e.target.value == '1') {
-          items = e.target.parentNode.querySelectorAll(
-            '[name="div-scale"],[name="in-min"],[name="in-max"],[name="out-min"],[name="out-max"],' +
-            '[name="low-set"],[name="high-set"],[name="slave"],[name="function"],[name="register"],' +
-            '[name="type"],[name="quantity"],[name="decimal"],[name="coil-mask"],[name="discrete-mask"],' +             
-            '[for="scale"],[for="in-min"],[for="in-max"],[for="out-min"],[for="out-max"],' +
-            '[for="low-set"],[for="high-set"],[for="slave"],[for="function"],[for="register"],' +
-            '[for="type"],[for="quantity"],[for="decimal"],[for="coil-mask"],[for="discrete-mask"]'
-          );
-          for (let i = 0; i < items.length; i++) {
-            items[i].hidden = true; 
-          } 
-        } else if (e.target.value == '2') {
-          items = e.target.parentNode.querySelectorAll(
-            '[name="no"],' +
-            '[for="no"]'
-          );
-          for (let i = 0; i < items.length; i++) {
-            items[i].hidden = true; 
-          }       
-        }                         
-      }
-    }); 
+    create();    
         
     saveBut.addEventListener('click', function() {
       //if (!port) {

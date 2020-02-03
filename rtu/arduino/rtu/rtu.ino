@@ -18,7 +18,7 @@ const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5,
 const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
 const uint8_t RANDOM_PIN        = A5;               // PF0/ADC0
 
-// ge[]
+// ge[] (10, 8)
 const uint8_t _lora_dr          = 0;          // 1 byte   select
 const uint8_t _lora_port        = 1;          // 1 byte   input
 const uint8_t _poll             = 2;          // 1 byte   input
@@ -28,8 +28,7 @@ const uint8_t _modbus_data_bit  = 7;          // 1 byte   select
 const uint8_t _modbus_stop_bit  = 8;          // 1 byte   select
 const uint8_t _modbus_par_bit   = 9;          // 1 byte   select
 
-/*
-// an[]
+// an[] (38, 19)
 const uint8_t i_enable          = 0;          // 1 byte   checkbox
 const uint8_t i_unit            = 1;          // 1 byte   select
 const uint8_t i_scale           = 2;          // 1 byte   checkbox
@@ -50,52 +49,50 @@ const uint8_t i_rising_relay_1  = 35;         // 1 bytes  select
 const uint8_t i_rising_relay_2  = 36;         // 1 bytes  select 
 const uint8_t i_rising_uplink   = 37;         // 1 bytes  checkbox
 
-// dg[]
+// dg[] (13, 12)
 const uint8_t i_enable          = 0;          // 1 byte   checkbox
-const uint8_t i_unit            = 3;          // 1 byte   select
-const uint8_t i_delay           = 40;         // 2 bytes  input
-const uint8_t i_change_relay_1  = 42;         // 1 bytes  select
-const uint8_t i_change_relay_2  = 43;         // 1 bytes  select 
-const uint8_t i_change_uplink   = 44;         // 1 bytes  checkbox
-const uint8_t i_falling_relay_1 = 45;         // 1 bytes  select
-const uint8_t i_falling_relay_2 = 46;         // 1 bytes  select 
-const uint8_t i_falling_uplink  = 47;         // 1 bytes  checkbox
-const uint8_t i_rising_relay_1  = 48;         // 1 bytes  select
-const uint8_t i_rising_relay_2  = 49;         // 1 bytes  select 
-const uint8_t i_rising_uplink   = 50;         // 1 bytes  checkbox
-*/
-// ch[]
-const uint8_t i_enable          = 0;          // 1 byte   checkbox
-const uint8_t i_input           = 1;          // 1 byte   select
-const uint8_t i_no              = 2;          // 1 byte   select
-const uint8_t i_unit            = 3;          // 1 byte   select
-const uint8_t i_scale           = 4;          // 1 byte   checkbox
-const uint8_t i_in_min          = 5;          // 4 bytes  input
-const uint8_t i_in_max          = 9;          // 4 bytes  input
-const uint8_t i_out_min         = 13;         // 4 bytes  input
-const uint8_t i_out_max         = 17;         // 4 bytes  input
-const uint8_t i_slave           = 21;         // 1 byte   input
-const uint8_t i_function        = 22;         // 1 byte   select
-const uint8_t i_register        = 23;         // 2 byte   input ??????????
-const uint8_t i_type            = 25;         // 1 byte   select
-const uint8_t i_quantity        = 26;         // 1 byte   input
-const uint8_t i_decimal         = 27;         // 1 byte   input
-const uint8_t i_coil_mask       = 28;         // 2 bytes  input
-const uint8_t i_discrete_mask   = 30;         // 2 bytes  input
-const uint8_t i_low_set         = 32;         // 4 bytes  input
-const uint8_t i_high_set        = 36;         // 4 bytes  input
-const uint8_t i_delay           = 40;         // 2 bytes  input
-const uint8_t i_change_relay_1  = 42;         // 1 bytes  select
-const uint8_t i_change_relay_2  = 43;         // 1 bytes  select 
-const uint8_t i_change_uplink   = 44;         // 1 bytes  checkbox
-const uint8_t i_falling_relay_1 = 45;         // 1 bytes  select
-const uint8_t i_falling_relay_2 = 46;         // 1 bytes  select 
-const uint8_t i_falling_uplink  = 47;         // 1 bytes  checkbox
-const uint8_t i_rising_relay_1  = 48;         // 1 bytes  select
-const uint8_t i_rising_relay_2  = 49;         // 1 bytes  select 
-const uint8_t i_rising_uplink   = 50;         // 1 bytes  checkbox
+const uint8_t i_unit            = 1;          // 1 byte   select
+const uint8_t i_delay           = 2;          // 2 bytes  input
+const uint8_t i_change_relay_1  = 4;          // 1 bytes  select
+const uint8_t i_change_relay_2  = 5;          // 1 bytes  select 
+const uint8_t i_change_uplink   = 6;          // 1 bytes  checkbox
+const uint8_t i_falling_relay_1 = 7;          // 1 bytes  select
+const uint8_t i_falling_relay_2 = 8;          // 1 bytes  select 
+const uint8_t i_falling_uplink  = 9;          // 1 bytes  checkbox
+const uint8_t i_rising_relay_1  = 10;         // 1 bytes  select
+const uint8_t i_rising_relay_2  = 11;         // 1 bytes  select 
+const uint8_t i_rising_uplink   = 12;         // 1 bytes  checkbox
 
-// tm[] (2*5 = 10 bytes) 0
+// mo[] (49, 27)
+const uint8_t i_enable          = 0;          // 1 byte   checkbox
+const uint8_t i_unit            = 1;          // 1 byte   select
+const uint8_t i_scale           = 2;          // 1 byte   checkbox
+const uint8_t i_in_min          = 3;          // 4 bytes  input
+const uint8_t i_in_max          = 7;          // 4 bytes  input
+const uint8_t i_out_min         = 11;         // 4 bytes  input
+const uint8_t i_out_max         = 15;         // 4 bytes  input
+const uint8_t i_slave           = 19;         // 1 byte   input
+const uint8_t i_function        = 20;         // 1 byte   select
+const uint8_t i_register        = 21;         // 2 byte   input ??????????
+const uint8_t i_type            = 23;         // 1 byte   select
+const uint8_t i_quantity        = 24;         // 1 byte   input
+const uint8_t i_decimal         = 25;         // 1 byte   input
+const uint8_t i_coil_mask       = 26;         // 2 bytes  input
+const uint8_t i_discrete_mask   = 28;         // 2 bytes  input
+const uint8_t i_low_set         = 30;         // 4 bytes  input
+const uint8_t i_high_set        = 34;         // 4 bytes  input
+const uint8_t i_delay           = 38;         // 2 bytes  input
+const uint8_t i_change_relay_1  = 40;         // 1 bytes  select
+const uint8_t i_change_relay_2  = 41;         // 1 bytes  select 
+const uint8_t i_change_uplink   = 42;         // 1 bytes  checkbox
+const uint8_t i_falling_relay_1 = 43;         // 1 bytes  select
+const uint8_t i_falling_relay_2 = 44;         // 1 bytes  select 
+const uint8_t i_falling_uplink  = 45;         // 1 bytes  checkbox
+const uint8_t i_rising_relay_1  = 46;         // 1 bytes  select
+const uint8_t i_rising_relay_2  = 47;         // 1 bytes  select 
+const uint8_t i_rising_uplink   = 48;         // 1 bytes  checkbox
+
+// tm[] (5, 5)
 //const uint8_t i_enable        = 0;          // 1 byte   checkbox
 const uint8_t i_hour            = 1;          // 1 byte
 const uint8_t i_minute          = 2;          // 1 byte
