@@ -53,10 +53,10 @@
       for (let i = 0; i < numAn; i++) {
         buts[i].setAttribute('data-target', '#analog' + i);
         buts[i].setAttribute('aria-controls', 'analog' + i);
-        buts[i].innerText += ' ' + String(i + 1); 
+        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'analog' + i);      
       }            
-      skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41];      
+      skipindex = [4,5,6,8,9,10,12,13,14,16,17,18,20,21,22,24,25,26,28];      
       items = analogsDiv.querySelectorAll('input,select');
       id = 0;
       for (let i = 0; i < numAn; i++) {
@@ -78,10 +78,10 @@
       for (let i = 0; i < numDg; i++) {
         buts[i].setAttribute('data-target', '#digital' + i);
         buts[i].setAttribute('aria-controls', 'digital' + i);
-        buts[i].innerText += ' ' + String(i + 1); 
+        buts[i].innerText = '(' + String(i + 3) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1);
         divs[i].setAttribute('id', 'digital' + i);      
       }            
-      skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41];      
+      skipindex = [3];      
       items = digitalsDiv.querySelectorAll('input,select');
       id = 0;
       for (let i = 0; i < numDg; i++) {
@@ -103,10 +103,10 @@
       for (let i = 0; i < numMo; i++) {
         buts[i].setAttribute('data-target', '#modbus' + i);
         buts[i].setAttribute('aria-controls', 'modbus' + i);
-        buts[i].innerText += ' ' + String(i + 1); 
+        buts[i].innerText = '(' + String(i + 5) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1);
         divs[i].setAttribute('id', 'modbus' + i);      
       }            
-      skipindex = [6,7,8,10,11,12,14,15,16,18,19,20,24,29,31,33,34,35,37,38,39,41];      
+      skipindex = [4,5,6,8,9,10,12,13,14,16,17,18,22,27,29,31,32,33,35,36,37,39];      
       items = modbusesDiv.querySelectorAll('input,select');
       id = 0;
       for (let i = 0; i < numMo; i++) {
