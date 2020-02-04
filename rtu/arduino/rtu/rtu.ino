@@ -93,14 +93,27 @@ const uint8_t tm_ub_minute      = 2;  // input
 const uint8_t tm_ub_time-relay_1= 3;  // select
 const uint8_t tm_ub_time-relay_2= 4;  // select
 
+struct Conf {
+  uint8_t   ge_ub[6];
+  uint16_t  ge_us[2];
+  uint8_t   an_ub[9];
+  uint16_t  an_us[1];
+  float     an_ff[6];
+  uint8_t   dg_ub[8];
+  uint16_t  dg_us[1];
+  uint8_t   mo_ub[13];
+  uint16_t  mo_us[6];
+  float     mo_ff[2];
+  uint8_t   tm_ub[5];     
+};
 
-
+struct Vl {
+  float     va_ff[2];
+  uint8_t   vd_ub[2]
+  
+};
 ///////////////////////////////////////////////////////////////////////////////////
-
-// tm[] 
-
-
-// vl[] (12*4 = 48 bytes)
+// val[] (12*4 = 48 bytes)
 const uint8_t _vl               = 0;          // 4 byte  
 
 
@@ -157,19 +170,7 @@ const uint8_t _channel          = 2;
 const uint8_t _relay            = 3;
 const uint8_t _uplink           = 5;
 
-struct Conf {
-  uint8_t lor_b[2];
-  uint16_t lor_w[1];
-  uint16_t rly_w[2];
-  uint8_t anc_b[2];
-  uint8_t anu_b[2];  
-  float ans_f[8];
-  float ana_f[8];
-  uint8_t dgc_b[2];
-  uint8_t dgu_b[2];
-  uint8_t tma_b[4];    
-  uint8_t alr_b[594];   
-};
+
 
 struct Alarm {
   uint8_t inp;

@@ -90,7 +90,7 @@
         items = mainForm.querySelectorAll('#x' + datas[i]);        
         for (let j = 0; j < items.length; j++) {
           items[j].id += ('0' + j).slice(-2);
-          statusDisp.textContent += items[j].id + '\r\n';
+          //statusDisp.textContent += items[j].id + '\r\n';
         }        
       }
     }
@@ -125,7 +125,7 @@
         }
         config += 'xsave' + '\r\n';                                 
       }            
-      statusDisp.textContent = config;
+      //statusDisp.textContent = config;
       //port.send(config);      
     });
 
