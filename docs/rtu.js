@@ -21,16 +21,13 @@
     let statusDisp = document.querySelector('#status');
 
     let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
-    let numgeub = 6, numgeus = 2;
     let items;
-    let item;
-    
+        
     function create() {
       statusDisp.textContent = "";
       let clon;
       let buts;
-      let divs;
-              
+      let divs;              
       // Generals
       clon = generalTemp.content.cloneNode(true);     
       generalsDiv.appendChild(clon);       
@@ -86,7 +83,7 @@
         buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'time' + i);      
       }
-      
+      // make id      
       let datas = 
       ['ge_ub','ge_us','an_ub','an_us','an_ff','dg_ub','dg_us','mo_ub','mo_us','mo_ff','tm_ub']; 
       for (let i = 0; i < datas.length; i++) {        
@@ -96,125 +93,6 @@
           statusDisp.textContent += items[j].id + '\r\n';
         }        
       }
-
-      /*    
-      for (let i = 1; i < numAn; i++) {
-        item = analogsDiv.querySelector('#analog' + i);
-        
-        
-        items = item.querySelectorAll('[id^="xan_ub"]');
-        statusDisp.textContent += items.length + '\r\n';
-        
-        for (let j = 0; j < items.length; j++) {
-          let id = Number(items[j].id.slice(-2)) + i * numgeub;
-          items[j].id = items[j].id.slice(0, 6) + id;
-          statusDisp.textContent += 'qqqqq' + '\r\n'; 
-        }
-        
-           
-      } 
-      */
-
-      //
-      /*  
-      for (let j = 0; j < items.length; j++) {
-        //let id = Number(items[j].id.slice(-2)) + i * numgeub;
-        //items[j].id = items[j].id.slice(0, 6) + id;
-        statusDisp.textContent += 'hrrrrrrrr' + '\r\n';
-      }
-      */
-      /*
-      items = clon.querySelectorAll('[id^="xge_us"]');
-      for (let j = 0; j < items.length; j++) {
-        let id = Number(items[j].id.slice(-2)) + i * numgeus;
-        items[j].id = items[j].id.slice(0, 6) + id;
-        statusDisp.textContent += items[j].id + '\r\n';
-      }
-      */
-      /*           
-      items = analogsDiv.querySelectorAll('input,select');
-      for (let i = 0; i < numAn; i++) {
-        
-          
-            items[id].id = 'xan' + ('00' +  String(j + i * numAnBytes)).slice (-3);            
-            statusDisp.textContent += items[id].id + '\r\n';
-            id++;
-                 
-        
-      } 
-      // Digitals
-      for (let i = 0; i < numDg; i++) {
-        clon = digitalTemp.content.cloneNode(true);        
-        digitalsDiv.appendChild(clon); 
-      }      
-      buts = digitalsDiv.querySelectorAll('button');
-      divs = digitalsDiv.querySelectorAll('#digital');
-      for (let i = 0; i < numDg; i++) {
-        buts[i].setAttribute('data-target', '#digital' + i);
-        buts[i].setAttribute('aria-controls', 'digital' + i);
-        buts[i].innerText = '(' + String(i + 3) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1);
-        divs[i].setAttribute('id', 'digital' + i);      
-      }            
-      skipindex = [3];      
-      items = digitalsDiv.querySelectorAll('input,select');
-      id = 0;
-      for (let i = 0; i < numDg; i++) {
-        for (let j = 0; j < numDgBytes; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            items[id].id = 'xdg' + ('00' +  String(j + i * numDgBytes)).slice (-3);            
-            statusDisp.textContent += items[id].id + '\r\n';
-            id++;
-          }        
-        } 
-      } 
-      // Modbuses
-      for (let i = 0; i < numMo; i++) {
-        clon = modbusTemp.content.cloneNode(true);        
-        modbusesDiv.appendChild(clon); 
-      }      
-      buts = modbusesDiv.querySelectorAll('button');
-      divs = modbusesDiv.querySelectorAll('#modbus');
-      for (let i = 0; i < numMo; i++) {
-        buts[i].setAttribute('data-target', '#modbus' + i);
-        buts[i].setAttribute('aria-controls', 'modbus' + i);
-        buts[i].innerText = '(' + String(i + 5) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1);
-        divs[i].setAttribute('id', 'modbus' + i);      
-      }            
-      skipindex = [5,10,12,14,15,16,18,19,20,22];      
-      items = modbusesDiv.querySelectorAll('input,select');
-      id = 0;
-      for (let i = 0; i < numMo; i++) {
-        for (let j = 0; j < numMoBytes; j++) {
-          if (skipindex.indexOf(j) < 0) {
-            items[id].id = 'xmo' + ('00' +  String(j + i * numMoBytes)).slice (-3);            
-            statusDisp.textContent += items[id].id + '\r\n';
-            id++;
-          }        
-        } 
-      } 
-      // Times
-      for (let i = 0; i < numTm; i++) {
-        clon = timeTemp.content.cloneNode(true);        
-        timesDiv.appendChild(clon); 
-      } 
-      buts = timesDiv.querySelectorAll('button');
-      divs = timesDiv.querySelectorAll('#time');
-      for (let i = 0; i < numTm; i++) {
-        buts[i].setAttribute('data-target', '#time' + i);
-        buts[i].setAttribute('aria-controls', 'time' + i);
-        buts[i].innerText += ' ' + String(i + 1);
-        divs[i].setAttribute('id', 'time' + i);      
-      }           
-      items = timesDiv.querySelectorAll('input,select');
-      id = 0;
-      for (let i = 0; i < numTm; i++) {        
-        for (let j = 0; j < numTmBytes; j++) {         
-          items[id].id = 'xtm' + ('00' +  String(j + i * numTmBytes)).slice (-3);            
-          statusDisp.textContent += items[id].id + '\r\n';
-          id++;                 
-        } 
-      } 
-      */                 
     }
     create();    
         
@@ -231,8 +109,14 @@
           if (items[i].id[0] == 'x') {             
             if (items[i].type === 'checkbox') {
               val = items[i].checked ? 1 : 0; 
-            } else if (items[i].name == 'coil-mask') {
-              val = parseInt(items[i].value, 2);           
+            } else if (items[i].name == 'coils-fall') {
+              val = parseInt(items[i].value, 2);
+            } else if (items[i].name == 'coils-rise') {
+              val = parseInt(items[i].value, 2);  
+            } else if (items[i].name == 'discs-fall') {
+              val = parseInt(items[i].value, 2);
+            } else if (items[i].name == 'discs-rise') {
+              val = parseInt(items[i].value, 2);         
             } else {
               val = Number(items[i].value);
             }
