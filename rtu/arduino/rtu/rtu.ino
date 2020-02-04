@@ -77,14 +77,10 @@ const uint8_t mo_ub_rise_relay_2= 11; // select
 const uint8_t mo_ub_rise_report = 12; // checkbox
 // uint16_t mo_us[]
 const uint8_t mo_us_register    = 0;  // input
-const uint8_t mo_us_coils_fall  = 1;  // input
-const uint8_t mo_us_coils_rise  = 2;  // input
-const uint8_t mo_us_discs_fall  = 3;  // input
-const uint8_t mo_us_discs_rise  = 4;  // input
-const uint8_t mo_us_delay       = 5;  // input
-// float mo_ff[]
-const uint8_t mo_ff_low_set     = 0;  // input
-const uint8_t mo_ff_high_set    = 1;  // input
+const uint8_t mo_us_delay       = 1;  // input
+// float mo_sl[]
+const uint8_t mo_sl_low_set     = 0;  // input
+const uint8_t mo_sl_high_set    = 1;  // input
 
 // uint8_t tm_ub[]
 const uint8_t tm_ub_enable      = 0;  // checkbox
@@ -102,8 +98,8 @@ struct Conf {
   uint8_t   dg_ub[8];
   uint16_t  dg_us[1];
   uint8_t   mo_ub[13];
-  uint16_t  mo_us[6];
-  float     mo_ff[2];
+  uint16_t  mo_us[2];
+  int32_t   mo_sl[2];
   uint8_t   tm_ub[5];     
 };
 
