@@ -78,9 +78,9 @@ const uint8_t mo_ub_rise_report = 12; // checkbox
 // uint16_t mo_us[]
 const uint8_t mo_us_register    = 0;  // input
 const uint8_t mo_us_delay       = 1;  // input
-// float mo_sl[]
-const uint8_t mo_sl_low_set     = 0;  // input
-const uint8_t mo_sl_high_set    = 1;  // input
+// int32_t mo_ul[]
+const uint8_t mo_ul_low_set     = 0;  // input
+const uint8_t mo_ul_high_set    = 1;  // input
 
 // uint8_t tm_ub[]
 const uint8_t tm_ub_enable      = 0;  // checkbox
@@ -92,20 +92,21 @@ const uint8_t tm_ub_time-relay_2= 4;  // select
 struct Conf {
   uint8_t   ge_ub[6];
   uint16_t  ge_us[2];
-  uint8_t   an_ub[9];
-  uint16_t  an_us[1];
-  float     an_ff[6];
-  uint8_t   dg_ub[8];
-  uint16_t  dg_us[1];
-  uint8_t   mo_ub[13];
-  uint16_t  mo_us[2];
-  int32_t   mo_sl[2];
-  uint8_t   tm_ub[5];     
+  uint8_t   an_ub[18];
+  uint16_t  an_us[2];
+  float     an_ff[12];
+  uint8_t   dg_ub[16];
+  uint16_t  dg_us[2];
+  uint8_t   mo_ub[104];
+  uint16_t  mo_us[16];
+  uint32_t  mo_ul[2];
+  uint8_t   tm_ub[10];     
 };
 
-struct Vl {
-  float     va_ff[2];
-  uint8_t   vd_ub[2]
+struct Va {
+  float     an_ff[2];
+  uint8_t   dg_ub[2];
+  uint32_t  mo_ul[8]
   
 };
 ///////////////////////////////////////////////////////////////////////////////////
