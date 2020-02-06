@@ -106,9 +106,16 @@ struct Conf {
 struct Va {
   float     an_ff[2];
   uint8_t   dg_ub[2];
-  uint32_t  mo_ul[8]
-  
+  uint32_t  mo_ul[8];  
 };
+
+union ul_ff {
+  float ul;
+  uint32_t ff;
+};
+// string.toFloat()
+// atoul()
+
 ///////////////////////////////////////////////////////////////////////////////////
 // val[] (12*4 = 48 bytes)
 const uint8_t _vl               = 0;          // 4 byte  

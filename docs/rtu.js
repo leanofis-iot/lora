@@ -85,12 +85,12 @@
       }
       // make id      
       let datas = 
-      ['ge_ub','ge_us','an_ub','an_us','an_ff','dg_ub','dg_us','mo_ub','mo_us','mo_ul','tm_ub']; 
+      ['ge_u08','ge_u16','an_u08','an_u16','an_f32','dg_u08','dg_u16','mo_u08','mo_u16','mo_u32','tm_u08']; 
       for (let i = 0; i < datas.length; i++) {        
         items = mainForm.querySelectorAll('#x' + datas[i]);        
         for (let j = 0; j < items.length; j++) {
           items[j].id += ('0' + j).slice(-2);
-          //statusDisp.textContent += items[j].id + '\r\n';
+          statusDisp.textContent += items[j].id + '\r\n';
         }        
       }
     }
@@ -125,7 +125,7 @@
         }
         config += 'xsave' + '\r\n';                                 
       }            
-      //statusDisp.textContent = config;
+      statusDisp.textContent = config;
       //port.send(config);      
     });
 
