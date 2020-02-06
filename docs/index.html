@@ -288,9 +288,9 @@
     <input id="xmo_u08" type="number" required class="form-control" value="1" min="1" max="247" step="1" maxlength ="3" name="slave">
     <label for="function">Function:</label>
     <select id="xmo_u08" class="form-control" name="function">
-      <option value = "1">Discrete</option>
-      <option value = "2">Holding</option>
-      <option value = "3">Input</option>     
+      <option value = "2">Discrete</option>            
+      <option value = "3">Holding</option> 
+      <option value = "4">Input</option>          
     </select> 
     <label for="register">Register Address:</label>
     <input id="xmo_u16" type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="register">
@@ -302,8 +302,6 @@
       <option value = "3">int32</option>
       <option value = "4">float32</option>     
     </select>
-    <label for="quantity">Quantity:</label>
-    <input id="xmo_u08" type="number" required disabled class="form-control" value="1" name="quantity">
     <label for="decimal">Decimal Places:</label>
     <select id="xmo_u08" class="form-control" name="decimal">
       <option value = "0">0</option>
@@ -314,9 +312,9 @@
       <option value = "5">5</option>     
     </select>     
     <label for="low-set">Low Set:</label>
-    <input id="xmo_u32"type="number" required class="form-control" value="0" step="any" name="low-set">
+    <input id="xmo_n32"type="number" required class="form-control" value="0" step="any" name="low-set">
     <label for="high-set">High Set:</label>
-    <input id="xmo_u32"type="number" required class="form-control" value="0" step="any" name="high-set">
+    <input id="xmo_n32"type="number" required class="form-control" value="0" step="any" name="high-set">
     <label for="delay">Delay (Miliseconds 0-65535):</label>
     <input id="xmo_u16" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="delay">
     <br>

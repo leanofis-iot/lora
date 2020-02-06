@@ -6,6 +6,7 @@
 #include <INA226.h>
 #include <DS3232RTC.h>
 #include <WebUSB.h>
+#include <SensorModbusMaster.h>
 
 const uint8_t BUTTON_PIN          = 7;                // PE6/AIN0/INT6
 const uint8_t DS_INT_PIN          = SCK;              // PB1/SCLK/PCINT1
@@ -67,20 +68,19 @@ const uint8_t mo_u08_unit         = 1;  // select
 const uint8_t mo_u08_slave        = 2;  // input
 const uint8_t mo_u08_function     = 3;  // select
 const uint8_t mo_u08_type         = 4;  // select
-const uint8_t mo_u08_quantity     = 5;  // input
-const uint8_t mo_u08_decimal      = 6;  // input
-const uint8_t mo_u08_fall_relay_1 = 7;  // select
-const uint8_t mo_u08_fall_relay_2 = 8;  // select 
-const uint8_t mo_u08_fall_report  = 9;  // checkbox
-const uint8_t mo_u08_rise_relay_1 = 10; // select
-const uint8_t mo_u08_rise_relay_2 = 11; // select 
-const uint8_t mo_u08_rise_report  = 12; // checkbox
+const uint8_t mo_u08_decimal      = 5;  // input
+const uint8_t mo_u08_fall_relay_1 = 6;  // select
+const uint8_t mo_u08_fall_relay_2 = 7;  // select 
+const uint8_t mo_u08_fall_report  = 8;  // checkbox
+const uint8_t mo_u08_rise_relay_1 = 9; // select
+const uint8_t mo_u08_rise_relay_2 = 10; // select 
+const uint8_t mo_u08_rise_report  = 11; // checkbox
 // uint16_t mo_u16[]
 const uint8_t mo_u16_register     = 0;  // input
 const uint8_t mo_u16_delay        = 1;  // input
-// int32_t mo_u32[]
-const uint8_t mo_u32_low_set      = 0;  // input
-const uint8_t mo_u32_high_set     = 1;  // input
+// mo_n32[]
+const uint8_t mo_n32_low_set      = 0;  // input
+const uint8_t mo_n32_high_set     = 1;  // input
 
 // uint8_t tm_u08[]
 const uint8_t tm_u08_enable       = 0;  // checkbox
@@ -99,7 +99,8 @@ struct Conf {
   uint16_t  dg_u16[2];
   uint8_t   mo_u08[104];
   uint16_t  mo_u16[16];
-  uint32_t  mo_u32[2];
+  uint32_t  mo_u32[16];
+  uint32_t  mo_f32[16];
   uint8_t   tm_u08[10];     
 };
 Conf conf;
@@ -107,21 +108,45 @@ Conf conf;
 struct Va {
   float     an_f32[2];
   uint8_t   dg_u08[2];
-  uint32_t  mo_u32[8];  
+  uint32_t  mo_u32[8];
+  float     mo_f32[8];  
 };
 Va va;
 
-union F32_U32 {
-  uint32_t u32;  
-  float f32;
-};
-F32_U32 f32_u32;
+const uint8_t u16                 = 0;
+const uint8_t i16                 = 1;
+const uint8_t u32                 = 2;
+const uint8_t i32                 = 3;
+const uint8_t f32                 = 4;
 
-union U08_U32 {
-  uint32_t u32;  
-  uint8_t u08[4];
-};
-U08_U32 u08_u32;
+
+
+void readModbus() {  
+  for (uint8_t ch = 0; ch < 8; ch++) {         
+    if (conf.mo_u08[mo_u08_enable + ch * sizeof(conf.mo_u08)]) {      
+      modbus.begin(mo_u08_slave + ch * sizeof(conf.mo_u08), modbusSerial, RS_DIR_PIN);
+      const uint8_t _type = mo_u08_type + ch * sizeof(conf.mo_u08);
+      const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08);
+      const uint8_t _register = mo_u08_register + ch * sizeof(conf.mo_u08);      
+      if (conf.mo_u08[_type] == u16) {        
+        va.mo_u32[ch] = modbus.uint16FromRegister(_function, _register), bigEndian);                
+      } else if (conf.mo_u08[_type] == i16) {
+        va.mo_u32[ch] = modbus.int16FromRegister(_function, _register), bigEndian);                
+      } else if if (conf.mo_u08[_type] == u32) {
+        va.mo_u32[ch] = modbus.uint32FromRegister(_function, _register), bigEndian);
+      } else if if (conf.mo_u08[_type] == i32) {
+        va.mo_u32[ch] = modbus.int32FromRegister(_function, _register), bigEndian);
+      } else if if (conf.mo_u08[_type] == f32) { 
+        va.mo_f32[ch] = modbus.float32FromRegister(_function, _register), bigEndian);     
+      }      
+    }    
+  }  
+}
+
+char buf[15];
+str.toCharArray(buf, sizeof(buf));
+float f = atof(buf);
+int32_t i = atol(buf);
 
 // string.toFloat()
 // atoul()
@@ -203,8 +228,9 @@ tmElements_t tm;
 uint8_t alarms;
 
 
-Alarm alr;
 AltSoftSerial rakSerial;
+HardwareSerial* modbusSerial = &Serial1;
+modbusMaster modbus;
 CayenneLPP lpp(51);
 INA226 ina;
 //WebUSB WebUSBSerial(1 /* https:// */, "leanofis-iot.github.io/lora");
@@ -213,14 +239,15 @@ INA226 ina;
 void setup() {
   wdt_enable(WDTO_8S);
   if (USBSTA >> VBUS & 1) {    
-    Serial.begin(115200);
+    Serial.begin(115200);    
     while (!Serial) {
       wdt_reset();
     }
   }    
   setPins();
   rakSerial.begin(9600);
-  loadConf();  
+  loadConf();
+  Serial1.begin(conf.ge_u16[ge_u16_mod_baud, SERIAL_8N1);  
   setINA226();
   setDigAlr();
   setDS3231M();

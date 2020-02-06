@@ -85,7 +85,7 @@
       }
       // make id      
       let datas = 
-      ['ge_u08','ge_u16','an_u08','an_u16','an_f32','dg_u08','dg_u16','mo_u08','mo_u16','mo_u32','tm_u08']; 
+      ['ge_u08','ge_u16','an_u08','an_u16','an_f32','dg_u08','dg_u16','mo_u08','mo_u16','mo_n32','tm_u08']; 
       for (let i = 0; i < datas.length; i++) {        
         items = mainForm.querySelectorAll('#x' + datas[i]);        
         for (let j = 0; j < items.length; j++) {
