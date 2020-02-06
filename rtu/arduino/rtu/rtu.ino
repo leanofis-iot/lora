@@ -119,25 +119,42 @@ const uint8_t u32                 = 2;
 const uint8_t i32                 = 3;
 const uint8_t f32                 = 4;
 
-
-
+void readAnalog() {
+  // wire.end(); 
+  for (uint8_t ch = 0; ch < 2; ch++) {    
+    while (INA_ALR_PIN[ch]);
+    ina.begin(0x40 + ch);
+    va.an_f32[ch] = ina.readShuntCurrent();
+    if (ina.isAlert());
+    const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08];
+    if (conf.an_u08[_enable]) {
+      const uint8_t _in_min = an_f32_in_min + ch * sizeof(conf.an_f32];
+      const uint8_t _in_max = an_f32_in_max + ch * sizeof(conf.an_f32];
+      const uint8_t _out_min = an_f32_out_min + ch * sizeof(conf.an_f32];
+      const uint8_t _out_max = an_f32_out_max + ch * sizeof(conf.an_f32];
+      va.an_f32[ch] = (va.an_f32[ch] - conf[_in_min]) * (conf[_out_max] - conf[_out_min)] / (conf[_in_max] - conf[_in_min]) + conf[_out_min];      
+    }              
+  }    
+}
 void readModbus() {  
-  for (uint8_t ch = 0; ch < 8; ch++) {         
-    if (conf.mo_u08[mo_u08_enable + ch * sizeof(conf.mo_u08)]) {      
-      modbus.begin(mo_u08_slave + ch * sizeof(conf.mo_u08), modbusSerial, RS_DIR_PIN);
+  for (uint8_t ch = 0; ch < 8; ch++) {
+    const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08);        
+    if (conf.mo_u08[_enable]) { 
+      const uint8_t _slave = mo_u08_slave + ch * sizeof(conf.mo_u08);     
+      modbus.begin(conf.mo_u08[_slave], modbusSerial, RS_DIR_PIN);
       const uint8_t _type = mo_u08_type + ch * sizeof(conf.mo_u08);
       const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08);
-      const uint8_t _register = mo_u08_register + ch * sizeof(conf.mo_u08);      
+      const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16);      
       if (conf.mo_u08[_type] == u16) {        
-        va.mo_u32[ch] = modbus.uint16FromRegister(_function, _register), bigEndian);                
+        va.mo_u32[ch] = modbus.uint16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
       } else if (conf.mo_u08[_type] == i16) {
-        va.mo_u32[ch] = modbus.int16FromRegister(_function, _register), bigEndian);                
+        va.mo_u32[ch] = modbus.int16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register]), bigEndian);                
       } else if if (conf.mo_u08[_type] == u32) {
-        va.mo_u32[ch] = modbus.uint32FromRegister(_function, _register), bigEndian);
+        va.mo_u32[ch] = modbus.uint32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
       } else if if (conf.mo_u08[_type] == i32) {
-        va.mo_u32[ch] = modbus.int32FromRegister(_function, _register), bigEndian);
+        va.mo_u32[ch] = modbus.int32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
       } else if if (conf.mo_u08[_type] == f32) { 
-        va.mo_f32[ch] = modbus.float32FromRegister(_function, _register), bigEndian);     
+        va.mo_f32[ch] = modbus.float32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);     
       }      
     }    
   }  
@@ -149,7 +166,7 @@ float f = atof(buf);
 int32_t i = atol(buf);
 
 // string.toFloat()
-// atoul()
+// atol() atof()
 
 ///////////////////////////////////////////////////////////////////////////////////
 // val[] (12*4 = 48 bytes)
@@ -211,11 +228,7 @@ const uint8_t _uplink           = 5;
 
 
 
-struct Alarm {
-  uint8_t inp;
-  uint8_t lev;
-  uint8_t chn;
-};
+
 
 float Amp, Ang[2];
 uint8_t hysPrev[2] = {3, 3};
@@ -256,11 +269,9 @@ void setup() {
   tmrMillis = millis();
 }
 void loop() {
-  for (uint8_t ch = 0; ch < 2; ch++) {    
-    while (INA_ALR_PIN[ch]);
-    readAng(ch);
-    calcAngAlr(ch);    
-  }  
+
+  readAnalog();
+   
   if (!DS_INT_PIN) {    
     if (dsIntPinPrev) {
       dsIntPinPrev = LOW;
@@ -277,14 +288,7 @@ void loop() {
   chkSerial();
   wdt_reset();      
 }
-void readAng(const uint8_t ch) {
-  // wire.end();   
-  ina.begin(0x40 + ch);
-  Amp = ina.readShuntCurrent();
-  if (ina.isAlert()) {}
-  Ang[ch] = (Amp - conf.ans_f[_amp_min + ch * 8]) * (conf.ans_f[_max + ch * 8] - conf.ans_f[_min + ch * 8]) / (conf.ans_f[_amp_max + ch * 8] - conf.ans_f[_amp_min + ch * 8]) + conf.ans_f[_min + ch * 8];  
-  //(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;  
-}
+
 void calcAngAlr(const uint8_t ch) {  
   if (Ang[ch] <= conf.ana_f[_low_set + ch * 8]) {
     if (hysPrev[ch] > 2) {
