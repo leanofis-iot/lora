@@ -7,112 +7,122 @@
 #include <DS3232RTC.h>
 #include <WebUSB.h>
 
-const uint8_t BUTTON_PIN        = 7;                // PE6/AIN0/INT6
-const uint8_t DS_INT_PIN        = SCK;              // PB1/SCLK/PCINT1
-const uint8_t INA_ALR_PIN[2]    = {MOSI, MISO};     // PB2/MOSI/PCINT2, PB3/MISO/PCINT3 
-const uint8_t ACT_LED_PIN       = 11;               // PB7/PCINT7
-const uint8_t RS_DIR_PIN        = 4;                // PD4/ADC8
-const uint8_t DIG_PIN[2]        = {9, 8};           // PB5/ADC12/PCINT5, PB4/ADC11/PCINT4
-const uint8_t RAK_RES_PIN       = 10;               // PB6/ADC13/PCINT6
-const uint8_t RELAY_PIN[4]      = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
-const uint8_t JOIN_LED_PIN      = A4;               // PF1/ADC1
-const uint8_t RANDOM_PIN        = A5;               // PF0/ADC0
+const uint8_t BUTTON_PIN          = 7;                // PE6/AIN0/INT6
+const uint8_t DS_INT_PIN          = SCK;              // PB1/SCLK/PCINT1
+const uint8_t INA_ALR_PIN[2]      = {MOSI, MISO};     // PB2/MOSI/PCINT2, PB3/MISO/PCINT3 
+const uint8_t ACT_LED_PIN         = 11;               // PB7/PCINT7
+const uint8_t RS_DIR_PIN          = 4;                // PD4/ADC8
+const uint8_t DIG_PIN[2]          = {9, 8};           // PB5/ADC12/PCINT5, PB4/ADC11/PCINT4
+const uint8_t RAK_RES_PIN         = 10;               // PB6/ADC13/PCINT6
+const uint8_t RELAY_PIN[4]        = {A3, A2, A1, A0}; // (S)PF4/ADC4, (R)PF5/ADC5, (S)PF6/ADC6, (R)PF7/ADC7 
+const uint8_t JOIN_LED_PIN        = A4;               // PF1/ADC1
+const uint8_t RANDOM_PIN          = A5;               // PF0/ADC0
 
-// uint8_t ge_ub[] 
-const uint8_t ge_ub_lora_dr     = 0;  // select
-const uint8_t ge_ub_lora_port   = 1;  // input
-const uint8_t ge_ub_poll        = 2;  // input
-const uint8_t ge_ub_mod_data_bit= 3;  // select
-const uint8_t ge_ub_mod_stop_bit= 4;  // select
-const uint8_t ge_ub_mod_par_bit = 5;  // select
-// uint16_t ge_us[]
-const uint8_t ge_us_report      = 0;  // input
-const uint8_t ge_us_mod_baud    = 1;  // select
+// uint8_t ge_u08[] 
+const uint8_t ge_u08_lora_dr      = 0;  // select
+const uint8_t ge_u08_lora_port    = 1;  // input
+const uint8_t ge_u08_poll         = 2;  // input
+const uint8_t ge_u08_mod_data_bit = 3;  // select
+const uint8_t ge_u08_mod_stop_bit = 4;  // select
+const uint8_t ge_u08_mod_par_bit  = 5;  // select
+// uint16_t ge_u16[]
+const uint8_t ge_u16_report       = 0;  // input
+const uint8_t ge_u16_mod_baud     = 1;  // select 
 
-// uint8_t an_ub[]
-const uint8_t an_ub_enable      = 0;  // checkbox
-const uint8_t an_ub_unit        = 1;  // select
-const uint8_t an_ub_scale       = 2;  // checkbox
-const uint8_t an_ub_fall_relay_1= 3;  // select
-const uint8_t an_ub_fall_relay_2= 4;  // select 
-const uint8_t an_ub_fall_report = 5;  // checkbox
-const uint8_t an_ub_rise_relay_1= 6;  // select
-const uint8_t an_ub_rise_relay_2= 7;  // select 
-const uint8_t an_ub_rise_report = 8;  // checkbox
-// uint16_t an_us[]
-const uint8_t an_us_delay       = 0;  // input
-// float an_ff[]
-const uint8_t an_ff_in_min      = 0;  // input
-const uint8_t an_ff_in_max      = 1;  // input
-const uint8_t an_ff_out_min     = 2;  // input
-const uint8_t an_ff_out_max     = 3;  // input
-const uint8_t an_ff_low_set     = 4;  // input
-const uint8_t an_ff_high_set    = 5;  // input
+// uint8_t an_u08[]
+const uint8_t an_u08_enable       = 0;  // checkbox
+const uint8_t an_u08_unit         = 1;  // select
+const uint8_t an_u08_scale        = 2;  // checkbox
+const uint8_t an_u08_fall_relay_1 = 3;  // select
+const uint8_t an_u08_fall_relay_2 = 4;  // select 
+const uint8_t an_u08_fall_report  = 5;  // checkbox
+const uint8_t an_u08_rise_relay_1 = 6;  // select
+const uint8_t an_u08_rise_relay_2 = 7;  // select 
+const uint8_t an_u08_rise_report  = 8;  // checkbox
+// uint16_t an_u16[]
+const uint8_t an_u16_delay        = 0;  // input
+// float an_f32[]
+const uint8_t an_f32_in_min       = 0;  // input
+const uint8_t an_f32_in_max       = 1;  // input
+const uint8_t an_f32_out_min      = 2;  // input
+const uint8_t an_f32_out_max      = 3;  // input
+const uint8_t an_f32_low_set      = 4;  // input
+const uint8_t an_f32_high_set     = 5;  // input
 
-// uint8_t dg_ub[]
-const uint8_t dg_ub_enable      = 0;  // checkbox
-const uint8_t dg_ub_unit        = 1;  // select
-const uint8_t dg_ub_fall_relay_1= 2;  // select
-const uint8_t dg_ub_fall_relay_2= 3;  // select 
-const uint8_t dg_ub_fall_report = 4;  // checkbox
-const uint8_t dg_ub_rise_relay_1= 5;  // select
-const uint8_t dg_ub_rise_relay_2= 6;  // select 
-const uint8_t dg_ub_rise_report = 7;  // checkbox
-// uint16_t dg_us[]
-const uint8_t dg_us_delay       = 0;  // input
+// uint8_t dg_u08[]
+const uint8_t dg_u08_enable       = 0;  // checkbox
+const uint8_t dg_u08_unit         = 1;  // select
+const uint8_t dg_u08_fall_relay_1 = 2;  // select
+const uint8_t dg_u08_fall_relay_2 = 3;  // select 
+const uint8_t dg_u08_fall_report  = 4;  // checkbox
+const uint8_t dg_u08_rise_relay_1 = 5;  // select
+const uint8_t dg_u08_rise_relay_2 = 6;  // select 
+const uint8_t dg_u08_rise_report  = 7;  // checkbox
+// uint16_t dg_u16[]
+const uint8_t dg_u16_delay        = 0;  // input
 
-// uint8_t mo_ub[]
-const uint8_t mo_ub_enable      = 0;  // checkbox
-const uint8_t mo_ub_unit        = 1;  // select
-const uint8_t mo_ub_slave       = 2;  // input
-const uint8_t mo_ub_function    = 3;  // select
-const uint8_t mo_ub_type        = 4;  // select
-const uint8_t mo_ub_quantity    = 5;  // input
-const uint8_t mo_ub_decimal     = 6;  // input
-const uint8_t mo_ub_fall_relay_1= 7;  // select
-const uint8_t mo_ub_fall_relay_2= 8;  // select 
-const uint8_t mo_ub_fall_report = 9;  // checkbox
-const uint8_t mo_ub_rise_relay_1= 10; // select
-const uint8_t mo_ub_rise_relay_2= 11; // select 
-const uint8_t mo_ub_rise_report = 12; // checkbox
-// uint16_t mo_us[]
-const uint8_t mo_us_register    = 0;  // input
-const uint8_t mo_us_delay       = 1;  // input
-// int32_t mo_ul[]
-const uint8_t mo_ul_low_set     = 0;  // input
-const uint8_t mo_ul_high_set    = 1;  // input
+// uint8_t mo_u08[]
+const uint8_t mo_u08_enable       = 0;  // checkbox
+const uint8_t mo_u08_unit         = 1;  // select
+const uint8_t mo_u08_slave        = 2;  // input
+const uint8_t mo_u08_function     = 3;  // select
+const uint8_t mo_u08_type         = 4;  // select
+const uint8_t mo_u08_quantity     = 5;  // input
+const uint8_t mo_u08_decimal      = 6;  // input
+const uint8_t mo_u08_fall_relay_1 = 7;  // select
+const uint8_t mo_u08_fall_relay_2 = 8;  // select 
+const uint8_t mo_u08_fall_report  = 9;  // checkbox
+const uint8_t mo_u08_rise_relay_1 = 10; // select
+const uint8_t mo_u08_rise_relay_2 = 11; // select 
+const uint8_t mo_u08_rise_report  = 12; // checkbox
+// uint16_t mo_u16[]
+const uint8_t mo_u16_register     = 0;  // input
+const uint8_t mo_u16_delay        = 1;  // input
+// int32_t mo_u32[]
+const uint8_t mo_u32_low_set      = 0;  // input
+const uint8_t mo_u32_high_set     = 1;  // input
 
-// uint8_t tm_ub[]
-const uint8_t tm_ub_enable      = 0;  // checkbox
-const uint8_t tm_ub_hour        = 1;  // input
-const uint8_t tm_ub_minute      = 2;  // input
-const uint8_t tm_ub_time-relay_1= 3;  // select
-const uint8_t tm_ub_time-relay_2= 4;  // select
+// uint8_t tm_u08[]
+const uint8_t tm_u08_enable       = 0;  // checkbox
+const uint8_t tm_u08_hour         = 1;  // input
+const uint8_t tm_u08_minute       = 2;  // input
+const uint8_t tm_u08_time-relay_1 = 3;  // select
+const uint8_t tm_u08_time-relay_2 = 4;  // select
 
 struct Conf {
-  uint8_t   ge_ub[6];
-  uint16_t  ge_us[2];
-  uint8_t   an_ub[18];
-  uint16_t  an_us[2];
-  float     an_ff[12];
-  uint8_t   dg_ub[16];
-  uint16_t  dg_us[2];
-  uint8_t   mo_ub[104];
-  uint16_t  mo_us[16];
-  uint32_t  mo_ul[2];
-  uint8_t   tm_ub[10];     
+  uint8_t   ge_u08[6];
+  uint16_t  ge_u16[2];
+  uint8_t   an_u08[18];
+  uint16_t  an_u16[2];
+  float     an_f32[12];
+  uint8_t   dg_u08[16];
+  uint16_t  dg_u16[2];
+  uint8_t   mo_u08[104];
+  uint16_t  mo_u16[16];
+  uint32_t  mo_u32[2];
+  uint8_t   tm_u08[10];     
 };
+Conf conf;
 
 struct Va {
-  float     an_ff[2];
-  uint8_t   dg_ub[2];
-  uint32_t  mo_ul[8];  
+  float     an_f32[2];
+  uint8_t   dg_u08[2];
+  uint32_t  mo_u32[8];  
 };
+Va va;
 
-union ul_ff {
-  float ul;
-  uint32_t ff;
+union F32_U32 {
+  uint32_t u32;  
+  float f32;
 };
+F32_U32 f32_u32;
+
+union U08_U32 {
+  uint32_t u32;  
+  uint8_t u08[4];
+};
+U08_U32 u08_u32;
+
 // string.toFloat()
 // atoul()
 
@@ -192,7 +202,7 @@ bool loraJoin = false, loraSend = true;
 tmElements_t tm;
 uint8_t alarms;
 
-Conf conf;
+
 Alarm alr;
 AltSoftSerial rakSerial;
 CayenneLPP lpp(51);
