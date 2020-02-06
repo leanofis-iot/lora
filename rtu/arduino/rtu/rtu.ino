@@ -105,13 +105,16 @@ struct Conf {
 };
 Conf conf;
 
-struct Va {
-  float     an_f32[2];
-  uint8_t   dg_u08[2];
-  uint32_t  mo_u32[8];
-  float     mo_f32[8];  
-};
-Va va;
+float             an_f32[2];
+uint32_t          mo_u32[8];
+float             mo_f32[8]; 
+
+bool              is_iftt;
+uint8_t           an_iftt[2];
+volatile uint8_t  dg_iftt[2];
+uint8_t           mo_iftt[8];
+uint8_t           tm_iftt[2];  
+
 
 const uint8_t u16                 = 0;
 const uint8_t i16                 = 1;
@@ -119,12 +122,17 @@ const uint8_t u32                 = 2;
 const uint8_t i32                 = 3;
 const uint8_t f32                 = 4;
 
-void readAnalog() {
+const uint8_t falling             = 1;  
+const uint8_t rising              = 2;
+
+
+
+void getAnalog() {
   // wire.end(); 
   for (uint8_t ch = 0; ch < 2; ch++) {    
     while (INA_ALR_PIN[ch]);
     ina.begin(0x40 + ch);
-    va.an_f32[ch] = ina.readShuntCurrent();
+    an_f32[ch] = ina.readShuntCurrent();
     if (ina.isAlert());
     const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08];
     if (conf.an_u08[_enable]) {
@@ -132,11 +140,23 @@ void readAnalog() {
       const uint8_t _in_max = an_f32_in_max + ch * sizeof(conf.an_f32];
       const uint8_t _out_min = an_f32_out_min + ch * sizeof(conf.an_f32];
       const uint8_t _out_max = an_f32_out_max + ch * sizeof(conf.an_f32];
-      va.an_f32[ch] = (va.an_f32[ch] - conf[_in_min]) * (conf[_out_max] - conf[_out_min)] / (conf[_in_max] - conf[_in_min]) + conf[_out_min];      
+      an_f32[ch] = (an_f32[ch] - conf[_in_min]) * (conf[_out_max] - conf[_out_min)] / (conf[_in_max] - conf[_in_min]) + conf[_out_min];      
     }              
   }    
 }
-void readModbus() {  
+void getDigital() {
+  for (uint8_t ch = 0; ch < 2; ch++) {
+    const uint8_t _enable = dg_u08_enable + ch * sizeof(conf.dg_u08];
+    if (conf.dg_u08[_enable]) {
+      if (dg_iftt[ch]) {
+        const uint8_t _delay = dg_u16_delay + ch * sizeof(conf.dg_u16];
+        delay(dg_u16[_delay]);
+        dg_iftt[ch] = digitalRead(DIG_PIN[ch]) ? 1 : 2;        
+      }      
+    }
+  }
+}
+void getModbus() {  
   for (uint8_t ch = 0; ch < 8; ch++) {
     const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08);        
     if (conf.mo_u08[_enable]) { 
@@ -146,19 +166,41 @@ void readModbus() {
       const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08);
       const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16);      
       if (conf.mo_u08[_type] == u16) {        
-        va.mo_u32[ch] = modbus.uint16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
+        mo_u32[ch] = modbus.uint16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
       } else if (conf.mo_u08[_type] == i16) {
-        va.mo_u32[ch] = modbus.int16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register]), bigEndian);                
+        mo_u32[ch] = modbus.int16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register]), bigEndian);                
       } else if if (conf.mo_u08[_type] == u32) {
-        va.mo_u32[ch] = modbus.uint32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
+        mo_u32[ch] = modbus.uint32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
       } else if if (conf.mo_u08[_type] == i32) {
-        va.mo_u32[ch] = modbus.int32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
+        mo_u32[ch] = modbus.int32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
       } else if if (conf.mo_u08[_type] == f32) { 
-        va.mo_f32[ch] = modbus.float32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);     
+        mo_f32[ch] = modbus.float32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);     
       }      
     }    
   }  
 }
+void getTm() {
+  for (uint8_t ch = 0; ch < 2; ch++) {
+    const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08];
+    if (conf.tm_u08[_enable]) {
+      if (!DS_INT_PIN) {
+        if (RTC.alarm(ALARM_1)) {
+          tm_iftt[0] = 1;
+        } else if (RTC.alarm(ALARM_2)) {
+          tm_iftt[1] = 1;
+        } 
+      } 
+    }      
+  }
+}
+////////// poll ile analog ve modbus, diğerleri fastloop
+  if (is_iftt) {
+    doIftt();  
+  }    
+  chkReport();
+  chkRakSerial();
+  chkSerial();
+  wdt_reset();
 
 char buf[15];
 str.toCharArray(buf, sizeof(buf));
@@ -283,7 +325,7 @@ void loop() {
   if (alr.inp) {
     doAction();  
   }    
-  chkMillis();
+  chkReport();
   chkRakSerial();
   chkSerial();
   wdt_reset();      
@@ -317,10 +359,10 @@ void calcAngAlr(const uint8_t ch) {
     hysPrev[ch] = 5;    
   }
 }
-void chkMillis() {
+void chkReport() {
   if (millis() - tmrMillis >= conf.lor_w[_report] * 60000) {
     tmrMillis = millis();
-    uplink();
+    report();
   }
 }
 void chkRakSerial() {
@@ -449,24 +491,10 @@ void setDigAlr() {
   attachInterrupt(digitalPinToInterrupt(DIG_PIN[1]), digAlr1, CHANGE);
 }
 void digAlr0() {
-  delayMicroseconds(digDly * 1000);
-  if (DIG_PIN[0]) {    
-    alr.lev = _high; 
-  } else {
-    alr.lev = _low;
-  }
-  alr.inp = _dig;  
-  alr.chn = 0;
+  dg_iftt[0] = 1;  
 }
 void digAlr1() {
-  delayMicroseconds(digDly * 1000);
-  if (DIG_PIN[1]) {
-    alr.lev = _high; 
-  } else {
-    alr.lev = _low;
-  }
-  alr.inp = _dig;  
-  alr.chn = 1;
+  dg_iftt[1] = 1;
 }
 void setDS3231M() {
   /*
@@ -486,17 +514,7 @@ void setDS3231M() {
   RTC.alarmInterrupt(ALARM_1, true);
   RTC.alarmInterrupt(ALARM_2, true);
 }
-void calcTmAlr() {
-  if (RTC.alarm(ALARM_1)) {
-    alr.inp = _time;
-    alr.lev = 0;
-    alr.chn = 0;    
-  } else if (RTC.alarm(ALARM_2)) {
-    alr.inp = _time;
-    alr.lev = 0;
-    alr.chn = 1;
-  }  
-}
+
 void setRak() {
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
@@ -510,7 +528,7 @@ void doAction() {
             actRelay(ch, conf.alr_b[ii * 6 + _relay + ch]);              
           }    
           if (conf.alr_b[ii * 6 + _uplink]) {
-            uplink();  
+            report();  
           }
           // break; // ????????????????         
         }
@@ -546,7 +564,7 @@ void resRelay(const uint8_t ch) {
   delay(10);
   digitalWrite(RELAY_PIN[ch + 1], LOW);
 }
-void uplink() {
+void report() {
   wdt_reset();
   if (loraJoin && loraSend) {
     loraSend = false;      
