@@ -186,9 +186,9 @@ void isAnalogIftt(const uint8_t ch) {
   low_set = an_f32_low_set + ch * sizeof(conf.an_f32] / 2;
   high_set = an_f32_high_set + ch * sizeof(conf.an_f32] / 2;
   uint8_t change = 0;          
-  if (an_f32[ch] <= conf.an_f32[_low_set] {
+  if (an_f32[ch] <= conf.an_f32[_low_set]) {
     change = falling;          
-  } else if (an_f32[ch] >= conf.an_f32[_high_set] {
+  } else if (an_f32[ch] >= conf.an_f32[_high_set]) {
     change = rising;    
   }
   for (uint8_t r = 0; r < 2; r++) {
@@ -250,9 +250,37 @@ void getModbus() {
         mo_u32[ch] = modbus.int32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
       } else if if (conf.mo_u08[_type] == f32) { 
         mo_f32[ch] = modbus.float32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);     
-      }      
+      } 
+      isModbusIftt(ch, _type);     
     }    
   }  
+}
+void isModbusIftt(const uint8_t ch, const uint8_t _type) {
+  uint8_t _low_set, _high_set;  
+  uint8_t change = 0;  
+
+  if (conf.mo_u08[_type] == u16) { 
+    low_set = mo_u32_low_set + ch * sizeof(conf.mo_u32] / 2;
+    high_set = mo_u32_high_set + ch * sizeof(conf.mo_u32] / 2; 
+    if ((uint16_t)mo_u32[ch] <= (uint16_t)conf.mo_u32[_low_set]) {
+      change = falling;          
+    } else if ((uint16_t)mo_u32[ch] >= (uint16_t)conf.mo_u32[_low_set]) {
+      change = rising;    
+    }
+
+
+          
+    mo_u32[ch] = modbus.uint16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
+  } else if (conf.mo_u08[_type] == i16) {
+    mo_u32[ch] = modbus.int16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register]), bigEndian);                
+  } else if if (conf.mo_u08[_type] == u32) {
+    mo_u32[ch] = modbus.uint32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
+  } else if if (conf.mo_u08[_type] == i32) {
+    mo_u32[ch] = modbus.int32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
+  } else if if (conf.mo_u08[_type] == f32) { 
+    mo_f32[ch] = modbus.float32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);     
+  }           
+
 }
 void getTm() {
   for (uint8_t ch = 0; ch < 2; ch++) {
