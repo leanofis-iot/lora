@@ -113,8 +113,7 @@ bool              is_iftt;
 uint8_t           an_iftt[2];
 volatile uint8_t  dg_iftt[2];
 uint8_t           mo_iftt[8];
-uint8_t           tm_iftt[2];  
-
+uint8_t           tm_iftt[2]; 
 
 const uint8_t u16                 = 0;
 const uint8_t i16                 = 1;
@@ -125,8 +124,59 @@ const uint8_t f32                 = 4;
 const uint8_t falling             = 1;  
 const uint8_t rising              = 2;
 
+const uint8_t _activate           = 1;  
+const uint8_t _deactivate         = 2;  
+const uint8_t _toggle             = 3; 
 
+unsigned long tmrPoll, tmrReport;
+String strSerial, strRakSerial;
+bool loraJoin = false, loraSend = true;
+tmElements_t tm;
 
+AltSoftSerial rakSerial;
+HardwareSerial* modbusSerial = &Serial1;
+modbusMaster modbus;
+CayenneLPP lpp(51);
+INA226 ina;
+//WebUSB WebUSBSerial(1 /* https:// */, "leanofis-iot.github.io/lora");
+//#define Serial WebUSBSerial
+
+void setup() {
+  wdt_enable(WDTO_8S);
+  if (USBSTA >> VBUS & 1) {    
+    Serial.begin(115200);    
+    while (!Serial) {
+      wdt_reset();
+    }
+  }    
+  setPins();
+  rakSerial.begin(9600);
+  loadConf();    
+  setAnalog();
+  setDigital();
+  setModbus();
+  setTm();
+  //delayRandom();    
+  setRak(); 
+  tmrMillis = millis();
+}
+void loop() {
+  if (isPollInterval()) {
+    getAnalog();
+    getModbus();
+  }  
+  getDigital();
+  getTm();
+  if (is_iftt) {
+    doIftt();  
+  }
+  if (isReportInterval()) {
+    report();    
+  }  
+  doRakSerial();
+  doSerial();
+  wdt_reset();
+}
 void getAnalog() {
   // wire.end(); 
   for (uint8_t ch = 0; ch < 2; ch++) {    
@@ -193,179 +243,21 @@ void getTm() {
     }      
   }
 }
-////////// poll ile analog ve modbus, diğerleri fastloop
-  if (is_iftt) {
-    doIftt();  
-  }    
-  chkReport();
-  chkRakSerial();
-  chkSerial();
-  wdt_reset();
-
-char buf[15];
-str.toCharArray(buf, sizeof(buf));
-float f = atof(buf);
-int32_t i = atol(buf);
-
-// string.toFloat()
-// atol() atof()
-
-///////////////////////////////////////////////////////////////////////////////////
-// val[] (12*4 = 48 bytes)
-const uint8_t _vl               = 0;          // 4 byte  
-
-
-const uint8_t _analog           = 0;
-const uint8_t _digital          = 1;
-const uint8_t _modbus           = 2;
-const uint8_t _time             = 3;
-
-const uint8_t _low              = 0;  ///???
-const uint8_t _high             = 1;  ///???
-const uint8_t _change           = 1;  ///???
-const uint8_t _falling          = 2;  ///???
-const uint8_t _rising           = 3;  ///???
-
-const uint8_t _activate         = 1;  
-const uint8_t _deactivate       = 2;  
-const uint8_t _toggle           = 3;  
-
-
-
-
-
-// type begin 1
-
-////////////////////////////
-
-
-const uint8_t _amp_min          = 0;
-const uint8_t _amp_max          = 1;
-const uint8_t _min              = 2;
-const uint8_t _max              = 3;
-const uint8_t _low_set          = 0;
-const uint8_t _low_clear        = 1;
-const uint8_t _high_set         = 2;
-const uint8_t _high_clear       = 3;
-const uint8_t _low              = 0;
-const uint8_t _high             = 1;
-const uint8_t _unit             = 0;
-const uint8_t _pulse_dur        = 0;
-
-
-const uint8_t _temp             = 1;
-const uint8_t _hum              = 2;
-const uint8_t _bar              = 3;
-const uint8_t _lum              = 4;
-const uint8_t _set              = 1;
-const uint8_t _res              = 2;
-const uint8_t _set_pulse        = 3;
-const uint8_t _res_pulse        = 4;
-
-const uint8_t _input            = 0;
-const uint8_t _level            = 1;
-const uint8_t _channel          = 2;
-const uint8_t _relay            = 3;
-const uint8_t _uplink           = 5;
-
-
-
-
-
-float Amp, Ang[2];
-uint8_t hysPrev[2] = {3, 3};
-const uint8_t digDly = 10; // ms, max 16ms
-bool dsIntPinPrev = HIGH;
-unsigned long tmrMillis, tmrMinutes;
-String strSerial, strRakSerial;
-bool loraJoin = false, loraSend = true;
-tmElements_t tm;
-uint8_t alarms;
-
-
-AltSoftSerial rakSerial;
-HardwareSerial* modbusSerial = &Serial1;
-modbusMaster modbus;
-CayenneLPP lpp(51);
-INA226 ina;
-//WebUSB WebUSBSerial(1 /* https:// */, "leanofis-iot.github.io/lora");
-//#define Serial WebUSBSerial
-
-void setup() {
-  wdt_enable(WDTO_8S);
-  if (USBSTA >> VBUS & 1) {    
-    Serial.begin(115200);    
-    while (!Serial) {
-      wdt_reset();
-    }
-  }    
-  setPins();
-  rakSerial.begin(9600);
-  loadConf();
-  Serial1.begin(conf.ge_u16[ge_u16_mod_baud, SERIAL_8N1);  
-  setINA226();
-  setDigAlr();
-  setDS3231M();
-  //delayRandom();    
-  setRak(); 
-  tmrMillis = millis();
-}
-void loop() {
-
-  readAnalog();
-   
-  if (!DS_INT_PIN) {    
-    if (dsIntPinPrev) {
-      dsIntPinPrev = LOW;
-      calcTmAlr();
-    }    
-  } else {
-    dsIntPinPrev = HIGH;
-  }  
-  if (alr.inp) {
-    doAction();  
-  }    
-  chkReport();
-  chkRakSerial();
-  chkSerial();
-  wdt_reset();      
-}
-
-void calcAngAlr(const uint8_t ch) {  
-  if (Ang[ch] <= conf.ana_f[_low_set + ch * 8]) {
-    if (hysPrev[ch] > 2) {
-      alr.inp = _ang;
-      alr.lev = _low_set;
-      alr.chn = ch;      
-    }
-    hysPrev[ch] = 1;  
-  } else if ((Ang[ch] >= conf.ana_f[_low_clear + ch * 8]) && (Ang[ch] <= conf.ana_f[_high_clear + ch * 8])) {
-    if (hysPrev[ch] < 2) {
-      alr.inp = _ang;
-      alr.lev = _low_clear;
-      alr.chn = ch;        
-    } else if (hysPrev[ch] > 4) {
-      alr.inp = _ang;
-      alr.lev = _high_clear;
-      alr.chn = ch;      
-    }
-    hysPrev[ch] = 3; 
-  } else if (Ang[ch] >= conf.ana_f[_high_set + ch * 8]) {
-    if (hysPrev[ch] < 4) {
-      alr.inp = _ang;
-      alr.lev = _high_set;
-      alr.chn = ch;       
-    }
-    hysPrev[ch] = 5;    
+bool isPollInterval() {
+  const uint8_t _poll = ge_u08_poll;
+  if (millis() - tmrPoll >= conf.ge_u08[_poll] * 1000) {
+    tmrPoll = millis();
+    return true;
   }
 }
-void chkReport() {
-  if (millis() - tmrMillis >= conf.lor_w[_report] * 60000) {
-    tmrMillis = millis();
-    report();
+bool isReportInterval() {
+  const uint8_t _report = ge_u16_report;
+  if (millis() - tmrReport >= conf.ge_u16[_report] * 60000) {
+    tmrReport = millis();
+    return true;
   }
 }
-void chkRakSerial() {
+void doRakSerial() {
   while (rakSerial.available()) {
     const char chrRakSerial = (char)rakSerial.read();
     //if (Serial) {
@@ -388,7 +280,7 @@ void chkRakSerial() {
     }
   }
 }
-void chkSerial() {
+void doSerial() {
   while (Serial.available()) {
     const char chrSerial = (char)Serial.read();
     strSerial += chrSerial;
@@ -446,13 +338,7 @@ String lppGetBuffer() {
   return str;
 }
 void loadConf() {
-  EEPROM.get(0, conf);
-  for (uint8_t ii = 0; ii < sizeof(conf.alr_b); ii = ii + 6) {
-    if (!conf.alr_b[ii]) {
-      alarms = ii;
-      break;
-    }    
-  }    
+  EEPROM.get(0, conf);  
 }
 void setPins() {
   pinMode(BUTTON_PIN, INPUT);  
@@ -476,7 +362,7 @@ void setPins() {
     digitalWrite(RELAY_PIN[ch], LOW);    
   }   
 }
-void setINA226() {
+void setAnalog() {
   for (uint8_t ch = 0; ch < 2; ch++) { 
     // wire.end();   
     ina.begin(0x40 + ch);
@@ -485,18 +371,21 @@ void setINA226() {
     ina.enableConversionReadyAlert();               
   } 
 }
-void setDigAlr() {
+void setDigital() {
   EIFR = 255;     
-  attachInterrupt(digitalPinToInterrupt(DIG_PIN[0]), digAlr0, CHANGE);       
-  attachInterrupt(digitalPinToInterrupt(DIG_PIN[1]), digAlr1, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(DIG_PIN[0]), digChange0, CHANGE);       
+  attachInterrupt(digitalPinToInterrupt(DIG_PIN[1]), digChange1, CHANGE);
 }
-void digAlr0() {
+void digChange0() {
   dg_iftt[0] = 1;  
 }
-void digAlr1() {
+void digChange1() {
   dg_iftt[1] = 1;
 }
-void setDS3231M() {
+void setModbus() {
+  Serial1.begin(conf.ge_u16[ge_u16_mod_baud, SERIAL_8N1);
+}
+void setTm() {
   /*
   RTC.setAlarm(ALM1_MATCH_DATE, 0, 0, 0, 1);
   RTC.setAlarm(ALM2_MATCH_DATE, 0, 0, 0, 1);
@@ -505,50 +394,32 @@ void setDS3231M() {
   RTC.alarmInterrupt(ALARM_1, false);
   RTC.alarmInterrupt(ALARM_2, false);
   RTC.squareWave(SQWAVE_NONE);
-  */  
-  RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.tma_b[1], conf.tma_b[0], 0);
-  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.tma_b[3], conf.tma_b[2], 0);
+  */ 
+  RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.tm_u08[tm_u08_minute], conf.tm_u08[tm_u08_hour], 0);
+  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.tm_u08[tm_u08_minute + sizeof(conf.tm_u08)], conf.tm_u08[tm_u08_hour + sizeof(conf.tm_u08)], 0);
   RTC.alarm(ALARM_1);
   RTC.alarm(ALARM_2);
   RTC.squareWave(SQWAVE_NONE);
   RTC.alarmInterrupt(ALARM_1, true);
   RTC.alarmInterrupt(ALARM_2, true);
 }
-
 void setRak() {
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
 }
-void doAction() {  
-  for (uint8_t ii = 0; ii < alarms; ii++) {
-    if (conf.alr_b[ii * 6 + _input] == alr.inp) {
-      if (conf.alr_b[ii * 6 + _level] == alr.lev) {        
-        if (conf.alr_b[ii * 6 + _channel] == alr.chn) {
-          for (uint8_t ch = 0; ch < 2; ch++) {            
-            actRelay(ch, conf.alr_b[ii * 6 + _relay + ch]);              
-          }    
-          if (conf.alr_b[ii * 6 + _uplink]) {
-            report();  
-          }
-          // break; // ????????????????         
-        }
-      }        
-    }
-  }
-  alr.inp = 0;
-  alr.lev = 0;  // ????????
-  alr.chn = 0;  // ????????
+void doIftt() {  
+  
 }
-void actRelay(const uint8_t ch, const uint8_t act) {
-  if (act == _set) {                  
+void doRelay(const uint8_t ch, const uint8_t do) {
+  if (do == _set) {                  
     setRelay(ch);
-  } else if (act == _res) {           
+  } else if (do == _res) {           
     resRelay(ch);    
-  } else if (act == _set_pulse) {       
+  } else if (do == _set_pulse) {       
     setRelay(ch); 
     delay(conf.rly_w[_pulse_dur + ch]);
     resRelay(ch);
-  } else if (act == _res_pulse) {       
+  } else if (do == _res_pulse) {       
     resRelay(ch);
     delay(conf.rly_w[_pulse_dur + ch]);
     setRelay(ch); 
@@ -603,3 +474,12 @@ void resetMe() {
   wdt_enable(WDTO_15MS);
   while(true); 
 }
+/*
+ * char buf[15];
+str.toCharArray(buf, sizeof(buf));
+float f = atof(buf);
+int32_t i = atol(buf);
+// string.toFloat()
+// atol() atof()
+*/
+ */
