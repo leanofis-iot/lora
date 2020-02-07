@@ -39,8 +39,6 @@ const uint8_t an_u08_fall_report  = 4;  // checkbox
 const uint8_t an_u08_rise_relay_1 = 5;  // select
 const uint8_t an_u08_rise_relay_2 = 6;  // select 
 const uint8_t an_u08_rise_report  = 7;  // checkbox
-// uint16_t an_u16[]
-const uint8_t an_u16_delay        = 0;  // input
 // float an_f32[]
 const uint8_t an_f32_in_min       = 0;  // input
 const uint8_t an_f32_in_max       = 1;  // input
@@ -59,7 +57,7 @@ const uint8_t dg_u08_rise_relay_1 = 5;  // select
 const uint8_t dg_u08_rise_relay_2 = 6;  // select 
 const uint8_t dg_u08_rise_report  = 7;  // checkbox
 // uint16_t dg_u16[]
-const uint8_t dg_u16_delay        = 0;  // input
+const uint8_t dg_u16_debounce     = 0;  // input
 
 // uint8_t mo_u08[]
 const uint8_t mo_u08_enable       = 0;  // checkbox
@@ -76,7 +74,6 @@ const uint8_t mo_u08_rise_relay_2 = 10; // select
 const uint8_t mo_u08_rise_report  = 11; // checkbox
 // uint16_t mo_u16[]
 const uint8_t mo_u16_register     = 0;  // input
-const uint8_t mo_u16_delay        = 1;  // input
 // mo_n32[]
 const uint8_t mo_n32_low_set      = 0;  // input
 const uint8_t mo_n32_high_set     = 1;  // input
@@ -91,13 +88,12 @@ const uint8_t tm_u08_time-relay_2 = 4;  // select
 struct Conf {
   uint8_t   ge_u08[6];
   uint16_t  ge_u16[2];
-  uint8_t   an_u08[18];
-  uint16_t  an_u16[2];
+  uint8_t   an_u08[16];
   float     an_f32[12];
   uint8_t   dg_u08[16];
   uint16_t  dg_u16[2];
-  uint8_t   mo_u08[104];
-  uint16_t  mo_u16[16];
+  uint8_t   mo_u08[96];
+  uint16_t  mo_u16[8];
   uint32_t  mo_u32[16];
   uint32_t  mo_f32[16];
   uint8_t   tm_u08[10];     
@@ -109,13 +105,6 @@ uint8_t     dg_u08[2];
 uint32_t    mo_u32[8];
 float       mo_f32[8]; 
 
-/*
-bool              is_iftt;
-uint8_t           an_iftt[2];
-volatile uint8_t  dg_iftt[2];
-uint8_t           mo_iftt[8];
-uint8_t           tm_iftt[2]; 
-*/
 const uint8_t u16                 = 0;
 const uint8_t i16                 = 1;
 const uint8_t u32                 = 2;
@@ -129,28 +118,23 @@ const uint8_t _activate           = 1;
 const uint8_t _deactivate         = 2;  
 
 unsigned long tmrPoll, tmrReport;
-String strSerial, strRakSerial;
+String strUsbSerial, strRakSerial;
 bool loraJoin = false, loraSend = true, isReportIftt;
 tmElements_t tm;
 
-AltSoftSerial rakSerial;
+HardwareSerial* usbSerial = &Serial; //////// delete this line
 HardwareSerial* modbusSerial = &Serial1;
 modbusMaster modbus;
+AltSoftSerial rakSerial;
 CayenneLPP lpp(51);
 INA226 ina;
 //WebUSB WebUSBSerial(1 /* https:// */, "leanofis-iot.github.io/lora");
-//#define Serial WebUSBSerial
+//#define usbSerial WebUSBSerial
 
 void setup() {
   wdt_enable(WDTO_8S);
-  if (USBSTA >> VBUS & 1) {    
-    Serial.begin(115200);    
-    while (!Serial) {
-      wdt_reset();
-    }
-  }    
-  setPins();
-  rakSerial.begin(9600);
+  setUsb();
+  setPins();  
   loadConf();    
   setAnalog();
   setDigital();
@@ -158,7 +142,8 @@ void setup() {
   setTm();
   //delayRandom();    
   setRak(); 
-  tmrMillis = millis();
+  tmrPoll = millis();
+  tmrReport = millis();
 }
 void loop() {
   if (isPollInterval()) {
@@ -174,59 +159,52 @@ void loop() {
     report();    
   }  
   doRakSerial();
-  doSerial();
+  doUsbSerial();
   wdt_reset();
 }
 void getAnalog() {
   // wire.end();    
   for (uint8_t ch = 0; ch < 2; ch++) {
-    const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08]; 
+    const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08] / 2; 
     if (conf.an_u08[_enable]) {   
       while (INA_ALR_PIN[ch]);
       ina.begin(0x40 + ch);
       an_f32[ch] = ina.readShuntCurrent();
       if (ina.isAlert());      
-        const uint8_t _in_min = an_f32_in_min + ch * sizeof(conf.an_f32];
-        const uint8_t _in_max = an_f32_in_max + ch * sizeof(conf.an_f32];
-        const uint8_t _out_min = an_f32_out_min + ch * sizeof(conf.an_f32];
-        const uint8_t _out_max = an_f32_out_max + ch * sizeof(conf.an_f32];
+        const uint8_t _in_min = an_f32_in_min + ch * sizeof(conf.an_f32] / 2;
+        const uint8_t _in_max = an_f32_in_max + ch * sizeof(conf.an_f32] / 2;
+        const uint8_t _out_min = an_f32_out_min + ch * sizeof(conf.an_f32] / 2;
+        const uint8_t _out_max = an_f32_out_max + ch * sizeof(conf.an_f32] / 2;
         an_f32[ch] = (an_f32[ch] - conf.an_f32[_in_min]) * (conf.an_f32[_out_max] - conf.an_f32[_out_min)] / (conf.an_f32[_in_max] - conf.an_f32[_in_min]) + conf.an_f32[_out_min];      
       }
-    } 
-    isAnalogIftt(ch);                
+      isAnalogIftt(ch);
+    }                    
   }    
 }
 void isAnalogIftt(const uint8_t ch) {       
   uint8_t _low_set, _high_set;
-  low_set = an_f32_low_set + ch * sizeof(conf.an_f32];
-  high_set = an_f32_high_set + ch * sizeof(conf.an_f32];
-  uint8_t _change = 0;          
+  low_set = an_f32_low_set + ch * sizeof(conf.an_f32] / 2;
+  high_set = an_f32_high_set + ch * sizeof(conf.an_f32] / 2;
+  uint8_t change = 0;          
   if (an_f32[ch] <= conf.an_f32[_low_set] {
-    const uint8_t _delay = an_u16_delay + ch * sizeof(conf.an_u16];
-    delay(conf.an_u16[_delay]);
-    if (an_f32[ch] <= conf.an_f32[_low_set] {
-      _change = falling;
-    }        
+    change = falling;          
   } else if (an_f32[ch] >= conf.an_f32[_high_set] {
-    const uint8_t _delay = an_u16_delay + ch * sizeof(conf.an_u16];
-    delay(conf.an_u16[_delay]);
-    if (an_f32[ch] >= conf.an_f32[_high_set] {
-      _change = rising;
-    }        
+    change = rising;    
   }
   for (uint8_t r = 0; r < 2; r++) {
     uint8_t _relay;
-    if (_change = falling) {
-      _relay  = an_u08_fall_relay_1 + ch * sizeof(conf.an_u08];                             
-    } else if (_change = rising) {
-      _relay  = an_u08_rise_relay_1 + ch * sizeof(conf.an_u08];              
-    }  
-    doRelay(r, conf.an_u08[_relay + r]);          
+    if (change = falling) {
+      _relay  = an_u08_fall_relay_1 + ch * sizeof(conf.an_u08] / 2;
+      doRelay(r, conf.an_u08[_relay + r]);                             
+    } else if (change = rising) {
+      _relay  = an_u08_rise_relay_1 + ch * sizeof(conf.an_u08] / 2;
+      doRelay(r, conf.an_u08[_relay + r]);              
+    }              
   }  
 }
 void getDigital() {
   for (uint8_t ch = 0; ch < 2; ch++) {
-    const uint8_t _enable = dg_u08_enable + ch * sizeof(conf.dg_u08];
+    const uint8_t _enable = dg_u08_enable + ch * sizeof(conf.dg_u08] / 2;
     if (conf.dg_u08[_enable]) {      
       isDigitalIftt(ch);     
     }    
@@ -235,32 +213,33 @@ void getDigital() {
 void isDigitalIftt(const uint8_t ch) {
   if (dg_u08[ch]) {
     dg_u08[ch] = digitalRead(DIG_PIN[ch]);
-    const uint8_t _delay = dg_u16_delay + ch * sizeof(conf.dg_u16];
-    delay(conf.dg_u16[_delay]); 
+    const uint8_t _debounce = dg_u16_debounce + ch * sizeof(conf.dg_u16] / 2;
+    delay(conf.dg_u16[_debounce]); 
     if (dg_u08[ch] == digitalRead(DIG_PIN[ch]) {
-      uint8_t _change = 0;
-      _change = dg_u08[ch] ? falling : rising;
+      uint8_t change = 0;
+      change = dg_u08[ch] ? falling : rising;
       for (uint8_t r = 0; r < 2; r++) {
         uint8_t _relay;
-        if (_change = falling) {
-          _relay  = dg_u08_fall_relay_1 + ch * sizeof(conf.dg_u08];                             
-        } else if (_change = rising) {
-          _relay  = dg_u08_rise_relay_1 + ch * sizeof(conf.dg_u08];              
+        if (change = falling) {
+          _relay  = dg_u08_fall_relay_1 + ch * sizeof(conf.dg_u08] / 2;                             
+        } else if (change = rising) {
+          _relay  = dg_u08_rise_relay_1 + ch * sizeof(conf.dg_u08] / 2;              
         }  
         doRelay(r, conf.dg_u08[_relay + r]);          
       }
     }                      
-  }       
+  }
+  dg_u08[ch] = digitalRead(DIG_PIN[ch]);       
 }
 void getModbus() {  
   for (uint8_t ch = 0; ch < 8; ch++) {
-    const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08);        
+    const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08) / 8;        
     if (conf.mo_u08[_enable]) { 
-      const uint8_t _slave = mo_u08_slave + ch * sizeof(conf.mo_u08);     
+      const uint8_t _slave = mo_u08_slave + ch * sizeof(conf.mo_u08) / 8;     
       modbus.begin(conf.mo_u08[_slave], modbusSerial, RS_DIR_PIN);
-      const uint8_t _type = mo_u08_type + ch * sizeof(conf.mo_u08);
-      const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08);
-      const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16);      
+      const uint8_t _type = mo_u08_type + ch * sizeof(conf.mo_u08) / 8;
+      const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08) / 8;
+      const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16) / 8;      
       if (conf.mo_u08[_type] == u16) {        
         mo_u32[ch] = modbus.uint16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
       } else if (conf.mo_u08[_type] == i16) {
@@ -277,7 +256,7 @@ void getModbus() {
 }
 void getTm() {
   for (uint8_t ch = 0; ch < 2; ch++) {
-    const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08];
+    const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08] / 2;
     if (conf.tm_u08[_enable]) {
       isTmIftt(ch);
     }      
@@ -290,7 +269,7 @@ void isTmIftt(const uint8_t ch) {
       if (ch == 0 && RTC.alarm(ALARM_1) {          
         _relay  = tm_u08_time-relay_1;                             
       } else if (ch == 1 && RTC.alarm(ALARM_2)) {
-        _relay  = tm_u08_time-relay_1 + sizeof(conf.dg_u08];              
+        _relay  = tm_u08_time-relay_1 + sizeof(conf.dg_u08] / 2;              
       } else {
         return;
       } 
@@ -316,12 +295,12 @@ bool isReportInterval() {
 }
 void doRakSerial() {
   while (rakSerial.available()) {
-    const char chrRakSerial = (char)rakSerial.read();
+    const char chr = (char)rakSerial.read();
     //if (Serial) {
-      Serial.print(chrRakSerial); // or line print
+      usbSerial.print(chr); // or line print
     //}
-    strRakSerial += chrRakSerial;
-    if (chrRakSerial == '\n') {
+    strRakSerial += chr;
+    if (chr == '\n') {
       strRakSerial.trim();
       if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
@@ -337,49 +316,49 @@ void doRakSerial() {
     }
   }
 }
-void doSerial() {
-  while (Serial.available()) {
-    const char chrSerial = (char)Serial.read();
-    strSerial += chrSerial;
-    if (chrSerial == '\n') {
-      strSerial.trim();       
-      if (strSerial.startsWith(F("at"))) {
-        rakSerial.println(strSerial);
-      } else if (strSerial.startsWith(F("&lor_b"))) {
-        conf.lor_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
-      } else if (strSerial.startsWith(F("&lor_w"))) {
-        conf.lor_w[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
-      } else if (strSerial.startsWith(F("&rly_w"))) {
-        conf.rly_w[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
-      } else if (strSerial.startsWith(F("&anu_b"))) {
-        conf.anu_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();
-      } else if (strSerial.startsWith(F("&ans_f"))) {
-        conf.ans_f[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toFloat();
-      } else if (strSerial.startsWith(F("&ana_f"))) {
-        conf.ana_f[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toFloat();
-      } else if (strSerial.startsWith(F("&tma_b"))) {
-        conf.tma_b[strSerial.substring(6,8).toInt()] = strSerial.substring(8).toInt();     
-      } else if (strSerial.startsWith(F("&alr_b"))) {
-        conf.alr_b[strSerial.substring(6,9).toInt()] = strSerial.substring(9).toInt(); 
-      } else if (strSerial.startsWith(F("&save"))) {
+void doUsbSerial() {
+  while (usbSerial.available()) {
+    const char chr = (char)usbSerial.read();
+    strUsbSerial += chr;
+    if (chr == '\n') {
+      strUsbSerial.trim();       
+      if (strUsbSerial.startsWith(F("at"))) {
+        rakSerial.println(strUsbSerial);
+      } else if (strUsbSerial.startsWith(F("&lor_b"))) {
+        conf.lor_b[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
+      } else if (strUsbSerial.startsWith(F("&lor_w"))) {
+        conf.lor_w[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
+      } else if (strUsbSerial.startsWith(F("&rly_w"))) {
+        conf.rly_w[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
+      } else if (strUsbSerial.startsWith(F("&anu_b"))) {
+        conf.anu_b[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
+      } else if (strUsbSerial.startsWith(F("&ans_f"))) {
+        conf.ans_f[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toFloat();
+      } else if (strUsbSerial.startsWith(F("&ana_f"))) {
+        conf.ana_f[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toFloat();
+      } else if (strUsbSerial.startsWith(F("&tma_b"))) {
+        conf.tma_b[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();     
+      } else if (strUsbSerial.startsWith(F("&alr_b"))) {
+        conf.alr_b[strUsbSerial.substring(6,9).toInt()] = strUsbSerial.substring(9).toInt(); 
+      } else if (strUsbSerial.startsWith(F("&save"))) {
         EEPROM.put(0, conf);
         resetMe();         
-      } else if (strSerial.startsWith(F("&ss"))) {
-        tm.Second = strSerial.substring(3).toInt();
-      } else if (strSerial.startsWith(F("&mm"))) {
-        tm.Minute = strSerial.substring(3).toInt();
-      } else if (strSerial.startsWith(F("&hh"))) {
-        tm.Hour = strSerial.substring(3).toInt();
-      } else if (strSerial.startsWith(F("&dd"))) {
-        tm.Day = strSerial.substring(3).toInt();
-      } else if (strSerial.startsWith(F("&mh"))) {
-        tm.Month = strSerial.substring(3).toInt();
-      } else if (strSerial.startsWith(F("&yy"))) {
-        tm.Year = strSerial.substring(3).toInt() - 1970;
-      } else if (strSerial.startsWith(F("&time"))) {
+      } else if (strUsbSerial.startsWith(F("&ss"))) {
+        tm.Second = strUsbSerial.substring(3).toInt();
+      } else if (strUsbSerial.startsWith(F("&mm"))) {
+        tm.Minute = strUsbSerial.substring(3).toInt();
+      } else if (strUsbSerial.startsWith(F("&hh"))) {
+        tm.Hour = strUsbSerial.substring(3).toInt();
+      } else if (strUsbSerial.startsWith(F("&dd"))) {
+        tm.Day = strUsbSerial.substring(3).toInt();
+      } else if (strUsbSerial.startsWith(F("&mh"))) {
+        tm.Month = strUsbSerial.substring(3).toInt();
+      } else if (strUsbSerial.startsWith(F("&yy"))) {
+        tm.Year = strUsbSerial.substring(3).toInt() - 1970;
+      } else if (strUsbSerial.startsWith(F("&time"))) {
         RTC.write(tm);
       }
-      strSerial = "";
+      strUsbSerial = "";
     }
   }   
 }
@@ -453,7 +432,7 @@ void setTm() {
   RTC.squareWave(SQWAVE_NONE);
   */ 
   RTC.setAlarm(ALM1_MATCH_HOURS, 0, conf.tm_u08[tm_u08_minute], conf.tm_u08[tm_u08_hour], 0);
-  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.tm_u08[tm_u08_minute + sizeof(conf.tm_u08)], conf.tm_u08[tm_u08_hour + sizeof(conf.tm_u08)], 0);
+  RTC.setAlarm(ALM2_MATCH_HOURS, 0, conf.tm_u08[tm_u08_minute + sizeof(conf.tm_u08) / 2], conf.tm_u08[tm_u08_hour + sizeof(conf.tm_u08) / 2], 0);
   RTC.alarm(ALARM_1);
   RTC.alarm(ALARM_2);
   RTC.squareWave(SQWAVE_NONE);
@@ -461,9 +440,18 @@ void setTm() {
   RTC.alarmInterrupt(ALARM_2, true);
 }
 void setRak() {
+  rakSerial.begin(9600);
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
 }
+void setUsb() {
+  if (USBSTA >> VBUS & 1) {    
+    usbSerial.begin(115200);    
+    while (!Serial) {
+      wdt_reset();
+    }
+  } 
+}   
 void doRelay(const uint8_t r, const uint8_t do) {
   if (do == _activate) {                  
     digitalWrite(RELAY_PIN[r], HIGH);      
