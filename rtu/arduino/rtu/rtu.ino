@@ -82,8 +82,8 @@ const uint8_t mo_n32_high_set     = 1;  // input
 const uint8_t tm_u08_enable       = 0;  // checkbox
 const uint8_t tm_u08_hour         = 1;  // input
 const uint8_t tm_u08_minute       = 2;  // input
-const uint8_t tm_u08_time-relay_1 = 3;  // select
-const uint8_t tm_u08_time-relay_2 = 4;  // select
+const uint8_t tm_u08_time_relay_1 = 3;  // select
+const uint8_t tm_u08_time_relay_2 = 4;  // select
 
 struct Conf {
   uint8_t   ge_u08[6];
@@ -105,11 +105,11 @@ uint8_t     dg_u08[2];
 uint32_t    mo_u32[8];
 float       mo_f32[8]; 
 
-const uint8_t u16                 = 0;
-const uint8_t i16                 = 1;
-const uint8_t u32                 = 2;
-const uint8_t i32                 = 3;
-const uint8_t f32                 = 4;
+const uint8_t _u16                 = 0;
+const uint8_t _i16                 = 1;
+const uint8_t _u32                 = 2;
+const uint8_t _i32                 = 3;
+const uint8_t _f32                 = 4;
 
 const uint8_t falling             = 1;  
 const uint8_t rising              = 2;
@@ -165,65 +165,84 @@ void loop() {
 void getAnalog() {
   // wire.end();    
   for (uint8_t ch = 0; ch < 2; ch++) {
-    const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08] / 2; 
+    const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08) / 2; 
     if (conf.an_u08[_enable]) {   
       while (INA_ALR_PIN[ch]);
       ina.begin(0x40 + ch);
       an_f32[ch] = ina.readShuntCurrent();
       if (ina.isAlert());      
-        const uint8_t _in_min = an_f32_in_min + ch * sizeof(conf.an_f32] / 2;
-        const uint8_t _in_max = an_f32_in_max + ch * sizeof(conf.an_f32] / 2;
-        const uint8_t _out_min = an_f32_out_min + ch * sizeof(conf.an_f32] / 2;
-        const uint8_t _out_max = an_f32_out_max + ch * sizeof(conf.an_f32] / 2;
-        an_f32[ch] = (an_f32[ch] - conf.an_f32[_in_min]) * (conf.an_f32[_out_max] - conf.an_f32[_out_min)] / (conf.an_f32[_in_max] - conf.an_f32[_in_min]) + conf.an_f32[_out_min];      
-      }
-      isAnalogIftt(ch);
+      const uint8_t _in_min = an_f32_in_min + ch * sizeof(conf.an_f32) / 2;
+      const uint8_t _in_max = an_f32_in_max + ch * sizeof(conf.an_f32) / 2;
+      const uint8_t _out_min = an_f32_out_min + ch * sizeof(conf.an_f32) / 2;
+      const uint8_t _out_max = an_f32_out_max + ch * sizeof(conf.an_f32) / 2;
+      an_f32[ch] = (an_f32[ch] - conf.an_f32[_in_min]) * (conf.an_f32[_out_max] - conf.an_f32[_out_min]) / (conf.an_f32[_in_max] - conf.an_f32[_in_min]) + conf.an_f32[_out_min];      
+      isAnalogIftt(ch);      
     }                    
   }    
 }
 void isAnalogIftt(const uint8_t ch) {       
   uint8_t _low_set, _high_set;
-  low_set = an_f32_low_set + ch * sizeof(conf.an_f32] / 2;
-  high_set = an_f32_high_set + ch * sizeof(conf.an_f32] / 2;
+  _low_set = an_f32_low_set + ch * sizeof(conf.an_f32) / 2;
+  _high_set = an_f32_high_set + ch * sizeof(conf.an_f32) / 2;
   uint8_t change = 0;          
   if (an_f32[ch] <= conf.an_f32[_low_set]) {
-    change = falling;          
+    change = falling;
+    const uint8_t _report = an_u08_fall_report + ch * sizeof(conf.an_u08) / 2;
+    if (conf.an_u08[_report]) {
+      isReportIftt = true;
+    }          
   } else if (an_f32[ch] >= conf.an_f32[_high_set]) {
-    change = rising;    
+    change = rising; 
+    const uint8_t _report = an_u08_rise_report + ch * sizeof(conf.an_u08) / 2;
+    if (conf.an_u08[_report]) {
+      isReportIftt = true;
+    }           
   }
   for (uint8_t r = 0; r < 2; r++) {
     uint8_t _relay;
     if (change = falling) {
-      _relay  = an_u08_fall_relay_1 + ch * sizeof(conf.an_u08] / 2;
+      _relay  = an_u08_fall_relay_1 + ch * sizeof(conf.an_u08) / 2;
       doRelay(r, conf.an_u08[_relay + r]);                             
     } else if (change = rising) {
-      _relay  = an_u08_rise_relay_1 + ch * sizeof(conf.an_u08] / 2;
+      _relay  = an_u08_rise_relay_1 + ch * sizeof(conf.an_u08) / 2;
       doRelay(r, conf.an_u08[_relay + r]);              
     }              
   }  
 }
 void getDigital() {
   for (uint8_t ch = 0; ch < 2; ch++) {
-    const uint8_t _enable = dg_u08_enable + ch * sizeof(conf.dg_u08] / 2;
+    const uint8_t _enable = dg_u08_enable + ch * sizeof(conf.dg_u08) / 2;
     if (conf.dg_u08[_enable]) {      
-      isDigitalIftt(ch);     
+      isDigitalIftt(ch);          
     }    
   }
 }
 void isDigitalIftt(const uint8_t ch) {
   if (dg_u08[ch]) {
     dg_u08[ch] = digitalRead(DIG_PIN[ch]);
-    const uint8_t _debounce = dg_u16_debounce + ch * sizeof(conf.dg_u16] / 2;
+    const uint8_t _debounce = dg_u16_debounce + ch * sizeof(conf.dg_u16) / 2;
     delay(conf.dg_u16[_debounce]); 
     if (dg_u08[ch] == digitalRead(DIG_PIN[ch]) {
       uint8_t change = 0;
-      change = dg_u08[ch] ? falling : rising;
+      if (!dg_u08[ch]) {
+        change = falling;
+        const uint8_t _report = dg_u08_fall_report + ch * sizeof(conf.dg_u08) / 2;
+        if (conf.dg_08[_report]) {
+          isReportIftt = true;
+        }
+      } else {
+        change = rising;
+        const uint8_t _report = dg_u08_rise_report + ch * sizeof(conf.dg_u08) / 2;
+        if (conf.dg_08[_report]) {
+          isReportIftt = true;
+        } 
+      }      
       for (uint8_t r = 0; r < 2; r++) {
         uint8_t _relay;
         if (change = falling) {
-          _relay  = dg_u08_fall_relay_1 + ch * sizeof(conf.dg_u08] / 2;                             
+          _relay  = dg_u08_fall_relay_1 + ch * sizeof(conf.dg_u08) / 2;                             
         } else if (change = rising) {
-          _relay  = dg_u08_rise_relay_1 + ch * sizeof(conf.dg_u08] / 2;              
+          _relay  = dg_u08_rise_relay_1 + ch * sizeof(conf.dg_u08) / 2;              
         }  
         doRelay(r, conf.dg_u08[_relay + r]);          
       }
@@ -240,53 +259,92 @@ void getModbus() {
       const uint8_t _type = mo_u08_type + ch * sizeof(conf.mo_u08) / 8;
       const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08) / 8;
       const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16) / 8;      
-      if (conf.mo_u08[_type] == u16) {        
+      if (conf.mo_u08[_type] == _u16) {        
         mo_u32[ch] = modbus.uint16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
-      } else if (conf.mo_u08[_type] == i16) {
-        mo_u32[ch] = modbus.int16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register]), bigEndian);                
-      } else if if (conf.mo_u08[_type] == u32) {
+      } else if (conf.mo_u08[_type] == _i16) {
+        mo_u32[ch] = modbus.int16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
+      } else if (conf.mo_u08[_type] == _u32) {
         mo_u32[ch] = modbus.uint32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
-      } else if if (conf.mo_u08[_type] == i32) {
+      } else if (conf.mo_u08[_type] == _i32) {
         mo_u32[ch] = modbus.int32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
-      } else if if (conf.mo_u08[_type] == f32) { 
+      } else if (conf.mo_u08[_type] == _f32) { 
         mo_f32[ch] = modbus.float32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);     
       } 
-      isModbusIftt(ch, _type);     
+      isModbusIftt(ch, _type);          
     }    
   }  
 }
 void isModbusIftt(const uint8_t ch, const uint8_t _type) {
   uint8_t _low_set, _high_set;  
-  uint8_t change = 0;  
-
-  if (conf.mo_u08[_type] == u16) { 
-    low_set = mo_u32_low_set + ch * sizeof(conf.mo_u32] / 2;
-    high_set = mo_u32_high_set + ch * sizeof(conf.mo_u32] / 2; 
+  uint8_t change = 0; 
+  if (conf.mo_u08[_type] == _u16) { 
+    _low_set = mo_u32_low_set + ch * sizeof(conf.mo_u32) / 8;
+    _high_set = mo_u32_high_set + ch * sizeof(conf.mo_u32) / 8; 
     if ((uint16_t)mo_u32[ch] <= (uint16_t)conf.mo_u32[_low_set]) {
+      change = falling;                   
+    } else if ((uint16_t)mo_u32[ch] >= (uint16_t)conf.mo_u32[_high_set]) {
+      change = rising;          
+    }
+  } else if (conf.mo_u08[_type] == _i16) {
+    _low_set = mo_u32_low_set + ch * sizeof(conf.mo_u32) / 8;
+    _high_set = mo_u32_high_set + ch * sizeof(conf.mo_u32) / 8; 
+    if ((int16_t)mo_u32[ch] <= (int16_t)conf.mo_u32[_low_set]) {
       change = falling;          
-    } else if ((uint16_t)mo_u32[ch] >= (uint16_t)conf.mo_u32[_low_set]) {
+    } else if ((int16_t)mo_u32[ch] >= (int16_t)conf.mo_u32[_high_set]) {
       change = rising;    
     }
-
-
-          
-    mo_u32[ch] = modbus.uint16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);                
-  } else if (conf.mo_u08[_type] == i16) {
-    mo_u32[ch] = modbus.int16FromRegister(conf.mo_u08[_function], conf.mo_u16[_register]), bigEndian);                
-  } else if if (conf.mo_u08[_type] == u32) {
-    mo_u32[ch] = modbus.uint32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
-  } else if if (conf.mo_u08[_type] == i32) {
-    mo_u32[ch] = modbus.int32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);
-  } else if if (conf.mo_u08[_type] == f32) { 
-    mo_f32[ch] = modbus.float32FromRegister(conf.mo_u08[_function], conf.mo_u16[_register], bigEndian);     
-  }           
-
+  } else if (conf.mo_u08[_type] == _u32) {
+    _low_set = mo_u32_low_set + ch * sizeof(conf.mo_u32) / 8;
+    _high_set = mo_u32_high_set + ch * sizeof(conf.mo_u32) / 8; 
+    if ((uint32_t)mo_u32[ch] <= (uint32_t)conf.mo_u32[_low_set]) {
+      change = falling;          
+    } else if ((uint32_t)mo_u32[ch] >= (uint32_t)conf.mo_u32[_high_set]) {
+      change = rising;    
+    }
+  } else if (conf.mo_u08[_type] == _i32) {
+    _low_set = mo_u32_low_set + ch * sizeof(conf.mo_u32) / 8;
+    _high_set = mo_u32_high_set + ch * sizeof(conf.mo_u32) / 8; 
+    if ((int32_t)mo_u32[ch] <= (int32_t)conf.mo_u32[_low_set]) {
+      change = falling;          
+    } else if ((int32_t)mo_u32[ch] >= (int32_t)conf.mo_u32[_high_set]) {
+      change = rising;    
+    }
+  } else if (conf.mo_u08[_type] == _f32) {
+    _low_set = mo_f32_low_set + ch * sizeof(conf.mo_f32) / 8;
+    _high_set = mo_f32_high_set + ch * sizeof(conf.mo_f32) / 8; 
+    if (mo_f32[ch] <= conf.mo_f32[_low_set]) {
+      change = falling;          
+    } else if (mo_f32[ch] >= conf.mo_f32[_high_set]) {
+      change = rising;    
+    }
+  }
+  for (uint8_t r = 0; r < 2; r++) {
+    uint8_t _relay;
+    if (change = falling) {
+      _relay  = mo_u08_fall_relay_1 + ch * sizeof(conf.mo_u08) / 8;
+      doRelay(r, conf.mo_u08[_relay + r]);                             
+    } else if (change = rising) {
+      _relay  = mo_u08_rise_relay_1 + ch * sizeof(conf.mo_u08) / 8;
+      doRelay(r, conf.mo_u08[_relay + r]);              
+    }              
+  } 
+  if (change == falling) {    
+    const uint8_t _report = mo_u08_fall_report + ch * sizeof(conf.mo_u08) / 8;
+    if (conf.mo_08[_report]) {
+      isReportIftt = true;
+    }
+  } else if (change == rising) { 
+    const uint8_t _report = mo_u08_rise_report + ch * sizeof(conf.mo_u08) / 8;
+    if (conf.mo_08[_report]) {
+      isReportIftt = true;
+    }
+  }
 }
 void getTm() {
   for (uint8_t ch = 0; ch < 2; ch++) {
-    const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08] / 2;
+    const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08) / 2;
     if (conf.tm_u08[_enable]) {
-      isTmIftt(ch);
+      isTmIftt(ch);      
     }      
   }
 }
@@ -297,7 +355,7 @@ void isTmIftt(const uint8_t ch) {
       if (ch == 0 && RTC.alarm(ALARM_1) {          
         _relay  = tm_u08_time-relay_1;                             
       } else if (ch == 1 && RTC.alarm(ALARM_2)) {
-        _relay  = tm_u08_time-relay_1 + sizeof(conf.dg_u08] / 2;              
+        _relay  = tm_u08_time-relay_1 + sizeof(conf.dg_u08) / 2;              
       } else {
         return;
       } 
@@ -322,6 +380,7 @@ bool isReportInterval() {
   }
 }
 void doRakSerial() {
+  /*
   while (rakSerial.available()) {
     const char chr = (char)rakSerial.read();
     //if (Serial) {
@@ -343,8 +402,10 @@ void doRakSerial() {
       strRakSerial = "";
     }
   }
+  */
 }
 void doUsbSerial() {
+  /*
   while (usbSerial.available()) {
     const char chr = (char)usbSerial.read();
     strUsbSerial += chr;
@@ -388,9 +449,11 @@ void doUsbSerial() {
       }
       strUsbSerial = "";
     }
-  }   
+  }
+  */   
 }
 String lppGetBuffer() {
+  /*
   String str;
   for(uint8_t ii = 0; ii < lpp.getSize(); ii++){    
     if (lpp.getBuffer()[ii] < 16) {
@@ -400,6 +463,7 @@ String lppGetBuffer() {
     str.toUpperCase();        
   }
   return str;
+  */
 }
 void loadConf() {
   EEPROM.get(0, conf);  
@@ -480,18 +544,19 @@ void setUsb() {
     }
   } 
 }   
-void doRelay(const uint8_t r, const uint8_t do) {
-  if (do == _activate) {                  
+void doRelay(const uint8_t r, const uint8_t d) {
+  if (d == _activate) {                  
     digitalWrite(RELAY_PIN[r], HIGH);      
     delay(10);
     digitalWrite(RELAY_PIN[r], LOW);
-  } else if (do == _deactivate) {           
+  } else if (d == _deactivate) {           
     digitalWrite(RELAY_PIN[r + 1], HIGH);  
     delay(10);
     digitalWrite(RELAY_PIN[r + 1], LOW);    
   }
 }
 void report() {
+  /*
   wdt_reset();
   if (loraJoin && loraSend) {
     loraSend = false;      
@@ -516,7 +581,8 @@ void report() {
     rakSerial.println(lppGetBuffer());
   } else {
     resetMe();
-  }    
+  } 
+  */   
 }
 void delayRandom() {
   randomSeed(analogRead(RANDOM_PIN));
