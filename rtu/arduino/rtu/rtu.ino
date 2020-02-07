@@ -127,7 +127,6 @@ const uint8_t rising              = 2;
 
 const uint8_t _activate           = 1;  
 const uint8_t _deactivate         = 2;  
-const uint8_t _toggle             = 3; 
 
 unsigned long tmrPoll, tmrReport;
 String strSerial, strRakSerial;
@@ -197,7 +196,7 @@ void getAnalog() {
     isAnalogIftt(ch);                
   }    
 }
-void isAnalogIftt(uint8_t ch) {       
+void isAnalogIftt(const uint8_t ch) {       
   uint8_t _low_set, _high_set;
   low_set = an_f32_low_set + ch * sizeof(conf.an_f32];
   high_set = an_f32_high_set + ch * sizeof(conf.an_f32];
@@ -233,7 +232,7 @@ void getDigital() {
     }    
   }
 }
-void isDigitalIftt(uint8_t ch) {
+void isDigitalIftt(const uint8_t ch) {
   if (dg_u08[ch]) {
     dg_u08[ch] = digitalRead(DIG_PIN[ch]);
     const uint8_t _delay = dg_u16_delay + ch * sizeof(conf.dg_u16];
@@ -280,15 +279,26 @@ void getTm() {
   for (uint8_t ch = 0; ch < 2; ch++) {
     const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08];
     if (conf.tm_u08[_enable]) {
-      if (!DS_INT_PIN) {
-        if (RTC.alarm(ALARM_1)) {
-          
-        } else if (RTC.alarm(ALARM_2)) {
-          
-        } 
-      } 
+      isTmIftt(ch);
     }      
   }
+}
+void isTmIftt(const uint8_t ch) {
+  if (!DS_INT_PIN) {
+    for (uint8_t r = 0; r < 2; r++) {
+      uint8_t _relay;
+      if (ch == 0 && RTC.alarm(ALARM_1) {          
+        _relay  = tm_u08_time-relay_1;                             
+      } else if (ch == 1 && RTC.alarm(ALARM_2)) {
+        _relay  = tm_u08_time-relay_1 + sizeof(conf.dg_u08];              
+      } else {
+        return;
+      } 
+      RTC.alarm(ALARM_1);
+      RTC.alarm(ALARM_2); 
+      doRelay(r, conf.dg_u08[_relay + r]);          
+    }
+  } 
 }
 bool isPollInterval() {
   const uint8_t _poll = ge_u08_poll;
@@ -362,7 +372,7 @@ void doSerial() {
         tm.Hour = strSerial.substring(3).toInt();
       } else if (strSerial.startsWith(F("&dd"))) {
         tm.Day = strSerial.substring(3).toInt();
-      } else if (strSerial.startsWith(F("&mo"))) {
+      } else if (strSerial.startsWith(F("&mh"))) {
         tm.Month = strSerial.substring(3).toInt();
       } else if (strSerial.startsWith(F("&yy"))) {
         tm.Year = strSerial.substring(3).toInt() - 1970;
@@ -454,33 +464,16 @@ void setRak() {
   delay(100);
   digitalWrite(RAK_RES_PIN, HIGH);
 }
-void doIftt() {  
-  
-}
-void doRelay(const uint8_t ch, const uint8_t do) {
-  if (do == _set) {                  
-    setRelay(ch);
-  } else if (do == _res) {           
-    resRelay(ch);    
-  } else if (do == _set_pulse) {       
-    setRelay(ch); 
-    delay(conf.rly_w[_pulse_dur + ch]);
-    resRelay(ch);
-  } else if (do == _res_pulse) {       
-    resRelay(ch);
-    delay(conf.rly_w[_pulse_dur + ch]);
-    setRelay(ch); 
-  }  
-}
-void setRelay(const uint8_t ch) {
-  digitalWrite(RELAY_PIN[ch], HIGH);      
-  delay(10);
-  digitalWrite(RELAY_PIN[ch], LOW);
-}
-void resRelay(const uint8_t ch) {
-  digitalWrite(RELAY_PIN[ch + 1], HIGH);  
-  delay(10);
-  digitalWrite(RELAY_PIN[ch + 1], LOW);
+void doRelay(const uint8_t r, const uint8_t do) {
+  if (do == _activate) {                  
+    digitalWrite(RELAY_PIN[r], HIGH);      
+    delay(10);
+    digitalWrite(RELAY_PIN[r], LOW);
+  } else if (do == _deactivate) {           
+    digitalWrite(RELAY_PIN[r + 1], HIGH);  
+    delay(10);
+    digitalWrite(RELAY_PIN[r + 1], LOW);    
+  }
 }
 void report() {
   wdt_reset();
