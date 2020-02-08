@@ -20,7 +20,7 @@
     let port;
     let statusDisp = document.querySelector('#status');
 
-    let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
+    let numAn = 2, numDg = 2, numMo = 2, numTm = 2;
     let items;
         
     function create() {
@@ -54,7 +54,7 @@
       for (let i = 0; i < numDg; i++) {
         buts[i].setAttribute('data-target', '#digital' + i);
         buts[i].setAttribute('aria-controls', 'digital' + i);
-        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        buts[i].innerText = '(' + String(i + 1 + numAn) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'digital' + i);      
       }   
       // Modbuses
@@ -67,7 +67,7 @@
       for (let i = 0; i < numMo; i++) {
         buts[i].setAttribute('data-target', '#modbus' + i);
         buts[i].setAttribute('aria-controls', 'modbus' + i);
-        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        buts[i].innerText = '(' + String(i + 1 + +numAn + numDg) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'modbus' + i);      
       }
       // Times
