@@ -84,27 +84,27 @@ const uint8_t tm_u08_minute       = 2;  // input
 const uint8_t tm_u08_time_relay_1 = 3;  // select
 const uint8_t tm_u08_time_relay_2 = 4;  // select
 
+const uint8_t numAn               = 2;
+const uint8_t numDg               = 2;
+const uint8_t numMo               = 8;
+const uint8_t numTm               = 2;
+
 struct Conf {
   uint8_t   ge_u08[6];
   uint16_t  ge_u16[2];
-  uint8_t   an_u08[16];
-  float     an_f32[12];
-  uint8_t   dg_u08[16];
-  uint16_t  dg_u16[2];
-  uint8_t   mo_u08[24];
-  uint16_t  mo_u16[6];
-  uint8_t   tm_u08[10];     
+  uint8_t   an_u08[8 * numAn];
+  float     an_f32[6 * numAn];
+  uint8_t   dg_u08[8 * numDg];
+  uint16_t  dg_u16[1 * numDg];
+  uint8_t   mo_u08[12 * numMo];
+  uint16_t  mo_u16[3 * numMo];
+  uint8_t   tm_u08[5 * numTm];     
 };
 Conf conf;
 
 float       an_f32[2];
 uint8_t     dg_u08[2];
 uint16_t    mo_u16[2];
-
-const uint8_t numAn               = 2;
-const uint8_t numDg               = 2;
-const uint8_t numMo               = 2;
-const uint8_t numTm               = 2;
 
 const uint8_t _u16                = 0;
 const uint8_t _i16                = 1;
@@ -129,7 +129,6 @@ CayenneLPP lpp(51);
 INA226 ina;
 WebUSB WebUSBSerial(1 /* https:// */, "leanofis-iot.github.io/lora");
 #define usbSerial WebUSBSerial
-HardwareSerial *modbusSerial = &Serial1;
 ModbusMaster modbus;
 
 void setup() {
@@ -185,15 +184,15 @@ void isAnalogIftt(const uint8_t ch) {
   uint8_t _low, _high;
   _low = an_f32_low + ch * sizeof(conf.an_f32) / numAn;
   _high = an_f32_high + ch * sizeof(conf.an_f32) / numAn;
-  uint8_t change = 0;          
+  uint8_t _change = 0;          
   if (an_f32[ch] <= conf.an_f32[_low]) {
-    change = low;
+    _change = low;
     const uint8_t _report = an_u08_low_report + ch * sizeof(conf.an_u08) / numAn;
     if (conf.an_u08[_report]) {
       isReportIftt = true;
     }          
   } else if (an_f32[ch] >= conf.an_f32[_high]) {
-    change = high; 
+    _change = high; 
     const uint8_t _report = an_u08_high_report + ch * sizeof(conf.an_u08) / numAn;
     if (conf.an_u08[_report]) {
       isReportIftt = true;
@@ -201,10 +200,10 @@ void isAnalogIftt(const uint8_t ch) {
   }
   for (uint8_t r = 0; r < 2; r++) {
     uint8_t _relay;
-    if (change = low) {
+    if (_change == low) {
       _relay  = an_u08_low_relay_1 + ch * sizeof(conf.an_u08) / numAn;
       doRelay(r, conf.an_u08[_relay + r]);                             
-    } else if (change = high) {
+    } else if (_change == high) {
       _relay  = an_u08_high_relay_1 + ch * sizeof(conf.an_u08) / numAn;
       doRelay(r, conf.an_u08[_relay + r]);              
     }              
@@ -224,15 +223,15 @@ void isDigitalIftt(const uint8_t ch) {
     const uint8_t _debounce = dg_u16_debounce + ch * sizeof(conf.dg_u16) / numDg;
     delay(conf.dg_u16[_debounce]); 
     if (dg_u08[ch] == digitalRead(DIG_PIN[ch])) {
-      uint8_t change = 0;
+      uint8_t _change = 0;
       if (!dg_u08[ch]) {
-        change = low;
+        _change = low;
         const uint8_t _report = dg_u08_low_report + ch * sizeof(conf.dg_u08) / numDg;
         if (conf.dg_u08[_report]) {
           isReportIftt = true;
         }
       } else {
-        change = high;
+        _change = high;
         const uint8_t _report = dg_u08_high_report + ch * sizeof(conf.dg_u08) / numDg;
         if (conf.dg_u08[_report]) {
           isReportIftt = true;
@@ -240,9 +239,9 @@ void isDigitalIftt(const uint8_t ch) {
       }      
       for (uint8_t r = 0; r < 2; r++) {
         uint8_t _relay;
-        if (change = low) {
+        if (_change == low) {
           _relay  = dg_u08_low_relay_1 + ch * sizeof(conf.dg_u08) / numDg;                             
-        } else if (change = high) {
+        } else if (_change == high) {
           _relay  = dg_u08_high_relay_1 + ch * sizeof(conf.dg_u08) / numDg;              
         }  
         doRelay(r, conf.dg_u08[_relay + r]);          
@@ -256,7 +255,7 @@ void getModbus() {
     const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08) / numMo;        
     if (conf.mo_u08[_enable]) { 
       const uint8_t _slave = mo_u08_slave + ch * sizeof(conf.mo_u08) / numMo;     
-      modbus.begin(conf.mo_u08[_slave], modbusSerial);
+      modbus.begin(conf.mo_u08[_slave], Serial1);
       const uint8_t _type = mo_u08_type + ch * sizeof(conf.mo_u08) / numMo;
       const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08) / numMo;
       const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16) / numMo;     
@@ -272,65 +271,38 @@ void getModbus() {
   }  
 }
 void isModbusIftt(const uint8_t ch, const uint8_t _type) {
-  uint8_t _low, _high;  
-  uint8_t change = 0; 
-  if (conf.mo_u08[_type] == _u16) { 
-    _low = mo_n32_low + ch * sizeof(conf.mo_u32) / numMo;
-    _high = mo_n32_high + ch * sizeof(conf.mo_u32) / numMo; 
-    if ((uint16_t)mo_u32[ch] <= (uint16_t)conf.mo_u32[_low]) {
-      change = low;                   
-    } else if ((uint16_t)mo_u32[ch] >= (uint16_t)conf.mo_u32[_high]) {
-      change = high;          
+  const uint8_t _low = mo_u16_low + ch * sizeof(conf.mo_u16) / numMo;
+  const uint8_t _high = mo_u16_high + ch * sizeof(conf.mo_u16) / numMo; 
+  uint8_t _change = 0; 
+  if (conf.mo_u08[_type] == _u16) {     
+    if ((uint16_t)mo_u16[ch] <= (uint16_t)conf.mo_u16[_low]) {
+      _change = low;                   
+    } else if ((uint16_t)mo_u16[ch] >= (uint16_t)conf.mo_u16[_high]) {
+      _change = high;          
     }
   } else if (conf.mo_u08[_type] == _i16) {
-    _low = mo_n32_low + ch * sizeof(conf.mo_u32) / numMo;
-    _high = mo_n32_high + ch * sizeof(conf.mo_u32) / numMo; 
-    if ((int16_t)mo_u32[ch] <= (int16_t)conf.mo_u32[_low]) {
-      change = low;          
-    } else if ((int16_t)mo_u32[ch] >= (int16_t)conf.mo_u32[_high]) {
-      change = high;    
-    }
-  } else if (conf.mo_u08[_type] == _u32) {
-    _low = mo_n32_low + ch * sizeof(conf.mo_u32) / numMo;
-    _high = mo_n32_high + ch * sizeof(conf.mo_u32) / numMo; 
-    if ((uint32_t)mo_u32[ch] <= (uint32_t)conf.mo_u32[_low]) {
-      change = low;          
-    } else if ((uint32_t)mo_u32[ch] >= (uint32_t)conf.mo_u32[_high]) {
-      change = high;    
-    }
-  } else if (conf.mo_u08[_type] == _i32) {
-    _low = mo_n32_low + ch * sizeof(conf.mo_u32) / numMo;
-    _high = mo_n32_high + ch * sizeof(conf.mo_u32) / numMo; 
-    if ((int32_t)mo_u32[ch] <= (int32_t)conf.mo_u32[_low]) {
-      change = low;          
-    } else if ((int32_t)mo_u32[ch] >= (int32_t)conf.mo_u32[_high]) {
-      change = high;    
-    }
-  } else if (conf.mo_u08[_type] == _f32) {
-    _low = mo_n32_low + ch * sizeof(conf.mo_f32) / numMo;
-    _high = mo_n32_high + ch * sizeof(conf.mo_f32) / numMo; 
-    if (mo_f32[ch] <= conf.mo_f32[_low]) {
-      change = low;          
-    } else if (mo_f32[ch] >= conf.mo_f32[_high]) {
-      change = high;    
+    if ((int16_t)mo_u16[ch] <= (int16_t)conf.mo_u16[_low]) {
+      _change = low;                   
+    } else if ((int16_t)mo_u16[ch] >= (int16_t)conf.mo_u16[_high]) {
+      _change = high;          
     }
   }
   for (uint8_t r = 0; r < 2; r++) {
     uint8_t _relay;
-    if (change = low) {
+    if (_change == low) {
       _relay  = mo_u08_low_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
       doRelay(r, conf.mo_u08[_relay + r]);                             
-    } else if (change = high) {
+    } else if (_change == high) {
       _relay  = mo_u08_high_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
       doRelay(r, conf.mo_u08[_relay + r]);              
     }              
   } 
-  if (change == low) {    
+  if (_change == low) {    
     const uint8_t _report = mo_u08_low_report + ch * sizeof(conf.mo_u08) / numMo;
     if (conf.mo_u08[_report]) {
       isReportIftt = true;
     }
-  } else if (change == high) { 
+  } else if (_change == high) { 
     const uint8_t _report = mo_u08_high_report + ch * sizeof(conf.mo_u08) / numMo;
     if (conf.mo_u08[_report]) {
       isReportIftt = true;
@@ -508,10 +480,10 @@ void digChange1() {
   dg_u08[1] = 1;
 }
 void setModbus() {
-  modbusSerial.begin(conf.ge_u16[ge_u16_mod_baud], SERIAL_8N1);  
+  Serial1.begin(conf.ge_u16[ge_u16_mod_baud], SERIAL_8N1);  
 }
-modbus.preTransmission();
-modbus.postTransmission();
+//modbus.preTransmission();
+//modbus.postTransmission();
 
 void setTm() {
   /*
