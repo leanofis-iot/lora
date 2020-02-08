@@ -75,8 +75,8 @@ const uint8_t mo_u08_high_report  = 11; // checkbox
 // uint16_t mo_u16[]
 const uint8_t mo_u16_register     = 0;  // input
 // uint16_t mo_f32[]
-const uint8_t mo_u16_low          = 0;  // input
-const uint8_t mo_u16_high         = 1;  // input
+const uint8_t mo_f32_low          = 0;  // input
+const uint8_t mo_f32_high         = 1;  // input
 
 // uint8_t tm_u08[]
 const uint8_t tm_u08_enable       = 0;  // checkbox
@@ -106,7 +106,7 @@ Conf conf;
 
 float       an_f32[numAn];
 uint8_t     dg_u08[numDg];
-uint16_t    mo_f32[numMo];
+float       mo_f32[numMo];
 
 const uint8_t _u16                = 0;
 const uint8_t _i16                = 1;
@@ -252,7 +252,7 @@ void isDigitalIftt(const uint8_t ch) {
   }
   dg_u08[ch] = digitalRead(DIG_PIN[ch]);       
 }
-void getModbus() {  
+void getModbus() { 
   for (uint8_t ch = 0; ch < 8; ch++) {
     const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08) / numMo;        
     if (conf.mo_u08[_enable]) { 
@@ -260,22 +260,36 @@ void getModbus() {
       modbus.begin(conf.mo_u08[_slave], Serial1);
       const uint8_t _type = mo_u08_type + ch * sizeof(conf.mo_u08) / numMo;
       const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08) / numMo;
-      const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16) / numMo;     
+      const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16) / numMo;
+      const uint8_t _decimal = mo_u08_decimal + ch * sizeof(conf.mo_u08) / numMo;     
       if (conf.mo_u08[_function] == discrete) {
-        mo_u16[ch] = modbus.readDiscreteInputs(conf.mo_u16[_register], 1);
-      } else if (conf.mo_u08[_function] == discrete) {
-        mo_u16[ch] = modbus.readHoldingRegisters(conf.mo_u16[_register], 1);
-      } else if (conf.mo_u08[_function] == discrete) {                 
-        mo_u16[ch] = modbus.readInputRegisters(conf.mo_u16[_register], 1);
-      }      
-      isModbusIftt(ch, _type);          
+        mo_f32[ch] = modbus.readDiscreteInputs(conf.mo_u16[_register], 1);
+      } else if (conf.mo_u08[_function] == holding) {
+        if (conf.mo_u08[_type] == _u16) {
+          mo_f32[ch] = (uint16_t)(modbus.readHoldingRegisters(conf.mo_u16[_register], 1));
+        } else if (conf.mo_u08[_type] == _i16) {
+          mo_f32[ch] = (int16_t)(modbus.readHoldingRegisters(conf.mo_u16[_register], 1));
+        }                
+      } else if (conf.mo_u08[_function] == input) {
+        if (conf.mo_u08[_type] == _u16) {
+          mo_f32[ch] = (uint16_t)(modbus.readInputRegisters(conf.mo_u16[_register], 1));
+        } else if (conf.mo_u08[_type] == _i16) {
+          mo_f32[ch] = (int16_t)(modbus.readInputRegisters(conf.mo_u16[_register], 1));
+        }       
+      } 
+      mo_f32[ch] /= pow(10, conf.mo_u08[_decimal]);     
+      isModbusIftt(ch);          
     }    
   }  
 }
-void isModbusIftt(const uint8_t ch, const uint8_t _type) {
-  const uint8_t _low = mo_u16_low + ch * sizeof(conf.mo_u16) / numMo;
-  const uint8_t _high = mo_u16_high + ch * sizeof(conf.mo_u16) / numMo; 
+void isModbusIftt(const uint8_t ch) {  
+  const uint8_t _low = mo_f32_low + ch * sizeof(conf.mo_f32) / numMo;
+  const uint8_t _high = mo_f32_high + ch * sizeof(conf.mo_f32) / numMo; 
   uint8_t _change = 0; 
+  
+
+
+  
   if (conf.mo_u08[_type] == _u16) {     
     if ((uint16_t)mo_u16[ch] <= (uint16_t)conf.mo_u16[_low]) {
       _change = low;                   
@@ -310,6 +324,7 @@ void isModbusIftt(const uint8_t ch, const uint8_t _type) {
       isReportIftt = true;
     }
   }
+  
 }
 void getTm() {
   for (uint8_t ch = 0; ch < 2; ch++) {
