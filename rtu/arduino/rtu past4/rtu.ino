@@ -74,9 +74,8 @@ const uint8_t mo_u08_high_relay_2 = 10; // select
 const uint8_t mo_u08_high_report  = 11; // checkbox
 // uint16_t mo_u16[]
 const uint8_t mo_u16_register     = 0;  // input
-// uint16_t mo_f32[]
-const uint8_t mo_u16_low          = 0;  // input
-const uint8_t mo_u16_high         = 1;  // input
+const uint8_t mo_u16_low          = 1;  // input
+const uint8_t mo_u16_high         = 2;  // input
 
 // uint8_t tm_u08[]
 const uint8_t tm_u08_enable       = 0;  // checkbox
@@ -98,15 +97,14 @@ struct Conf {
   uint8_t   dg_u08[8 * numDg];
   uint16_t  dg_u16[1 * numDg];
   uint8_t   mo_u08[12 * numMo];
-  uint16_t  mo_u16[1 * numMo];
-  uint16_t  mo_f32[2 * numMo];
+  uint16_t  mo_u16[3 * numMo];
   uint8_t   tm_u08[5 * numTm];     
 };
 Conf conf;
 
-float       an_f32[numAn];
-uint8_t     dg_u08[numDg];
-uint16_t    mo_f32[numMo];
+float       an_f32[2];
+uint8_t     dg_u08[2];
+uint16_t    mo_u16[2];
 
 const uint8_t _u16                = 0;
 const uint8_t _i16                = 1;
