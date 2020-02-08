@@ -85,7 +85,7 @@
       }
       // make id      
       let datas = 
-      ['ge_u08','ge_u16','an_u08','an_f32','dg_u08','dg_u16','mo_u08','mo_u16','mo_n32','tm_u08']; 
+      ['ge_u08','ge_u16','an_u08','an_f32','dg_u08','dg_u16','mo_u08','mo_u16','tm_u08']; 
       for (let i = 0; i < datas.length; i++) {        
         items = mainForm.querySelectorAll('#x' + datas[i]);        
         for (let j = 0; j < items.length; j++) {
@@ -108,15 +108,7 @@
         for (let i = 0; i < items.length; i++) {          
           if (items[i].id[0] == 'x') {             
             if (items[i].type === 'checkbox') {
-              val = items[i].checked ? 1 : 0; 
-            } else if (items[i].name == 'coils-fall') {
-              val = parseInt(items[i].value, 2);
-            } else if (items[i].name == 'coils-rise') {
-              val = parseInt(items[i].value, 2);  
-            } else if (items[i].name == 'discs-fall') {
-              val = parseInt(items[i].value, 2);
-            } else if (items[i].name == 'discs-rise') {
-              val = parseInt(items[i].value, 2);         
+              val = items[i].checked ? 1 : 0;                    
             } else {
               val = Number(items[i].value);
             }
