@@ -497,11 +497,16 @@ void digChange1() {
 void setModbus() {
   const uint16_t _baud = conf.ge_u16[ge_u16_mod_baud];
   const uint8_t _config = conf.ge_u08[ge_u08_mod_data_bit] | conf.ge_u08[ge_u08_mod_par_bit] | conf.ge_u08[ge_u08_mod_stop_bit];    
-  Serial1.begin(_baud, _config);  
+  Serial1.begin(_baud, _config); 
+  modbus.preTransmission(modbusDe);
+  modbus.postTransmission(modbusRe);
 }
-//modbus.preTransmission();
-//modbus.postTransmission();
-
+void modbusDe() {
+  digitalWrite(RS_DIR_PIN, HIGH);
+}
+void modbusRe() {
+  digitalWrite(RS_DIR_PIN, LOW);
+}
 void setTm() {
   /*
   RTC.setAlarm(ALM1_MATCH_DATE, 0, 0, 0, 1);
