@@ -495,7 +495,9 @@ void digChange1() {
   dg[1] = change;
 }
 void setModbus() {
-  Serial1.begin(conf.ge_u16[ge_u16_mod_baud], SERIAL_8N1);  
+  const uint16_t _baud = conf.ge_u16[ge_u16_mod_baud];
+  const uint8_t _config = conf.ge_u08[ge_u08_mod_data_bit] | conf.ge_u08[ge_u08_mod_par_bit] | conf.ge_u08[ge_u08_mod_stop_bit];    
+  Serial1.begin(_baud, _config);  
 }
 //modbus.preTransmission();
 //modbus.postTransmission();
