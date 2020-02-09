@@ -39,6 +39,7 @@ const uint8_t an_u08_low_report   = 4;  // checkbox
 const uint8_t an_u08_high_relay_1 = 5;  // select
 const uint8_t an_u08_high_relay_2 = 6;  // select 
 const uint8_t an_u08_high_report  = 7;  // checkbox
+const uint8_t an_u08_within_report= 8; // checkbox
 // float an_f32[]
 const uint8_t an_f32_in_min       = 0;  // input
 const uint8_t an_f32_in_max       = 1;  // input
@@ -72,6 +73,8 @@ const uint8_t mo_u08_low_report   = 8;  // checkbox
 const uint8_t mo_u08_high_relay_1 = 9; // select
 const uint8_t mo_u08_high_relay_2 = 10; // select 
 const uint8_t mo_u08_high_report  = 11; // checkbox
+const uint8_t mo_u08_within_report= 12; // checkbox
+
 // uint16_t mo_u16[]
 const uint8_t mo_u16_register     = 0;  // input
 // uint16_t mo_f32[]
@@ -93,11 +96,11 @@ const uint8_t numTm               = 2;
 struct Conf {
   uint8_t   ge_u08[6];
   uint16_t  ge_u16[2];
-  uint8_t   an_u08[8 * numAn];
+  uint8_t   an_u08[9 * numAn];
   float     an_f32[6 * numAn];
   uint8_t   dg_u08[8 * numDg];
   uint16_t  dg_u16[1 * numDg];
-  uint8_t   mo_u08[12 * numMo];
+  uint8_t   mo_u08[13 * numMo];
   uint16_t  mo_u16[1 * numMo];
   uint16_t  mo_f32[2 * numMo];
   uint8_t   tm_u08[5 * numTm];     
@@ -117,7 +120,9 @@ const uint8_t _i16                = 1;
 
 const uint8_t low                 = 1;  
 const uint8_t high                = 2;
-const uint8_t change              = 3;
+const uint8_t within              = 3;
+
+const uint8_t change              = 4;
 
 const uint8_t discrete            = 2;
 const uint8_t holding             = 3;
@@ -194,7 +199,7 @@ void isAnalogIftt(const uint8_t ch) {
   uint8_t _state = 0;          
   if (an[ch] <= conf.an_f32[_low]) {
     _state = low;
-    if (an_state[ch] == high) {
+    if (an_state[ch] != low) {
       for (uint8_t r = 0; r < 2; r++) {
         uint8_t _relay;        
         _relay  = an_u08_high_relay_1 + ch * sizeof(conf.an_u08) / numAn;
@@ -207,7 +212,7 @@ void isAnalogIftt(const uint8_t ch) {
     }              
   } else if (an[ch] >= conf.an_f32[_high]) {
     _state = high; 
-    if (an_state[ch] == low) {
+    if (an_state[ch] != high) {
       for (uint8_t r = 0; r < 2; r++) {
         uint8_t _relay;        
         _relay  = an_u08_low_relay_1 + ch * sizeof(conf.an_u08) / numAn;
@@ -217,7 +222,18 @@ void isAnalogIftt(const uint8_t ch) {
       if (conf.an_u08[_report]) {
         isReportIftt = true;
       }      
-    }            
+    }
+  } else {
+    _state = within; 
+    if (an_state[ch] != within) {
+      for (uint8_t r = 0; r < 2; r++) {        
+        doRelay(r, deactivate);      
+      }
+      const uint8_t _report = an_u08_within_report + ch * sizeof(conf.an_u08) / numAn;
+      if (conf.an_u08[_report]) {
+        isReportIftt = true;
+      }        
+    }              
   }
   an_state[ch] = _state;  
 }
@@ -297,7 +313,7 @@ void isModbusIftt(const uint8_t ch) {
   uint8_t _state = 0;          
   if (mo[ch] <= conf.mo_f32[_low]) {
     _state = low;
-    if (mo_state[ch] == high) {
+    if (mo_state[ch] != low) {
       for (uint8_t r = 0; r < 2; r++) {
         uint8_t _relay;        
         _relay  = mo_u08_high_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
@@ -310,7 +326,7 @@ void isModbusIftt(const uint8_t ch) {
     }              
   } else if (mo[ch] >= conf.mo_f32[_high]) {
     _state = high; 
-    if (mo_state[ch] == low) {
+    if (mo_state[ch] != high) {
       for (uint8_t r = 0; r < 2; r++) {
         uint8_t _relay;        
         _relay  = mo_u08_low_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
@@ -320,9 +336,20 @@ void isModbusIftt(const uint8_t ch) {
       if (conf.mo_u08[_report]) {
         isReportIftt = true;
       }      
-    }            
+    }
+  } else {
+    _state = within; 
+    if (mo_state[ch] != within) {
+      for (uint8_t r = 0; r < 2; r++) {        
+        doRelay(r, deactivate);      
+      }
+      const uint8_t _report = mo_u08_within_report + ch * sizeof(conf.mo_u08) / numMo;
+      if (conf.mo_u08[_report]) {
+        isReportIftt = true;
+      }         
+    }              
   }
-  mo_state[ch] = _state;
+  mo_state[ch] = _state;  
 }
 void getTm() {
   for (uint8_t ch = 0; ch < 2; ch++) {
