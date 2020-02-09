@@ -28,7 +28,8 @@ const uint8_t ge_u08_mod_stop_bit = 4;  // select
 const uint8_t ge_u08_mod_par_bit  = 5;  // select
 // uint16_t ge_u16[]
 const uint8_t ge_u16_report       = 0;  // input
-const uint8_t ge_u16_mod_baud     = 1;  // select 
+// uint32_t ge_u32[]
+const uint8_t ge_u32_mod_baud     = 0;  // select 
 
 // uint8_t an_u08[]
 const uint8_t an_u08_enable       = 0;  // checkbox
@@ -95,7 +96,8 @@ const uint8_t numTm               = 2;
 
 struct Conf {
   uint8_t   ge_u08[6];
-  uint16_t  ge_u16[2];
+  uint16_t  ge_u16[1];
+  uint32_t  ge_u32[1];
   uint8_t   an_u08[9 * numAn];
   float     an_f32[6 * numAn];
   uint8_t   dg_u08[8 * numDg];
@@ -170,8 +172,8 @@ void loop() {
   if (isReportInterval()) {
     report();    
   }  
-  doRakSerial();
-  doUsbSerial();
+  getRakSerial();
+  getUsbSerial();
   wdt_reset();
 }
 void getAnalog() {
@@ -378,23 +380,22 @@ void isTmIftt(const uint8_t ch) {
 }
 bool isPollInterval() {
   const uint8_t _poll = ge_u08_poll;
-  if (millis() - tmrPoll >= conf.ge_u08[_poll] * 1000) {
+  if (millis() / 1000 - tmrPoll >= conf.ge_u08[_poll]) {
     tmrPoll = millis();
     return true;
   }
 }
 bool isReportInterval() {
   const uint8_t _report = ge_u16_report;
-  if (millis() - tmrReport >= conf.ge_u16[_report] * 60000) {
+  if (millis() / 60000 - tmrReport >= conf.ge_u16[_report]) {
     tmrReport = millis();
     return true;
   }
 }
-void doRakSerial() {
-  /*
+void getRakSerial() { 
   while (rakSerial.available()) {
     const char chr = (char)rakSerial.read();
-    //if (Serial) {
+    //if (usbSerial) {
       usbSerial.print(chr); // or line print
     //}
     strRakSerial += chr;
@@ -403,8 +404,8 @@ void doRakSerial() {
       if (strRakSerial.endsWith(F("Join Success"))) {        
         // delay
         rakSerial.print(F("at+set_config=lora:dr:")); 
-        rakSerial.println(conf.lor_b[_dr]);
-      } else if (strRakSerial.endsWith("DR" + String(conf.lor_b[_dr]) +" success")) { 
+        rakSerial.println(conf.ge_u08[ge_u08_lora_dr]);
+      } else if (strRakSerial.endsWith("DR" + String(conf.ge_u08[ge_u08_lora_dr]) +" success")) { 
         loraJoin = true; 
         digitalWrite(JOIN_LED_PIN, HIGH);       
       } else if (strRakSerial.endsWith(F("send success"))) { 
@@ -413,10 +414,8 @@ void doRakSerial() {
       strRakSerial = "";
     }
   }
-  */
 }
-void doUsbSerial() {
-  /*
+void getUsbSerial() {
   while (usbSerial.available()) {
     const char chr = (char)usbSerial.read();
     strUsbSerial += chr;
@@ -460,8 +459,7 @@ void doUsbSerial() {
       }
       strUsbSerial = "";
     }
-  }
-  */   
+  }   
 }
 String lppGetBuffer() {
   /*
@@ -522,7 +520,7 @@ void digChange1() {
   dg[1] = change;
 }
 void setModbus() {
-  const uint16_t _baud = conf.ge_u16[ge_u16_mod_baud];
+  const uint32_t _baud = conf.ge_u32[ge_u32_mod_baud];
   const uint8_t _config = conf.ge_u08[ge_u08_mod_data_bit] | conf.ge_u08[ge_u08_mod_par_bit] | conf.ge_u08[ge_u08_mod_stop_bit];    
   Serial1.begin(_baud, _config); 
   modbus.preTransmission(modbusDe);
