@@ -75,7 +75,6 @@ const uint8_t mo_u08_high_relay_1 = 9; // select
 const uint8_t mo_u08_high_relay_2 = 10; // select 
 const uint8_t mo_u08_high_report  = 11; // checkbox
 const uint8_t mo_u08_within_report= 12; // checkbox
-
 // uint16_t mo_u16[]
 const uint8_t mo_u16_register     = 0;  // input
 // uint16_t mo_f32[]
@@ -115,7 +114,6 @@ float       mo[numMo];
 
 uint8_t     an_state[numAn];
 uint8_t     mo_state[numAn];
-
 
 const uint8_t _u16                = 0;
 const uint8_t _i16                = 1;
@@ -178,7 +176,7 @@ void loop() {
 }
 void getAnalog() {
   // wire.end();    
-  for (uint8_t ch = 0; ch < 2; ch++) {
+  for (uint8_t ch = 0; ch < numAn; ch++) {
     const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08) / numAn; 
     if (conf.an_u08[_enable]) {   
       while (INA_ALR_PIN[ch]);
@@ -240,7 +238,7 @@ void isAnalogIftt(const uint8_t ch) {
   an_state[ch] = _state;  
 }
 void getDigital() {
-  for (uint8_t ch = 0; ch < 2; ch++) {
+  for (uint8_t ch = 0; ch < numDg; ch++) {
     const uint8_t _enable = dg_u08_enable + ch * sizeof(conf.dg_u08) / numDg;
     if (conf.dg_u08[_enable]) {      
       isDigitalIftt(ch);          
@@ -279,7 +277,7 @@ void isDigitalIftt(const uint8_t ch) {
   dg[ch] = digitalRead(DIG_PIN[ch]);       
 }
 void getModbus() { 
-  for (uint8_t ch = 0; ch < 8; ch++) {
+  for (uint8_t ch = 0; ch < numMo; ch++) {
     const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08) / numMo;        
     if (conf.mo_u08[_enable]) { 
       const uint8_t _slave = mo_u08_slave + ch * sizeof(conf.mo_u08) / numMo;     
@@ -289,7 +287,7 @@ void getModbus() {
       const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16) / numMo;
       const uint8_t _decimal = mo_u08_decimal + ch * sizeof(conf.mo_u08) / numMo;     
       if (conf.mo_u08[_function] == discrete) {
-        mo[ch] = modbus.readDiscreteInputs(conf.mo_u16[_register], 1);
+        mo[ch] = (uint16_t)(modbus.readDiscreteInputs(conf.mo_u16[_register], 1));
       } else if (conf.mo_u08[_function] == holding) {
         if (conf.mo_u08[_type] == _u16) {
           mo[ch] = (uint16_t)(modbus.readHoldingRegisters(conf.mo_u16[_register], 1));
@@ -354,7 +352,7 @@ void isModbusIftt(const uint8_t ch) {
   mo_state[ch] = _state;  
 }
 void getTm() {
-  for (uint8_t ch = 0; ch < 2; ch++) {
+  for (uint8_t ch = 0; ch < numTm; ch++) {
     const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08) / numTm;
     if (conf.tm_u08[_enable]) {
       isTmIftt(ch);      
@@ -423,56 +421,45 @@ void getUsbSerial() {
       strUsbSerial.trim();       
       if (strUsbSerial.startsWith(F("at"))) {
         rakSerial.println(strUsbSerial);
-      } else if (strUsbSerial.startsWith(F("&lor_b"))) {
-        conf.lor_b[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
-      } else if (strUsbSerial.startsWith(F("&lor_w"))) {
-        conf.lor_w[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
-      } else if (strUsbSerial.startsWith(F("&rly_w"))) {
-        conf.rly_w[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
-      } else if (strUsbSerial.startsWith(F("&anu_b"))) {
-        conf.anu_b[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();
-      } else if (strUsbSerial.startsWith(F("&ans_f"))) {
-        conf.ans_f[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toFloat();
-      } else if (strUsbSerial.startsWith(F("&ana_f"))) {
-        conf.ana_f[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toFloat();
-      } else if (strUsbSerial.startsWith(F("&tma_b"))) {
-        conf.tma_b[strUsbSerial.substring(6,8).toInt()] = strUsbSerial.substring(8).toInt();     
-      } else if (strUsbSerial.startsWith(F("&alr_b"))) {
-        conf.alr_b[strUsbSerial.substring(6,9).toInt()] = strUsbSerial.substring(9).toInt(); 
-      } else if (strUsbSerial.startsWith(F("&save"))) {
+      } else if (strUsbSerial.startsWith(F("xge_u08"))) {
+        conf.ge_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());
+      } else if (strUsbSerial.startsWith(F("xge_u16"))) {
+        conf.ge_u16[strUsbSerial.substring(7,9).toInt()] = (uint16_t)(strUsbSerial.substring(9).toInt());
+      } else if (strUsbSerial.startsWith(F("xge_u32"))) {
+        conf.ge_u32[strUsbSerial.substring(7,9).toInt()] = (uint32_t)(strUsbSerial.substring(9).toInt());
+      } else if (strUsbSerial.startsWith(F("xan_u08"))) {
+        conf.an_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());
+      } else if (strUsbSerial.startsWith(F("xan_f32"))) {
+        conf.an_f32[strUsbSerial.substring(7,9).toInt()] = strUsbSerial.substring(9).toFloat();
+      } else if (strUsbSerial.startsWith(F("xmo_u08"))) {
+        conf.mo_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());
+      } else if (strUsbSerial.startsWith(F("xmo_u16"))) {
+        conf.mo_u16[strUsbSerial.substring(7,9).toInt()] = (uint16_t)(strUsbSerial.substring(9).toInt());
+      } else if (strUsbSerial.startsWith(F("xmo_f32"))) {
+        conf.mo_f32[strUsbSerial.substring(7,9).toInt()] = strUsbSerial.substring(9).toFloat();
+      } else if (strUsbSerial.startsWith(F("xtm_u08"))) {
+        conf.tm_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());      
+      } else if (strUsbSerial.startsWith(F("xsave"))) {
         EEPROM.put(0, conf);
         resetMe();         
-      } else if (strUsbSerial.startsWith(F("&ss"))) {
+      } else if (strUsbSerial.startsWith(F("xss"))) {
         tm.Second = strUsbSerial.substring(3).toInt();
-      } else if (strUsbSerial.startsWith(F("&mm"))) {
+      } else if (strUsbSerial.startsWith(F("xmm"))) {
         tm.Minute = strUsbSerial.substring(3).toInt();
-      } else if (strUsbSerial.startsWith(F("&hh"))) {
+      } else if (strUsbSerial.startsWith(F("xhh"))) {
         tm.Hour = strUsbSerial.substring(3).toInt();
-      } else if (strUsbSerial.startsWith(F("&dd"))) {
+      } else if (strUsbSerial.startsWith(F("xdd"))) {
         tm.Day = strUsbSerial.substring(3).toInt();
-      } else if (strUsbSerial.startsWith(F("&mh"))) {
+      } else if (strUsbSerial.startsWith(F("xmh"))) {
         tm.Month = strUsbSerial.substring(3).toInt();
-      } else if (strUsbSerial.startsWith(F("&yy"))) {
+      } else if (strUsbSerial.startsWith(F("xyy"))) {
         tm.Year = strUsbSerial.substring(3).toInt() - 1970;
-      } else if (strUsbSerial.startsWith(F("&time"))) {
+      } else if (strUsbSerial.startsWith(F("xtime"))) {
         RTC.write(tm);
       }
       strUsbSerial = "";
     }
   }   
-}
-String lppGetBuffer() {
-  /*
-  String str;
-  for(uint8_t ii = 0; ii < lpp.getSize(); ii++){    
-    if (lpp.getBuffer()[ii] < 16) {
-      str += '0';       
-    }
-    str += String(lpp.getBuffer()[ii], HEX);
-    str.toUpperCase();        
-  }
-  return str;
-  */
 }
 void loadConf() {
   EEPROM.get(0, conf);  
@@ -500,7 +487,7 @@ void setPin() {
   }   
 }
 void setAnalog() {
-  for (uint8_t ch = 0; ch < 2; ch++) { 
+  for (uint8_t ch = 0; ch < numAn; ch++) { 
     // wire.end();   
     ina.begin(0x40 + ch);
     ina.configure(INA226_AVERAGES_128, INA226_BUS_CONV_TIME_140US, INA226_SHUNT_CONV_TIME_8244US, INA226_MODE_SHUNT_CONT);
@@ -575,33 +562,103 @@ void doRelay(const uint8_t r, const uint8_t d) {
   }
 }
 void report() {
-  /*
   wdt_reset();
+  isReportIftt = false;,
+  // and other flags reset????????????
   if (loraJoin && loraSend) {
     loraSend = false;      
     lpp.reset();  
-    for (uint8_t ch = 0; ch < 2; ch++) {
-      if (conf.anu_b[ch] == _temp) {
-        lpp.addTemperature(1 + ch, Ang[ch]);      
-      } else if (conf.anu_b[ch] == _hum) {
-        lpp.addRelativeHumidity(1 + ch, Ang[ch]);
-      } else if (conf.anu_b[ch] == _bar) {
-        lpp.addBarometricPressure(1 + ch, Ang[ch]);
-      } else if (conf.anu_b[ch] == _lum) {
-        lpp.addLuminosity(1 + ch, Ang[ch]);
-      } else {
-      lpp.addAnalogInput(1 + ch, Ang[ch]);
-      }       
+    for (uint8_t ch = 0; ch < numAn; ch++) {
+      const uint8_t _unit = conf.an_u08[an_u08_unit + ch * sizeof(conf.an_u08) / numAn];      
+      if (_unit == LPP_ANALOG_INPUT) {
+        lpp.addAnalogInput(1 + ch, an[ch]);
+      } else if (_unit == LPP_LUMINOSITY) {
+        lpp.addLuminosity(1 + ch, an[ch]);
+      } else if (_unit == LPP_TEMPERATURE) {
+        lpp.addTemperature(1 + ch, an[ch]);
+      } else if (_unit == LPP_RELATIVE_HUMIDITY) {
+        lpp.addRelativeHumidity(1 + ch, an[ch]);
+      } else if (_unit == LPP_BAROMETRIC_PRESSURE) {
+        lpp.addBarometricPressure(1 + ch, an[ch]);
+      } else if (_unit == LPP_VOLTAGE) {
+        lpp.addVoltage(1 + ch, an[ch]);
+      } else if (_unit == LPP_CURRENT) {
+        lpp.addCurrent(1 + ch, an[ch]);
+      } else if (_unit == LPP_PERCENTAGE) {
+        lpp.addPercentage(1 + ch, an[ch]);
+      } else if (_unit == LPP_ALTITUDE) {
+        lpp.addAltitude(1 + ch, an[ch]);
+      } else if (_unit == LPP_POWER) {
+        lpp.addPower(1 + ch, an[ch]);
+      } else if (_unit == LPP_DIRECTION) {
+        lpp.addDirection(1 + ch, an[ch]);
+      } else if (_unit == LPP_DIGITAL_INPUT) {
+        lpp.addDigitalInput(1 + ch, an[ch]);
+      } else if (_unit == LPP_SWITCH) {
+        lpp.addSwitch(1 + ch, an[ch]);
+      } else if (_unit == LPP_PRESENCE) {  
+        lpp.addPresence(1 + ch, an[ch]);      
+      }
     } 
-    for (uint8_t ch = 0; ch < 2; ch++) {      
-      lpp.addDigitalInput(3 + ch, digitalRead(DIG_PIN[ch]));      
+    for (uint8_t ch = 0; ch < numDg; ch++) {
+      const uint8_t _unit = conf.dg_u08[dg_u08_unit + ch * sizeof(conf.dg_u08) / numDg];      
+      if (_unit == LPP_DIGITAL_INPUT) {
+        lpp.addDigitalInput(3 + ch, dg[ch]);
+      } else if (_unit == LPP_SWITCH) {
+        lpp.addSwitch(3 + ch, dg[ch]);
+      } else if (_unit == LPP_PRESENCE) {
+        lpp.addPresence(3 + ch, dg[ch]);
+      }
+    }
+    for (uint8_t ch = 0; ch < numMo; ch++) {
+      const uint8_t _unit = conf.mo_u08[mo_u08_unit + ch * sizeof(conf.mo_u08) / numMo];      
+      if (_unit == LPP_ANALOG_INPUT) {
+        lpp.addAnalogInput(5 + ch, mo[ch]);
+      } else if (_unit == LPP_LUMINOSITY) {
+        lpp.addLuminosity(5 + ch, mo[ch]);
+      } else if (_unit == LPP_TEMPERATURE) {
+        lpp.addTemperature(5 + ch, mo[ch]);
+      } else if (_unit == LPP_RELATIVE_HUMIDITY) {
+        lpp.addRelativeHumidity(5 + ch, mo[ch]);
+      } else if (_unit == LPP_BAROMETRIC_PRESSURE) {
+        lpp.addBarometricPressure(5 + ch, mo[ch]);
+      } else if (_unit == LPP_VOLTAGE) {
+        lpp.addVoltage(5 + ch, mo[ch]);
+      } else if (_unit == LPP_CURRENT) {
+        lpp.addCurrent(5 + ch, mo[ch]);
+      } else if (_unit == LPP_PERCENTAGE) {
+        lpp.addPercentage(5 + ch, mo[ch]);
+      } else if (_unit == LPP_ALTITUDE) {
+        lpp.addAltitude(5 + ch, mo[ch]);
+      } else if (_unit == LPP_POWER) {
+        lpp.addPower(5 + ch, mo[ch]);
+      } else if (_unit == LPP_DIRECTION) {
+        lpp.addDirection(5 + ch, mo[ch]);
+      } else if (_unit == LPP_DIGITAL_INPUT) {
+        lpp.addDigitalInput(5 + ch, mo[ch]);
+      } else if (_unit == LPP_SWITCH) {
+        lpp.addSwitch(5 + ch, mo[ch]);
+      } else if (_unit == LPP_PRESENCE) {  
+        lpp.addPresence(5 + ch, mo[ch]);      
+      }
     } 
-    rakSerial.print("at+send=lora:" + String(conf.lor_b[_port]) + ':'); 
-    rakSerial.println(lppGetBuffer());
+    rakSerial.print("at+send=lora:" + String(conf.ge_u08[ge_u08_lora_port]) + ':'); 
+    //rakSerial.println(lppGetBuffer());
+    rakSerial.println((char*)lpp.getBuffer());
   } else {
     resetMe();
-  } 
-  */   
+  }      
+}
+String lppGetBuffer() {
+  String str;
+  for(uint8_t ii = 0; ii < lpp.getSize(); ii++){    
+    if (lpp.getBuffer()[ii] < 16) {
+      str += '0';       
+    }
+    str += String(lpp.getBuffer()[ii], HEX);
+    str.toUpperCase();        
+  }
+  return str;
 }
 void delayRandom() {
   randomSeed(analogRead(RANDOM_PIN));
