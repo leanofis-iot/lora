@@ -40,7 +40,7 @@ const uint8_t an_u08_low_report   = 4;  // checkbox
 const uint8_t an_u08_high_relay_1 = 5;  // select
 const uint8_t an_u08_high_relay_2 = 6;  // select 
 const uint8_t an_u08_high_report  = 7;  // checkbox
-const uint8_t an_u08_within_report= 8; // checkbox
+const uint8_t an_u08_within_report= 8;  // checkbox
 // float an_f32[]
 const uint8_t an_f32_in_min       = 0;  // input
 const uint8_t an_f32_in_max       = 1;  // input
@@ -71,7 +71,7 @@ const uint8_t mo_u08_decimal      = 5;  // input
 const uint8_t mo_u08_low_relay_1  = 6;  // select
 const uint8_t mo_u08_low_relay_2  = 7;  // select 
 const uint8_t mo_u08_low_report   = 8;  // checkbox
-const uint8_t mo_u08_high_relay_1 = 9; // select
+const uint8_t mo_u08_high_relay_1 = 9;  // select
 const uint8_t mo_u08_high_relay_2 = 10; // select 
 const uint8_t mo_u08_high_report  = 11; // checkbox
 const uint8_t mo_u08_within_report= 12; // checkbox
@@ -441,7 +441,9 @@ void getUsbSerial() {
         conf.tm_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());      
       } else if (strUsbSerial.startsWith(F("xsave"))) {
         EEPROM.put(0, conf);
-        resetMe();         
+        resetMe(); 
+      } else if (strUsbSerial.startsWith(F("xget"))) {
+        getConf();        
       } else if (strUsbSerial.startsWith(F("xss"))) {
         tm.Second = strUsbSerial.substring(3).toInt();
       } else if (strUsbSerial.startsWith(F("xmm"))) {
@@ -459,6 +461,52 @@ void getUsbSerial() {
       }
       strUsbSerial = "";
     }
+  }   
+}
+void getConf() {  
+  for (uint8_t i = 0; i < sizeof(conf.ge_u08); i++) {
+    usbSerial.print(F("xge_u08"));
+    usbSerial.println(conf.ge_u08[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.ge_u16); i++) {
+    usbSerial.print(F("xge_u16"));
+    usbSerial.println(conf.ge_u16[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.ge_u32); i++) {
+    usbSerial.print(F("xge_u32"));
+    usbSerial.println(conf.ge_u32[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.an_u08); i++) {
+    usbSerial.print(F("xan_u08"));
+    usbSerial.println(conf.an_u08[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.an_f32); i++) {
+    usbSerial.print(F("xan_f32"));
+    usbSerial.println(conf.an_f32[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.dg_u08); i++) {
+    usbSerial.print(F("xdg_u08"));
+    usbSerial.println(conf.dg_u08[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.dg_u16); i++) {
+    usbSerial.print(F("xdg_u16"));
+    usbSerial.println(conf.dg_u16[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.mo_u08); i++) {
+    usbSerial.print(F("xmo_u08"));
+    usbSerial.println(conf.mo_u08[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.mo_u16); i++) {
+    usbSerial.print(F("xmo_u16"));
+    usbSerial.println(conf.mo_u16[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.mo_f32); i++) {
+    usbSerial.print(F("xmo_f32"));
+    usbSerial.println(conf.mo_f32[i]);    
+  }
+  for (uint8_t i = 0; i < sizeof(conf.tm_u08); i++) {
+    usbSerial.print(F("xtm_u08"));
+    usbSerial.println(conf.tm_u08[i]);    
   }   
 }
 void loadConf() {
@@ -563,8 +611,7 @@ void doRelay(const uint8_t r, const uint8_t d) {
 }
 void report() {
   wdt_reset();
-  isReportIftt = false;,
-  // and other flags reset????????????
+  isReportIftt = false;  
   if (loraJoin && loraSend) {
     loraSend = false;      
     lpp.reset();  
@@ -644,21 +691,10 @@ void report() {
     } 
     rakSerial.print("at+send=lora:" + String(conf.ge_u08[ge_u08_lora_port]) + ':'); 
     //rakSerial.println(lppGetBuffer());
-    rakSerial.println((char*)lpp.getBuffer());
+    rakSerial.println((char*)(lpp.getBuffer()));
   } else {
     resetMe();
   }      
-}
-String lppGetBuffer() {
-  String str;
-  for(uint8_t ii = 0; ii < lpp.getSize(); ii++){    
-    if (lpp.getBuffer()[ii] < 16) {
-      str += '0';       
-    }
-    str += String(lpp.getBuffer()[ii], HEX);
-    str.toUpperCase();        
-  }
-  return str;
 }
 void delayRandom() {
   randomSeed(analogRead(RANDOM_PIN));
@@ -673,7 +709,18 @@ void resetMe() {
   while(true); 
 }
 /*
- * char buf[15];
+String lppGetBuffer() {
+  String str;
+  for(uint8_t ii = 0; ii < lpp.getSize(); ii++){    
+    if (lpp.getBuffer()[ii] < 16) {
+      str += '0';       
+    }
+    str += String(lpp.getBuffer()[ii], HEX);
+    str.toUpperCase();        
+  }
+  return str;
+} 
+char buf[15];
 str.toCharArray(buf, sizeof(buf));
 float f = atof(buf);
 int32_t i = atol(buf);
