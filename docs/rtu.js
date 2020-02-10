@@ -22,6 +22,8 @@
 
     let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
     let items;
+
+    //at+set_config=lora:app_eui:70B3D57ED001EF7F
         
     function create() {
       statusDisp.textContent = "";

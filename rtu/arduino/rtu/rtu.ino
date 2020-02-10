@@ -118,11 +118,11 @@ uint8_t     mo_state[numAn];
 const uint8_t _u16                = 0;
 const uint8_t _i16                = 1;
 
+const uint8_t within              = 0;
 const uint8_t low                 = 1;  
 const uint8_t high                = 2;
-const uint8_t within              = 3;
 
-const uint8_t change              = 4;
+const uint8_t change              = 3;
 
 const uint8_t discrete            = 2;
 const uint8_t holding             = 3;
@@ -196,8 +196,19 @@ void isAnalogIftt(const uint8_t ch) {
   uint8_t _low, _high;
   _low = an_f32_low + ch * sizeof(conf.an_f32) / numAn;
   _high = an_f32_high + ch * sizeof(conf.an_f32) / numAn;
-  uint8_t _state = 0;          
-  if (an[ch] <= conf.an_f32[_low]) {
+  uint8_t _state; 
+  if (an[ch] > conf.an_f32[_low] && an[ch] < conf.an_f32[_high]) {   
+    _state = within; 
+    if (an_state[ch] != within) {
+      for (uint8_t r = 0; r < 2; r++) {        
+        doRelay(r, deactivate);      
+      }
+      const uint8_t _report = an_u08_within_report + ch * sizeof(conf.an_u08) / numAn;
+      if (conf.an_u08[_report]) {
+        isReportIftt = true;
+      }        
+    }              
+  } else if (an[ch] <= conf.an_f32[_low]) {
     _state = low;
     if (an_state[ch] != low) {
       for (uint8_t r = 0; r < 2; r++) {
@@ -223,17 +234,6 @@ void isAnalogIftt(const uint8_t ch) {
         isReportIftt = true;
       }      
     }
-  } else {
-    _state = within; 
-    if (an_state[ch] != within) {
-      for (uint8_t r = 0; r < 2; r++) {        
-        doRelay(r, deactivate);      
-      }
-      const uint8_t _report = an_u08_within_report + ch * sizeof(conf.an_u08) / numAn;
-      if (conf.an_u08[_report]) {
-        isReportIftt = true;
-      }        
-    }              
   }
   an_state[ch] = _state;  
 }
@@ -310,8 +310,19 @@ void isModbusIftt(const uint8_t ch) {
   uint8_t _low, _high;
   _low = mo_f32_low + ch * sizeof(conf.mo_f32) / numMo;
   _high = mo_f32_high + ch * sizeof(conf.mo_f32) / numMo;
-  uint8_t _state = 0;          
-  if (mo[ch] <= conf.mo_f32[_low]) {
+  uint8_t _state;
+  if (mo[ch] > conf.mo_f32[_low] && mo[ch] < conf.mo_f32[_high]){
+    _state = within; 
+    if (mo_state[ch] != within) {
+      for (uint8_t r = 0; r < 2; r++) {        
+        doRelay(r, deactivate);      
+      }
+      const uint8_t _report = mo_u08_within_report + ch * sizeof(conf.mo_u08) / numMo;
+      if (conf.mo_u08[_report]) {
+        isReportIftt = true;
+      }         
+    }              
+  } else if (mo[ch] <= conf.mo_f32[_low]) {
     _state = low;
     if (mo_state[ch] != low) {
       for (uint8_t r = 0; r < 2; r++) {
@@ -337,17 +348,6 @@ void isModbusIftt(const uint8_t ch) {
         isReportIftt = true;
       }      
     }
-  } else {
-    _state = within; 
-    if (mo_state[ch] != within) {
-      for (uint8_t r = 0; r < 2; r++) {        
-        doRelay(r, deactivate);      
-      }
-      const uint8_t _report = mo_u08_within_report + ch * sizeof(conf.mo_u08) / numMo;
-      if (conf.mo_u08[_report]) {
-        isReportIftt = true;
-      }         
-    }              
   }
   mo_state[ch] = _state;  
 }
