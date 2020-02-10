@@ -15,7 +15,7 @@
     let timesDiv = document.querySelector("#times");           
     let connectBut = document.querySelector("#connect");    
     let timeBut = document.querySelector('#set-time');
-    let readBut = document.querySelector('#read');
+    let getBut = document.querySelector('#get');
     let saveBut = document.querySelector('#save');     
     let port;
     let statusDisp = document.querySelector('#status');
@@ -182,7 +182,7 @@
 })();
 
 /*    
-readBut.addEventListener('click', function() {
+getBut.addEventListener('click', function() {
   //if (!port) {
   //  return;
   //}           
