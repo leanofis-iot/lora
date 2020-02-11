@@ -113,7 +113,7 @@ uint8_t     dg[numDg];
 float       mo[numMo];
 
 uint8_t     an_state[numAn];
-uint8_t     mo_state[numAn];
+uint16_t    mo_state[numAn];
 
 const uint8_t _u16                = 0;
 const uint8_t _i16                = 1;
@@ -124,6 +124,7 @@ const uint8_t high                = 2;
 
 const uint8_t change              = 3;
 
+const uint8_t coil                = 1;
 const uint8_t discrete            = 2;
 const uint8_t holding             = 3;
 const uint8_t input               = 4;
@@ -286,7 +287,9 @@ void getModbus() {
       const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08) / numMo;
       const uint8_t _register = mo_u16_register + ch * sizeof(conf.mo_u16) / numMo;
       const uint8_t _decimal = mo_u08_decimal + ch * sizeof(conf.mo_u08) / numMo;     
-      if (conf.mo_u08[_function] == discrete) {
+      if (conf.mo_u08[_function] == coil) {
+        mo[ch] = (uint16_t)(modbus.readCoils(conf.mo_u16[_register], 1));
+      } else if (conf.mo_u08[_function] == discrete) {
         mo[ch] = (uint16_t)(modbus.readDiscreteInputs(conf.mo_u16[_register], 1));
       } else if (conf.mo_u08[_function] == holding) {
         if (conf.mo_u08[_type] == _u16) {
@@ -306,50 +309,55 @@ void getModbus() {
     }    
   }  
 }
-void isModbusIftt(const uint8_t ch) {  
+void isModbusIftt(const uint8_t ch) { 
+  const uint8_t _function = mo_u08_function + ch * sizeof(conf.mo_u08) / numMo; 
   uint8_t _low, _high;
   _low = mo_f32_low + ch * sizeof(conf.mo_f32) / numMo;
   _high = mo_f32_high + ch * sizeof(conf.mo_f32) / numMo;
   uint8_t _state;
-  if (mo[ch] > conf.mo_f32[_low] && mo[ch] < conf.mo_f32[_high]){
-    _state = within; 
-    if (mo_state[ch] != within) {
-      for (uint8_t r = 0; r < 2; r++) {        
-        doRelay(r, deactivate);      
+  if (conf.mo_u08[_function] == coil || conf.mo_u08[_function] == discrete) {
+    
+  } else if (conf.mo_u08[_function] == holding || conf.mo_u08[_function] == input) {
+    if (mo[ch] > conf.mo_f32[_low] && mo[ch] < conf.mo_f32[_high]){
+      _state = within; 
+      if (mo_state[ch] != within) {
+        for (uint8_t r = 0; r < 2; r++) {        
+          doRelay(r, deactivate);      
+        }
+        const uint8_t _report = mo_u08_within_report + ch * sizeof(conf.mo_u08) / numMo;
+        if (conf.mo_u08[_report]) {
+          isReportIftt = true;
+        }         
+      }              
+    } else if (mo[ch] <= conf.mo_f32[_low]) {
+      _state = low;
+      if (mo_state[ch] != low) {
+        for (uint8_t r = 0; r < 2; r++) {
+          uint8_t _relay;        
+          _relay  = mo_u08_high_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
+          doRelay(r, conf.mo_u08[_relay + r]);                      
+        }      
+        const uint8_t _report = mo_u08_high_report + ch * sizeof(conf.mo_u08) / numMo;
+        if (conf.mo_u08[_report]) {
+          isReportIftt = true;
+        }      
+      }              
+    } else if (mo[ch] >= conf.mo_f32[_high]) {
+      _state = high; 
+      if (mo_state[ch] != high) {
+        for (uint8_t r = 0; r < 2; r++) {
+          uint8_t _relay;        
+          _relay  = mo_u08_low_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
+          doRelay(r, conf.mo_u08[_relay + r]);                      
+        }  
+        const uint8_t _report = mo_u08_low_report + ch * sizeof(conf.mo_u08) / numMo;
+        if (conf.mo_u08[_report]) {
+          isReportIftt = true;
+        }      
       }
-      const uint8_t _report = mo_u08_within_report + ch * sizeof(conf.mo_u08) / numMo;
-      if (conf.mo_u08[_report]) {
-        isReportIftt = true;
-      }         
-    }              
-  } else if (mo[ch] <= conf.mo_f32[_low]) {
-    _state = low;
-    if (mo_state[ch] != low) {
-      for (uint8_t r = 0; r < 2; r++) {
-        uint8_t _relay;        
-        _relay  = mo_u08_high_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
-        doRelay(r, conf.mo_u08[_relay + r]);                      
-      }      
-      const uint8_t _report = mo_u08_high_report + ch * sizeof(conf.mo_u08) / numMo;
-      if (conf.mo_u08[_report]) {
-        isReportIftt = true;
-      }      
-    }              
-  } else if (mo[ch] >= conf.mo_f32[_high]) {
-    _state = high; 
-    if (mo_state[ch] != high) {
-      for (uint8_t r = 0; r < 2; r++) {
-        uint8_t _relay;        
-        _relay  = mo_u08_low_relay_1 + ch * sizeof(conf.mo_u08) / numMo;
-        doRelay(r, conf.mo_u08[_relay + r]);                      
-      }  
-      const uint8_t _report = mo_u08_low_report + ch * sizeof(conf.mo_u08) / numMo;
-      if (conf.mo_u08[_report]) {
-        isReportIftt = true;
-      }      
     }
-  }
-  mo_state[ch] = _state;  
+    mo_state[ch] = _state;
+  }    
 }
 void getTm() {
   for (uint8_t ch = 0; ch < numTm; ch++) {
@@ -414,7 +422,7 @@ void getRakSerial() {
   }
 }
 void getUsbSerial() {
-  while (usbSerial.available()) {
+  while (usbSerial && usbSerial.available()) {
     const char chr = (char)usbSerial.read();
     strUsbSerial += chr;
     if (chr == '\n') {
@@ -592,10 +600,11 @@ void setRak() {
 }
 void setUsb() {
   if (USBSTA >> VBUS & 1) {    
-    usbSerial.begin(115200);    
-    while (!Serial) {
+    usbSerial.begin(9600);    
+    while (!usbSerial) {
       wdt_reset();
     }
+    usbSerial.flush();
   } 
 }   
 void doRelay(const uint8_t r, const uint8_t d) {
