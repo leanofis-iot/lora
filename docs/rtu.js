@@ -15,6 +15,7 @@
     let timesDiv = document.querySelector("#times");           
     let connectBut = document.querySelector("#connect");    
     let timeBut = document.querySelector('#set-time');
+    let readBut = document.querySelector('#read');
     let getBut = document.querySelector('#get');
     let saveBut = document.querySelector('#save');     
     let port;
@@ -190,6 +191,13 @@ getBut.addEventListener('click', function() {
   //}           
   statusDisp.textContent = 'deleted';      
   //port.send(t);      
+}); 
+
+readBut.addEventListener('click', function() {
+  //if (!port) {
+  //  return;
+  //}           
+        
 });    
 
 serialport.parsers.readline('\n');
