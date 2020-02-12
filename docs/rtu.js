@@ -3,11 +3,11 @@
 
   document.addEventListener('DOMContentLoaded', event => {
     let mainForm = document.querySelector('#main-form');    
-    let generalTemp = document.querySelectorAll('template')[0];
-    let analogTemp = document.querySelectorAll('template')[1];
-    let digitalTemp = document.querySelectorAll('template')[2];
-    let modbusTemp = document.querySelectorAll('template')[3];
-    let timeTemp = document.querySelectorAll('template')[4];
+    let generalTemp = document.querySelectorAll('template')[1];
+    let analogTemp = document.querySelectorAll('template')[2];
+    let digitalTemp = document.querySelectorAll('template')[3];
+    let modbusTemp = document.querySelectorAll('template')[4];
+    let timeTemp = document.querySelectorAll('template')[5];
     let generalsDiv = document.querySelector("#generals");
     let analogsDiv = document.querySelector("#analogs");
     let digitalsDiv = document.querySelector("#digitals");

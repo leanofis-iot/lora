@@ -7,8 +7,9 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">    
 </head>
 <body>
-<div class="container"> 
-  <form class="accordion" onsubmit="return false" id="main-form">
+<div class="container accordion" id="main-div">
+  <div id="lorawans"></div>  
+  <form onsubmit="return false" id="main-form">
     <div id="generals"></div>
     <div id="analogs"></div>
     <div id="digitals"></div>
@@ -35,10 +36,38 @@
 </html>
 
 <template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#lorawan" aria-expanded="true" aria-controls="lorawan">
+  LoRaWAN
+  </button> 
+  <div id="lorawan" class="collapse" data-parent="#main-div">
+    <br>
+    <form onsubmit="return false" id="dev-eui-form">
+      <label for="dev-eui">Dev EUI:</label>
+      <input id="dev-eui" type="text" required class="form-control" value="3238333574387306" pattern="[0-9A-F]{16}" maxlength ="16">          
+    </form>  
+    <button type="button" class="btn btn-secondary"id ="dev-eui-get">Get</button>
+    <button type="submit" class="btn btn-secondary" form="dev-eui-form" id="dev-eui-save">Save</button>
+    <form onsubmit="return false" id="app-eui-form">
+      <label for="app-eui">App EUI:</label>
+      <input id="app-eui" type="text" required class="form-control" value="70B3D57ED001EF7F" pattern="[0-9A-F]{16}" maxlength ="16">                
+    </form>  
+    <button type="button" class="btn btn-secondary"id ="app-eui-get">Get</button>
+    <button type="submit" class="btn btn-secondary" form="app-eui-form" id="app-eui-save">Save</button>
+    <form onsubmit="return false" id="app-key-form">
+      <label for="app-key">App KEY:</label>
+      <input id="app-key" type="text" required class="form-control" value="C3610040CDD56E02A1306A37CBB7FBB2" pattern="[0-9A-F]{32}" maxlength ="32">    
+    </form>  
+    <button type="button" class="btn btn-secondary"id ="app-key-get">Get</button>
+    <button type="submit" class="btn btn-secondary" form="app-key-form" id="app-key-save">Save</button>
+    <br>
+  </div>
+</template>
+
+<template>
   <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#general" aria-expanded="true" aria-controls="general">
   General
   </button> 
-  <div id="general" class="collapse" data-parent="#main-form">
+  <div id="general" class="collapse" data-parent="#main-div">
     <br>    
     <label for="lora-dr">LoRaWAN Data Rate:</label>
     <select id="xge_u08" class="form-control" name="lora-dr">
@@ -91,7 +120,7 @@
   <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#analog" aria-expanded="true" aria-controls="analog">
   Analog
   </button> 
-  <div id="analog" class="collapse" data-parent="#main-form">
+  <div id="analog" class="collapse" data-parent="#main-div">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -181,7 +210,7 @@
   <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#digital" aria-expanded="true" aria-controls="digital">
   Digital
   </button> 
-  <div id="digital" class="collapse" data-parent="#main-form">
+  <div id="digital" class="collapse" data-parent="#main-div">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -244,7 +273,7 @@
   <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#modbus" aria-expanded="true" aria-controls="modbus">
   Modbus
   </button> 
-  <div id="modbus" class="collapse" data-parent="#main-form">
+  <div id="modbus" class="collapse" data-parent="#main-div">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -351,7 +380,7 @@
   <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time" aria-expanded="true" aria-controls="time">
   Time
   </button> 
-  <div id="time" class="collapse" data-parent="#main-form">
+  <div id="time" class="collapse" data-parent="#main-div">
     <br>
     <div class="form-check">
       <label class="form-check-label">
