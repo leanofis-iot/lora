@@ -8,7 +8,11 @@
 </head>
 <body>
 <div class="container accordion" id="main-div">
-  <div id="lorawans"></div>  
+  <form onsubmit="return false" id="lora-form">
+    <div id="loras"></div>      
+  </form>
+  <button type="button" class="btn btn-secondary"id ="lora-get">Get</button>
+  <button type="submit" class="btn btn-secondary" form="lora-form" id="lora-save">Save</button>   
   <form onsubmit="return false" id="main-form">
     <div id="generals"></div>
     <div id="analogs"></div>
@@ -36,30 +40,18 @@
 </html>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#lorawan" aria-expanded="true" aria-controls="lorawan">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#lora" aria-expanded="true" aria-controls="lora">
   LoRaWAN
   </button> 
-  <div id="lorawan" class="collapse" data-parent="#main-div">
-    <br>
-    <form onsubmit="return false" id="dev-eui-form">
-      <label for="dev-eui">Dev EUI:</label>
-      <input id="dev-eui" type="text" required class="form-control" value="3238333574387306" pattern="[0-9A-F]{16}" maxlength ="16">          
-    </form>  
-    <button type="button" class="btn btn-secondary"id ="dev-eui-get">Get</button>
-    <button type="submit" class="btn btn-secondary" form="dev-eui-form" id="dev-eui-save">Save</button>
-    <form onsubmit="return false" id="app-eui-form">
-      <label for="app-eui">App EUI:</label>
-      <input id="app-eui" type="text" required class="form-control" value="70B3D57ED001EF7F" pattern="[0-9A-F]{16}" maxlength ="16">                
-    </form>  
-    <button type="button" class="btn btn-secondary"id ="app-eui-get">Get</button>
-    <button type="submit" class="btn btn-secondary" form="app-eui-form" id="app-eui-save">Save</button>
-    <form onsubmit="return false" id="app-key-form">
-      <label for="app-key">App KEY:</label>
-      <input id="app-key" type="text" required class="form-control" value="C3610040CDD56E02A1306A37CBB7FBB2" pattern="[0-9A-F]{32}" maxlength ="32">    
-    </form>  
-    <button type="button" class="btn btn-secondary"id ="app-key-get">Get</button>
-    <button type="submit" class="btn btn-secondary" form="app-key-form" id="app-key-save">Save</button>
-    <br>
+  <div id="lora" class="collapse" data-parent="#main-div">
+    <br>    
+    <label for="dev-eui">Dev EUI:</label>
+    <input id="at+set_config=lora:dev_eui:" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="dev-eui">    
+    <label for="app-eui">App EUI:</label>
+    <input id="at+set_config=lora:app_eui:" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="app-eui">                
+    <label for="app-key">App KEY:</label>
+    <input id="at+set_config=lora:app_key:" type="text" required class="form-control" value="00000000000000000000000000000000" pattern="[0-9A-F]{32}" maxlength ="32" name="app-key">    
+    <br>     
   </div>
 </template>
 

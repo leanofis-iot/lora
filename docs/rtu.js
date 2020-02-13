@@ -2,17 +2,22 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', event => {
-    let mainForm = document.querySelector('#main-form');    
+    let loraForm = document.querySelector('#lora-form');
+    let mainForm = document.querySelector('#main-form'); 
+    let loraTemp = document.querySelectorAll('template')[0];   
     let generalTemp = document.querySelectorAll('template')[1];
     let analogTemp = document.querySelectorAll('template')[2];
     let digitalTemp = document.querySelectorAll('template')[3];
     let modbusTemp = document.querySelectorAll('template')[4];
     let timeTemp = document.querySelectorAll('template')[5];
+    let lorasDiv = document.querySelector("#loras");
     let generalsDiv = document.querySelector("#generals");
     let analogsDiv = document.querySelector("#analogs");
     let digitalsDiv = document.querySelector("#digitals");
     let modbusesDiv = document.querySelector("#modbuses");
-    let timesDiv = document.querySelector("#times");           
+    let timesDiv = document.querySelector("#times"); 
+    let loraGetBut = document.querySelector("#lora-get");
+    let loraSaveBut = document.querySelector("#lora-save");          
     let connectBut = document.querySelector("#connect");    
     let timeBut = document.querySelector('#set-time');
     let readBut = document.querySelector('#read');
@@ -30,7 +35,10 @@
       statusDisp.textContent = "";
       let clon;
       let buts;
-      let divs;              
+      let divs;
+      // LoRaWAN
+      clon = loraTemp.content.cloneNode(true);     
+      lorasDiv.appendChild(clon);              
       // Generals
       clon = generalTemp.content.cloneNode(true);     
       generalsDiv.appendChild(clon);       
@@ -97,7 +105,38 @@
         }        
       }
     }
-    create();    
+    create();
+
+    loraGetBut.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      
+      statusDisp.textContent = 'fgdfgdfgd';
+                 
+    });
+    
+    loraSaveBut.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      let lora = '';               
+      if (loraForm.checkValidity()) {
+        statusDisp.textContent = 'validaion ok';
+        items = loraForm.querySelectorAll('input,select');
+        let val = 0;        
+        for (let i = 0; i < items.length; i++) {                      
+          if (items[i].type === 'checkbox') {
+            val = items[i].checked ? 1 : 0;                    
+          } else {
+            val = items[i].value;
+          }
+          lora += items[i].id + val + '\r\n';                                           
+        }                                         
+      }                  
+      statusDisp.textContent = lora;
+      //port.send(lora);           
+    });
         
     saveBut.addEventListener('click', function() {
       //if (!port) {
