@@ -11,15 +11,14 @@
   <form onsubmit="return false" id="lora-form">
     <div id="loras"></div>      
   </form> 
-  <br>  
-  <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lora-get">Get</button>
-  <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lora-form" id="lora-save">Save</button>
   <br>   
   <form onsubmit="return false" id="main-form">
     <div id="generals"></div>
+    <br>
     <div id="analogs"></div>
     <div id="digitals"></div>
     <div id="modbuses"></div>
+    <br>
     <div id="times"></div>    
   </form>
   <br>       
@@ -54,6 +53,8 @@
     <input id="app_eui" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="app-eui">                
     <label for="app-key">App KEY:</label>
     <input id="app_key" type="text" required class="form-control" value="00000000000000000000000000000000" pattern="[0-9A-F]{32}" maxlength ="32" name="app-key">    
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lora-get">Get</button>
+    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lora-form" id="lora-save">Save</button>
     <br>     
   </div>
 </template>

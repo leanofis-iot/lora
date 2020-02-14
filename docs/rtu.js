@@ -10,15 +10,13 @@
     let digitalTemp = document.querySelectorAll('template')[3];
     let modbusTemp = document.querySelectorAll('template')[4];
     let timeTemp = document.querySelectorAll('template')[5];
-    let lorasDiv = document.querySelector("#loras");
-    let generalsDiv = document.querySelector("#generals");
-    let analogsDiv = document.querySelector("#analogs");
-    let digitalsDiv = document.querySelector("#digitals");
-    let modbusesDiv = document.querySelector("#modbuses");
-    let timesDiv = document.querySelector("#times"); 
-    let loraGetBut = document.querySelector("#lora-get");
-    let loraSaveBut = document.querySelector("#lora-save");          
-    let connectBut = document.querySelector("#connect");    
+    let lorasDiv = document.querySelector('#loras');
+    let generalsDiv = document.querySelector('#generals');
+    let analogsDiv = document.querySelector('#analogs');
+    let digitalsDiv = document.querySelector('#digitals');
+    let modbusesDiv = document.querySelector('#modbuses');
+    let timesDiv = document.querySelector('#times'); 
+    let connectBut = document.querySelector('#connect');    
     let timeBut = document.querySelector('#set-time');
     let fetchBut = document.querySelector('#fetch');
     let getBut = document.querySelector('#get');
@@ -26,19 +24,24 @@
     let port;
     let statusDisp = document.querySelector('#status');
 
+    let loraGetBut;
+    let loraSaveBut;
+
     let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
     let items;
     
     //at+set_config=lora:app_eui:70B3D57ED001EF7F
         
     function create() {
-      statusDisp.textContent = "";
+      statusDisp.textContent = '';
       let clon;
       let buts;
       let divs;
       // LoRaWAN
       clon = loraTemp.content.cloneNode(true);     
-      lorasDiv.appendChild(clon);              
+      lorasDiv.appendChild(clon);
+      loraGetBut = document.querySelector('#lora-get');
+      loraSaveBut = document.querySelector('#lora-save');               
       // Generals
       clon = generalTemp.content.cloneNode(true);     
       generalsDiv.appendChild(clon);       
@@ -131,7 +134,7 @@
           }
           lora += 'at+set_config=lora:' + items[i].id + ':' + value + '\r\n';                                           
         }                                         
-      }                  
+      }                 
       statusDisp.textContent = lora;
       //port.send(lora);           
     });
@@ -261,7 +264,7 @@
 /*    
 serialport.parsers.readline('\n');
 parser: SerialPort.parsers.readline('\r')
-var serialPort = new SerialPort("/dev/ttyACM0", {
+var serialPort = new SerialPort('/dev/ttyACM0", {
   autoOpen: false,
   parser: SerialPort.parsers.readline('\n'),
   baudrate:115200
