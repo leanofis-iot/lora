@@ -28,8 +28,7 @@
 
     let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
     let items;
-    let item;
-
+    
     //at+set_config=lora:app_eui:70B3D57ED001EF7F
         
     function create() {
@@ -111,10 +110,8 @@
     loraGetBut.addEventListener('click', function() {
       //if (!port) {
       //  return;
-      //}
-      
-      statusDisp.textContent = 'fgdfgdfgd';
-                 
+      //}      
+      //port.send('at+get_config=lora:status' + '\r\n');                 
     });
     
     loraSaveBut.addEventListener('click', function() {
@@ -125,18 +122,32 @@
       if (loraForm.checkValidity()) {
         statusDisp.textContent = 'validaion ok';
         items = loraForm.querySelectorAll('input,select');
-        let val = 0;        
+        let value = 0;        
         for (let i = 0; i < items.length; i++) {                      
           if (items[i].type === 'checkbox') {
-            val = items[i].checked ? 1 : 0;                    
+            value = items[i].checked ? 1 : 0;                    
           } else {
-            val = items[i].value;
+            value = items[i].value;
           }
-          lora += 'at+set_config=lora:' + items[i].id + ':' + val + '\r\n';                                           
+          lora += 'at+set_config=lora:' + items[i].id + ':' + value + '\r\n';                                           
         }                                         
       }                  
       statusDisp.textContent = lora;
       //port.send(lora);           
+    });
+
+    getBut.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      //port.send('xget');      
+    });
+
+    readBut.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      //port.send('xread');      
     });
         
     saveBut.addEventListener('click', function() {
@@ -147,15 +158,15 @@
       if (mainForm.checkValidity()) {
         statusDisp.textContent = 'validaion ok';
         items = mainForm.querySelectorAll('input,select');
-        let val = 0;        
+        let value = 0;        
         for (let i = 0; i < items.length; i++) {          
           if (items[i].id[0] == 'x') {             
             if (items[i].type === 'checkbox') {
-              val = items[i].checked ? 1 : 0;                    
+              value = items[i].checked ? 1 : 0;                    
             } else {
-              val = Number(items[i].value);
+              value = Number(items[i].value);
             }
-            config += items[i].id + val + '\r\n';                        
+            config += items[i].id + value + '\r\n';                        
           }                                 
         }
         config += 'xsave' + '\r\n';                                 
@@ -189,19 +200,27 @@
           let textDecoder = new TextDecoder();
           console.log(textDecoder.decode(data));
           // here readline parser, and trim
+          let item;
+          let value;
           let dataline;
           if (dataline.startsWith('DevEui: ')) {
-            dataline.replace('DevEui: ', '');
-            item = loraForm.querySelector('#dev-eui');            
+            item = loraForm.querySelector('#dev-eui');
+            value = dataline.slice(8);                        
           } else if (dataline.startsWith('AppEui: ')) {
-            dataline.replace('AppEui: ', '');
             item = loraForm.querySelector('#app-eui');
+            value = dataline.slice(8);            
           } else if (dataline.startsWith('AppKey: ')) {
-            dataline.replace('AppKey: ', '');
             item = loraForm.querySelector('#app-key');
+            value = dataline.slice(8);            
+          } else if (dataline.startsWith('x')) {
+            item = mainForm.querySelector('#' + dataline.slice(0, 7));
+            value = Number(dataline.slice(7));            
           }
-          item.value = dataline;
-
+          if (item.type === 'checkbox') {
+            item.checked = value ? true : false;                    
+          } else {
+            item.value = value;
+          }          
         }
         port.onReceiveError = error => {
           console.error(error);
