@@ -488,6 +488,8 @@ void getUsbSerial() {
         tm.Hour = strUsbSerial.substring(3).toInt();
       } else if (strUsbSerial.startsWith(F("xdd"))) {
         tm.Day = strUsbSerial.substring(3).toInt();
+      } else if (strUsbSerial.startsWith(F("xwd"))) {
+        tm.Wday = strUsbSerial.substring(3).toInt();
       } else if (strUsbSerial.startsWith(F("xmh"))) {
         tm.Month = strUsbSerial.substring(3).toInt();
       } else if (strUsbSerial.startsWith(F("xyy"))) {

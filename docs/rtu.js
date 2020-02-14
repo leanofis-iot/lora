@@ -184,7 +184,8 @@
       t += 'xss' + d.getSeconds() + '\r\n';
       t += 'xmm' + d.getMinutes() + '\r\n';
       t += 'xhh' + d.getHours() + '\r\n';
-      t += 'xdd' + d.getDay() + '\r\n';
+      t += 'xdd' + d.getDate() + '\r\n';
+      t += 'xwd' + d.getDay() + '\r\n';
       t += 'xmh' + String(d.getMonth() + 1) + '\r\n';
       t += 'xyy' + d.getFullYear() + '\r\n';
       t += 'xtime' + '\r\n';
