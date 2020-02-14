@@ -28,6 +28,7 @@
 
     let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
     let items;
+    let item;
 
     //at+set_config=lora:app_eui:70B3D57ED001EF7F
         
@@ -131,7 +132,7 @@
           } else {
             val = items[i].value;
           }
-          lora += items[i].id + val + '\r\n';                                           
+          lora += 'at+set_config=lora:' + items[i].id + ':' + val + '\r\n';                                           
         }                                         
       }                  
       statusDisp.textContent = lora;
@@ -187,6 +188,20 @@
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
           console.log(textDecoder.decode(data));
+          // here readline parser, and trim
+          let dataline;
+          if (dataline.startsWith('DevEui: ')) {
+            dataline.replace('DevEui: ', '');
+            item = loraForm.querySelector('#dev-eui');            
+          } else if (dataline.startsWith('AppEui: ')) {
+            dataline.replace('AppEui: ', '');
+            item = loraForm.querySelector('#app-eui');
+          } else if (dataline.startsWith('AppKey: ')) {
+            dataline.replace('AppKey: ', '');
+            item = loraForm.querySelector('#app-key');
+          }
+          item.value = dataline;
+
         }
         port.onReceiveError = error => {
           console.error(error);
