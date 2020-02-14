@@ -20,7 +20,7 @@
     let loraSaveBut = document.querySelector("#lora-save");          
     let connectBut = document.querySelector("#connect");    
     let timeBut = document.querySelector('#set-time');
-    let readBut = document.querySelector('#read');
+    let fetchBut = document.querySelector('#fetch');
     let getBut = document.querySelector('#get');
     let saveBut = document.querySelector('#save');     
     let port;
@@ -51,8 +51,8 @@
       divs = analogsDiv.querySelectorAll('#analog');
       for (let i = 0; i < numAn; i++) {
         buts[i].setAttribute('data-target', '#analog' + i);
-        buts[i].setAttribute('aria-controls', 'analog' + i);
-        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        buts[i].setAttribute('aria-controls', 'analog' + i);        
+        buts[i].innerText = '#' + String(i + 1) + ' (' + buts[i].innerText + ' ' + String(i + 1) + ')'; 
         divs[i].setAttribute('id', 'analog' + i);      
       } 
       // Digitals
@@ -65,7 +65,7 @@
       for (let i = 0; i < numDg; i++) {
         buts[i].setAttribute('data-target', '#digital' + i);
         buts[i].setAttribute('aria-controls', 'digital' + i);
-        buts[i].innerText = '(' + String(i + 1 + numAn) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        buts[i].innerText = '#' + String(i + 1 + numAn) + ' (' + buts[i].innerText + ' ' + String(i + 1) + ')'; 
         divs[i].setAttribute('id', 'digital' + i);      
       }   
       // Modbuses
@@ -78,7 +78,7 @@
       for (let i = 0; i < numMo; i++) {
         buts[i].setAttribute('data-target', '#modbus' + i);
         buts[i].setAttribute('aria-controls', 'modbus' + i);
-        buts[i].innerText = '(' + String(i + 1 + +numAn + numDg) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        buts[i].innerText = '#' + String(i + 1 + +numAn + numDg) + ' (' + buts[i].innerText + ' ' + String(i + 1) + ')'; 
         divs[i].setAttribute('id', 'modbus' + i);      
       }
       // Times
@@ -91,7 +91,7 @@
       for (let i = 0; i < numTm; i++) {
         buts[i].setAttribute('data-target', '#time' + i);
         buts[i].setAttribute('aria-controls', 'time' + i);
-        buts[i].innerText = '(' + String(i + 1) + ')' + '  ' + buts[i].innerText + ' ' + String(i + 1); 
+        buts[i].innerText = buts[i].innerText + ' ' + String(i + 1); 
         divs[i].setAttribute('id', 'time' + i);      
       }
       // make id      
@@ -143,11 +143,11 @@
       //port.send('xget');      
     });
 
-    readBut.addEventListener('click', function() {
+    fetchBut.addEventListener('click', function() {
       //if (!port) {
       //  return;
       //}      
-      //port.send('xread');      
+      //port.send('xfetch');      
     });
         
     saveBut.addEventListener('click', function() {
@@ -258,21 +258,6 @@
 })();
 
 /*    
-getBut.addEventListener('click', function() {
-  //if (!port) {
-  //  return;
-  //}           
-  statusDisp.textContent = 'deleted';      
-  //port.send(t);      
-}); 
-
-readBut.addEventListener('click', function() {
-  //if (!port) {
-  //  return;
-  //}           
-        
-});    
-
 serialport.parsers.readline('\n');
 parser: SerialPort.parsers.readline('\r')
 var serialPort = new SerialPort("/dev/ttyACM0", {

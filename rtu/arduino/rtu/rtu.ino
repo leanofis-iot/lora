@@ -478,8 +478,8 @@ void getUsbSerial() {
         resetMe(); 
       } else if (strUsbSerial.startsWith(F("xget"))) {
         getConf();
-      } else if (strUsbSerial.startsWith(F("xread"))) {
-        readValues();        
+      } else if (strUsbSerial.startsWith(F("xfetch"))) {
+        fetchValues();        
       } else if (strUsbSerial.startsWith(F("xss"))) {
         tm.Second = strUsbSerial.substring(3).toInt();
       } else if (strUsbSerial.startsWith(F("xmm"))) {
@@ -568,7 +568,7 @@ void getConf() {
     usbSerial.println(conf.tm_u08[i]);    
   }   
 }
-void readValues() { 
+void fetchValues() { 
   String str;
   for (uint8_t i = 0; i < numAn; i++) {
     usbSerial.print(F("xan_val"));
