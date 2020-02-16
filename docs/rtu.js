@@ -2,25 +2,30 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', event => {
-    let loraForm = document.querySelector('#lora-form');
-    let mainForm = document.querySelector('#main-form'); 
-    let loraTemp = document.querySelectorAll('template')[0];   
+    let lorawanForm = document.querySelector('#lorawan-form');
+    let generalForm = document.querySelector('#general-form'); 
+    let timeForm = document.querySelector('#time-form');
+    let channelsForm = document.querySelector('#channels-form');
+
+    let lorawanTemp = document.querySelectorAll('template')[0];   
     let generalTemp = document.querySelectorAll('template')[1];
-    let analogTemp = document.querySelectorAll('template')[2];
-    let digitalTemp = document.querySelectorAll('template')[3];
-    let modbusTemp = document.querySelectorAll('template')[4];
-    let timeTemp = document.querySelectorAll('template')[5];
-    let lorasDiv = document.querySelector('#loras');
-    let generalsDiv = document.querySelector('#generals');
-    let analogsDiv = document.querySelector('#analogs');
-    let digitalsDiv = document.querySelector('#digitals');
-    let modbusesDiv = document.querySelector('#modbuses');
-    let timesDiv = document.querySelector('#times'); 
-    let connectBut = document.querySelector('#connect');    
-    let timeBut = document.querySelector('#set-time');
-    let fetchBut = document.querySelector('#fetch');
-    let getBut = document.querySelector('#get');
-    let saveBut = document.querySelector('#save');     
+    let timeTemp = document.querySelectorAll('template')[2];
+    let analogTemp = document.querySelectorAll('template')[3];
+    let digitalTemp = document.querySelectorAll('template')[4];
+    let modbusTemp = document.querySelectorAll('template')[5];
+    
+    let lorawanDiv = document.querySelector('#lorawan-div');
+    let generalDiv = document.querySelector('#general-div');
+    let timeDiv = document.querySelector('#time-div');
+    let analogDiv = document.querySelector('#analog-div');
+    let digitalDiv = document.querySelector('#digital-div');
+    let modbusDiv = document.querySelector('#modbus-div');
+     
+    let connectBtn = document.querySelector('#connect-btn');    
+    let lorawanBtn = document.querySelector('#lorawan-btn');
+    let generalBtn = document.querySelector('#general');
+    let timeBtn = document.querySelector('#time-btn');
+    let channelsBtn = document.querySelector('#channels-btn');     
     let port;
     let statusDisp = document.querySelector('#status');
 

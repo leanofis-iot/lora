@@ -7,26 +7,45 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">    
 </head>
 <body>
-<div class="container accordion" id="main-div">
-  <form onsubmit="return false" id="lora-form">
-    <div id="loras"></div>      
-  </form> 
-  <br>   
-  <form onsubmit="return false" id="main-form">
-    <div id="generals"></div>
-    <br>
-    <div id="analogs"></div>
-    <div id="digitals"></div>
-    <div id="modbuses"></div>
-    <br>
-    <div id="times"></div>    
+<div class="container" id="main-div">
+
+  <button type="button" class="btn btn-secondary btn-lg btn-block" id="connect-btn">CONNECT</button>
+  <button type="button" class="btn btn-secondary btn-lg btn-block" id="lorawan-btn">LORAWAN</button>
+  <button type="button" class="btn btn-secondary btn-lg btn-block" id="general-btn">GENERAL</button>
+  <button type="button" class="btn btn-secondary btn-lg btn-block" id="time-btn">TIME</button>
+  <button type="button" class="btn btn-secondary btn-lg btn-block" id="channels-btn">CHANNELS</button>  
+
+  <form onsubmit="return false" hidden id="lorawan-form">
+    <div id="lorawan-div"></div>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-get-btn">GET</button>
+    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lorawan-form" id="lorawan-save-btn">SAVE</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-back-btn">BACK</button>      
   </form>
-  <br>       
-  <button type="button" class="btn btn-secondary btn-lg btn-block" id="connect">Connect</button>
-  <button type="button" class="btn btn-secondary btn-lg btn-block" id="set-time">Time</button>
-  <button type="button" class="btn btn-secondary btn-lg btn-block"id ="fetch">Fetch</button>
-  <button type="button" class="btn btn-secondary btn-lg btn-block"id ="get">Get</button>
-  <button type="submit" class="btn btn-secondary btn-lg btn-block" form="main-form" id="save">Save</button>  
+  
+  <form onsubmit="return false" hidden id="general-form">
+    <div id="general-div"></div>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-get-btn">GET</button>
+    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="general-form" id="general-save-btn">SAVE</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-back-btn">BACK</button>      
+  </form>
+
+  <form onsubmit="return false" hidden id="time-form">
+    <div id="time-div"></div>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-get-btn">GET</button>
+    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="time-form" id="time-save-btn">SAVE</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-adjust-btn">ADJUST</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-back-btn">BACK</button>      
+  </form>
+
+  <form class="accordion" onsubmit="return false" hidden id="channels-form">
+    <div id="analog-div"></div>
+    <div id="digital-div"></div>
+    <div id="modbus-div"></div>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-get-btn">GET</button>
+    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="channels-form" id="channels-save-btn">SAVE</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-back-btn">BACK</button>        
+  </form>      
+    
   <h6 id="status">This is the message</h6>
   <br>
   <br>
@@ -42,10 +61,7 @@
 </html>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#lora" aria-expanded="true" aria-controls="lora">
-  LoRaWAN
-  </button> 
-  <div id="lora" class="collapse" data-parent="#main-div">
+  <div id="lorawan-temp"> 
     <br>    
     <label for="dev-eui">Dev EUI:</label>
     <input id="dev_eui" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="dev-eui">    
@@ -53,20 +69,15 @@
     <input id="app_eui" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="app-eui">                
     <label for="app-key">App KEY:</label>
     <input id="app_key" type="text" required class="form-control" value="00000000000000000000000000000000" pattern="[0-9A-F]{32}" maxlength ="32" name="app-key">    
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lora-get">Get</button>
-    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lora-form" id="lora-save">Save</button>
-    <br>     
-  </div>
+    <br>
+  </div>       
 </template>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#general" aria-expanded="true" aria-controls="general">
-  General
-  </button> 
-  <div id="general" class="collapse" data-parent="#main-div">
+  <div id="general-temp">
     <br>    
-    <label for="lora-dr">LoRaWAN Data Rate:</label>
-    <select id="xge_u08" class="form-control" name="lora-dr">
+    <label for="lorawan-dr">LoRaWAN Data Rate:</label>
+    <select id="xge_u08" class="form-control" name="lorawan-dr">
       <option value = "0">0 - SF12BW125</option>
       <option value = "1">1 - SF11BW125</option>
       <option value = "2">2 - SF10BW125</option>
@@ -74,14 +85,14 @@
       <option value = "4" selected>4 - SF8BW125</option>
       <option value = "5">5 - SF7BW125</option>
     </select>  
-    <label for="lora-port">LoRaWAN Port:</label>
-    <input  id="xge_u08" type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" name="lora-port">
+    <label for="lorawan-port">LoRaWAN Port:</label>
+    <input  id="xge_u08" type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" name="lorawan-port">
     <label for="poll">Poll Interval (Seconds 1-60):</label>
     <input id="xge_u08" type="number" required class="form-control" value="1" min="1" max="60" step="1" maxlength="2" name="poll">
     <label for="report">Report Interval (Minutes 5-1440):</label>
     <input id="xge_u16" type="number" required class="form-control" value="5" min="5" max="1440" step="1" maxlength="4" name="report">
-    <label for="mod-baud">Modbus Baud Rate:</label>
-    <select id="xge_u32" class="form-control" name="mod-baud">
+    <label for="modbus-baud">Modbus Baud Rate:</label>
+    <select id="xge_u32" class="form-control" name="modbus-baud">
       <option value = "2400">2400</option>
       <option value = "4800">4800</option>
       <option value = "9600" selected>9600</option>
@@ -90,33 +101,61 @@
       <option value = "57600">57600</option>
       <option value = "115200">115200</option>
     </select>  
-    <label for="mod-data-bit">Modbus Data Bits:</label>
-    <select id="xge_u08" class="form-control" name="mod-data-bit">
+    <label for="modbus-data-bit">Modbus Data Bits:</label>
+    <select id="xge_u08" class="form-control" name="modbus-data-bit">
       <option value = "0">5</option>
       <option value = "2">6</option>
       <option value = "4">7</option>
       <option value = "6" selected>8</option>      
     </select> 
-    <label for="mod-stop-bit">Modbus Stop Bits:</label>
-    <select id="xge_u08" class="form-control" name="mod-stop-bit">
+    <label for="modbus-stop-bit">Modbus Stop Bits:</label>
+    <select id="xge_u08" class="form-control" name="modbus-stop-bit">
       <option value = "0" selected>1</option>
       <option value = "8">2</option>           
     </select> 
-    <label for="mod-par-bit">Modbus Parity Bits:</label>
-    <select id="xge_u08" class="form-control" name="mod-par-bit">
+    <label for="modbus-par-bit">Modbus Parity Bits:</label>
+    <select id="xge_u08" class="form-control" name="modbus-par-bit">
       <option value = "0" selected>none</option>
       <option value = "32">Even</option>
       <option value = "48">Odd</option>      
     </select> 
-    <br>     
+    <br> 
   </div>
 </template>
 
+<template> 
+  <div id="time-temp"> 
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xtm_u08" type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>  
+    <label for="hour">Hour:</label>
+    <input id="xtm_u08" type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
+    <label for="minute">Minute:</label>
+    <input id="xtm_u08" type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
+    <label for="time-relay-1">If Time Than Relay 1</label>
+    <select id="xtm_u08" class="form-control" name="time-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>               
+    </select> 
+    <label for="time-relay-2">If Time Than Relay 2</label>
+    <select id="xtm_u08" class="form-control" name="time-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>         
+    </select>
+    <br>
+  </div>     
+</template>
+
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#analog" aria-expanded="true" aria-controls="analog">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#analog-temp" aria-expanded="true" aria-controls="analog-temp">
   Analog
   </button> 
-  <div id="analog" class="collapse" data-parent="#main-div">
+  <div id="analog-temp" class="collapse" data-parent="#channels-form">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -203,10 +242,10 @@
 </template>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#digital" aria-expanded="true" aria-controls="digital">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#digital-temp" aria-expanded="true" aria-controls="digital-temp">
   Digital
   </button> 
-  <div id="digital" class="collapse" data-parent="#main-div">
+  <div id="digital-temp" class="collapse" data-parent="#channels-form">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -266,10 +305,10 @@
 </template>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#modbus" aria-expanded="true" aria-controls="modbus">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#modbus-temp" aria-expanded="true" aria-controls="modbus-temp">
   Modbus
   </button> 
-  <div id="modbus" class="collapse" data-parent="#main-div">
+  <div id="modbus-temp" class="collapse" data-parent="#channels-form">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -370,35 +409,4 @@
     </div>
     <br>
   </div>
-</template>
-
-<template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time" aria-expanded="true" aria-controls="time">
-  Time
-  </button> 
-  <div id="time" class="collapse" data-parent="#main-div">
-    <br>
-    <div class="form-check">
-      <label class="form-check-label">
-        <input id="xtm_u08" type="checkbox" class="form-check-input" name="enable">Enable
-      </label>
-    </div>  
-    <label for="hour">Hour:</label>
-    <input id="xtm_u08" type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
-    <label for="minute">Minute:</label>
-    <input id="xtm_u08" type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
-    <label for="time-relay-1">If Time Than Relay 1</label>
-    <select id="xtm_u08" class="form-control" name="time-relay-1">
-      <option value = "0">none</option>
-      <option value = "1">Activate</option>
-      <option value = "2">Deactivate</option>               
-    </select> 
-    <label for="time-relay-2">If Time Than Relay 2</label>
-    <select id="xtm_u08" class="form-control" name="time-relay-2">
-      <option value = "0">none</option>
-      <option value = "1">Activate</option>
-      <option value = "2">Deactivate</option>         
-    </select>
-    <br>
-  </div>     
 </template>
