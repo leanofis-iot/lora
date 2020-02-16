@@ -20,18 +20,21 @@
   <div id="form-div" hidden>
     <form onsubmit="return false" id="lorawan-form">
       <div id="lorawan-div"></div>
+      <br>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-get-btn">GET</button>
       <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lorawan-form" id="lorawan-save-btn">SAVE</button>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-back-btn">BACK</button>      
     </form>    
     <form onsubmit="return false" id="general-form">
       <div id="general-div"></div>
+      <br>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-get-btn">GET</button>
       <button type="submit" class="btn btn-secondary btn-lg btn-block" form="general-form" id="general-save-btn">SAVE</button>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-back-btn">BACK</button>      
     </form>
     <form onsubmit="return false" id="time-form">
       <div id="time-div"></div>
+      <br>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-get-btn">GET</button>
       <button type="submit" class="btn btn-secondary btn-lg btn-block" form="time-form" id="time-save-btn">SAVE</button>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-adjust-btn">ADJUST</button>
@@ -41,6 +44,7 @@
       <div id="analog-div"></div>
       <div id="digital-div"></div>
       <div id="modbus-div"></div>
+      <br>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-get-btn">GET</button>
       <button type="submit" class="btn btn-secondary btn-lg btn-block" form="channels-form" id="channels-save-btn">SAVE</button>
       <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-back-btn">BACK</button>        
@@ -62,7 +66,7 @@
 </html>
 
 <template>
-  <div id="lorawan-temp"> 
+  <div id="lorawan"> 
     <br>    
     <label for="dev-eui">Dev EUI:</label>
     <input id="dev_eui" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="dev-eui">    
@@ -75,7 +79,7 @@
 </template>
 
 <template>
-  <div id="general-temp">
+  <div id="general">
     <br>    
     <label for="lorawan-dr">LoRaWAN Data Rate:</label>
     <select id="xge_u08" class="form-control" name="lorawan-dr">
@@ -125,10 +129,10 @@
 </template>
 
 <template> 
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time-temp" aria-expanded="true" aria-controls="time-temp">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time" aria-expanded="true" aria-controls="time">
   Time
   </button> 
-  <div id="time-temp" class="collapse" data-parent="#time-form"> 
+  <div id="time" class="collapse" data-parent="#time-form"> 
     <br>
     <div class="form-check">
       <label class="form-check-label">
@@ -156,10 +160,10 @@
 </template>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#analog-temp" aria-expanded="true" aria-controls="analog-temp">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#analog" aria-expanded="true" aria-controls="analog">
   Analog
   </button> 
-  <div id="analog-temp" class="collapse" data-parent="#channels-form">
+  <div id="analog" class="collapse" data-parent="#channels-form">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -246,10 +250,10 @@
 </template>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#digital-temp" aria-expanded="true" aria-controls="digital-temp">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#digital" aria-expanded="true" aria-controls="digital">
   Digital
   </button> 
-  <div id="digital-temp" class="collapse" data-parent="#channels-form">
+  <div id="digital" class="collapse" data-parent="#channels-form">
     <br>
     <h6>Settings:</h6>
     <br>
@@ -309,10 +313,10 @@
 </template>
 
 <template>
-  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#modbus-temp" aria-expanded="true" aria-controls="modbus-temp">
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#modbus" aria-expanded="true" aria-controls="modbus">
   Modbus
   </button> 
-  <div id="modbus-temp" class="collapse" data-parent="#channels-form">
+  <div id="modbus" class="collapse" data-parent="#channels-form">
     <br>
     <h6>Settings:</h6>
     <br>

@@ -112,12 +112,12 @@
         timeDiv.appendChild(clon); 
       }      
       btns = timeDiv.querySelectorAll('button');
-      divs = timeDiv.querySelectorAll('#time-temp');
+      divs = timeDiv.querySelectorAll('#time');
       for (let i = 0; i < numTm; i++) {
-        btns[i].setAttribute('data-target', '#time-temp' + i);
-        btns[i].setAttribute('aria-controls', 'time-temp' + i);
-        btns[i].innerText = btns[i].innerText + ' ' + String(i + 1); 
-        divs[i].setAttribute('id', 'time-temp' + i);      
+        btns[i].setAttribute('data-target', '#time' + i);
+        btns[i].setAttribute('aria-controls', 'time' + i);
+        btns[i].textContent = btns[i].textContent + ' ' + String(i + 1); 
+        divs[i].setAttribute('id', 'time' + i);      
       }      
       // ANALOG
       for (let i = 0; i < numAn; i++) {
@@ -125,12 +125,12 @@
         analogDiv.appendChild(clon); 
       }      
       btns = analogDiv.querySelectorAll('button');
-      divs = analogDiv.querySelectorAll('#analog-temp');
+      divs = analogDiv.querySelectorAll('#analog');
       for (let i = 0; i < numAn; i++) {
-        btns[i].setAttribute('data-target', '#analog-temp' + i);
-        btns[i].setAttribute('aria-controls', 'analog-temp' + i);        
-        btns[i].innerText = '#' + String(i + 1) + ' (' + btns[i].innerText + ' ' + String(i + 1) + ')'; 
-        divs[i].setAttribute('id', 'analog-temp' + i);      
+        btns[i].setAttribute('data-target', '#analog' + i);
+        btns[i].setAttribute('aria-controls', 'analog' + i);        
+        btns[i].textContent = '#' + String(i + 1) + ' (' + btns[i].textContent + ' ' + String(i + 1) + ')'; 
+        divs[i].setAttribute('id', 'analog' + i);      
       } 
       // DIGITAL
       for (let i = 0; i < numDg; i++) {
@@ -138,12 +138,12 @@
         digitalDiv.appendChild(clon); 
       }      
       btns = digitalDiv.querySelectorAll('button');
-      divs = digitalDiv.querySelectorAll('#digital-temp');
+      divs = digitalDiv.querySelectorAll('#digital');
       for (let i = 0; i < numDg; i++) {
-        btns[i].setAttribute('data-target', '#digital-temp' + i);
-        btns[i].setAttribute('aria-controls', 'digital-temp' + i);
-        btns[i].innerText = '#' + String(i + 1 + numAn) + ' (' + btns[i].innerText + ' ' + String(i + 1) + ')'; 
-        divs[i].setAttribute('id', 'digital-temp' + i);      
+        btns[i].setAttribute('data-target', '#digital' + i);
+        btns[i].setAttribute('aria-controls', 'digital' + i);
+        btns[i].textContent = '#' + String(i + 1 + numAn) + ' (' + btns[i].textContent + ' ' + String(i + 1) + ')'; 
+        divs[i].setAttribute('id', 'digital' + i);      
       }   
       // MODBUS
       for (let i = 0; i < numMo; i++) {
@@ -151,12 +151,12 @@
         modbusDiv.appendChild(clon); 
       }      
       btns = modbusDiv.querySelectorAll('button');
-      divs = modbusDiv.querySelectorAll('#modbus-temp');
+      divs = modbusDiv.querySelectorAll('#modbus');
       for (let i = 0; i < numMo; i++) {
-        btns[i].setAttribute('data-target', '#modbus-temp' + i);
-        btns[i].setAttribute('aria-controls', 'modbus-temp' + i);
-        btns[i].innerText = '#' + String(i + 1 + +numAn + numDg) + ' (' + btns[i].innerText + ' ' + String(i + 1) + ')'; 
-        divs[i].setAttribute('id', 'modbus-temp' + i);      
+        btns[i].setAttribute('data-target', '#modbus' + i);
+        btns[i].setAttribute('aria-controls', 'modbus' + i);
+        btns[i].textContent = '#' + String(i + 1 + +numAn + numDg) + ' (' + btns[i].textContent + ' ' + String(i + 1) + ')'; 
+        divs[i].setAttribute('id', 'modbus' + i);      
       }      
       // make id      
       let datas = 
