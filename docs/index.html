@@ -9,42 +9,43 @@
 <body>
 <div class="container" id="main-div">
 
-  <button type="button" class="btn btn-secondary btn-lg btn-block" id="connect-btn">CONNECT</button>
-  <button type="button" class="btn btn-secondary btn-lg btn-block" id="lorawan-btn">LORAWAN</button>
-  <button type="button" class="btn btn-secondary btn-lg btn-block" id="general-btn">GENERAL</button>
-  <button type="button" class="btn btn-secondary btn-lg btn-block" id="time-btn">TIME</button>
-  <button type="button" class="btn btn-secondary btn-lg btn-block" id="channels-btn">CHANNELS</button>  
-
-  <form onsubmit="return false" hidden id="lorawan-form">
-    <div id="lorawan-div"></div>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-get-btn">GET</button>
-    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lorawan-form" id="lorawan-save-btn">SAVE</button>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-back-btn">BACK</button>      
-  </form>
+  <div id="button-div">
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="connect-btn">CONNECT</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="lorawan-btn">LORAWAN</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="general-btn">GENERAL</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="time-btn">TIME</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="channels-btn">CHANNELS</button>
+  </div>
   
-  <form onsubmit="return false" hidden id="general-form">
-    <div id="general-div"></div>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-get-btn">GET</button>
-    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="general-form" id="general-save-btn">SAVE</button>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-back-btn">BACK</button>      
-  </form>
-
-  <form onsubmit="return false" hidden id="time-form">
-    <div id="time-div"></div>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-get-btn">GET</button>
-    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="time-form" id="time-save-btn">SAVE</button>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-adjust-btn">ADJUST</button>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-back-btn">BACK</button>      
-  </form>
-
-  <form class="accordion" onsubmit="return false" hidden id="channels-form">
-    <div id="analog-div"></div>
-    <div id="digital-div"></div>
-    <div id="modbus-div"></div>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-get-btn">GET</button>
-    <button type="submit" class="btn btn-secondary btn-lg btn-block" form="channels-form" id="channels-save-btn">SAVE</button>
-    <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-back-btn">BACK</button>        
-  </form>      
+  <div id="form-div" hidden>
+    <form onsubmit="return false" id="lorawan-form">
+      <div id="lorawan-div"></div>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lorawan-form" id="lorawan-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-back-btn">BACK</button>      
+    </form>    
+    <form onsubmit="return false" id="general-form">
+      <div id="general-div"></div>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="general-form" id="general-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-back-btn">BACK</button>      
+    </form>
+    <form onsubmit="return false" id="time-form">
+      <div id="time-div"></div>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="time-form" id="time-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-adjust-btn">ADJUST</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-back-btn">BACK</button>      
+    </form>
+    <form class="accordion" onsubmit="return false" id="channels-form">
+      <div id="analog-div"></div>
+      <div id="digital-div"></div>
+      <div id="modbus-div"></div>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="channels-form" id="channels-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-back-btn">BACK</button>        
+    </form>  
+  </div>
     
   <h6 id="status">This is the message</h6>
   <br>
@@ -124,7 +125,10 @@
 </template>
 
 <template> 
-  <div id="time-temp"> 
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time-temp" aria-expanded="true" aria-controls="time-temp">
+  Time
+  </button> 
+  <div id="time-temp" class="collapse" data-parent="#time-form"> 
     <br>
     <div class="form-check">
       <label class="form-check-label">

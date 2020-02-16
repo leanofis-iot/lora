@@ -14,6 +14,9 @@
     let digitalTemp = document.querySelectorAll('template')[4];
     let modbusTemp = document.querySelectorAll('template')[5];
     
+    let mainDiv = document.querySelector('#main-div');
+    let formDiv = document.querySelector('#form-div');
+    let buttonDiv = document.querySelector('#button-div');
     let lorawanDiv = document.querySelector('#lorawan-div');
     let generalDiv = document.querySelector('#general-div');
     let timeDiv = document.querySelector('#time-div');
@@ -23,90 +26,143 @@
      
     let connectBtn = document.querySelector('#connect-btn');    
     let lorawanBtn = document.querySelector('#lorawan-btn');
-    let generalBtn = document.querySelector('#general');
+    let lorawanBackBtn = document.querySelector('#lorawan-back-btn');
+    let generalBtn = document.querySelector('#general-btn');
+    let generalBackBtn = document.querySelector('#general-back-btn');
     let timeBtn = document.querySelector('#time-btn');
-    let channelsBtn = document.querySelector('#channels-btn');     
+    let timeBackBtn = document.querySelector('#time-back-btn');
+    let channelsBtn = document.querySelector('#channels-btn'); 
+    let channelsBackBtn = document.querySelector('#channels-back-btn');    
     let port;
     let statusDisp = document.querySelector('#status');
 
-    let loraGetBut;
-    let loraSaveBut;
-
     let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
     let items;
+
+    lorawanBtn.addEventListener('click', function() {
+      buttonDiv.hidden = true;
+      formDiv.hidden = false;
+      lorawanForm.hidden = false;
+      generalForm.hidden = true;
+      timeForm.hidden = true;
+      channelsForm.hidden = true;                
+    });
+
+    lorawanBackBtn.addEventListener('click', function() {
+      buttonDiv.hidden = false;
+      formDiv.hidden = true;                      
+    });
+
+    generalBtn.addEventListener('click', function() {
+      buttonDiv.hidden = true;
+      formDiv.hidden = false;
+      lorawanForm.hidden = true;
+      generalForm.hidden = false;
+      timeForm.hidden = true;
+      channelsForm.hidden = true;                
+    });
+
+    generalBackBtn.addEventListener('click', function() {
+      buttonDiv.hidden = false;
+      formDiv.hidden = true;                      
+    });
+
+    timeBtn.addEventListener('click', function() {
+      buttonDiv.hidden = true;
+      formDiv.hidden = false;
+      lorawanForm.hidden = true;
+      generalForm.hidden = true;
+      timeForm.hidden = false;
+      channelsForm.hidden = true;                
+    });
+
+    timeBackBtn.addEventListener('click', function() {
+      buttonDiv.hidden = false;
+      formDiv.hidden = true;                      
+    });
+
+    channelsBtn.addEventListener('click', function() {
+      buttonDiv.hidden = true;
+      formDiv.hidden = false;
+      lorawanForm.hidden = true;
+      generalForm.hidden = true;
+      timeForm.hidden = true;
+      channelsForm.hidden = false;                
+    });
+
+    channelsBackBtn.addEventListener('click', function() {
+      buttonDiv.hidden = false;
+      formDiv.hidden = true;                      
+    });    
     
-    //at+set_config=lora:app_eui:70B3D57ED001EF7F
-        
     function create() {
       statusDisp.textContent = '';
       let clon;
-      let buts;
+      let btns;
       let divs;
-      // LoRaWAN
-      clon = loraTemp.content.cloneNode(true);     
-      lorasDiv.appendChild(clon);
-      loraGetBut = document.querySelector('#lora-get');
-      loraSaveBut = document.querySelector('#lora-save');               
-      // Generals
+      // LORAWAN
+      clon = lorawanTemp.content.cloneNode(true);     
+      lorawanDiv.appendChild(clon);                     
+      // GENERAL
       clon = generalTemp.content.cloneNode(true);     
-      generalsDiv.appendChild(clon);       
-      // Analogs
-      for (let i = 0; i < numAn; i++) {
-        clon = analogTemp.content.cloneNode(true);
-        analogsDiv.appendChild(clon); 
-      }      
-      buts = analogsDiv.querySelectorAll('button');
-      divs = analogsDiv.querySelectorAll('#analog');
-      for (let i = 0; i < numAn; i++) {
-        buts[i].setAttribute('data-target', '#analog' + i);
-        buts[i].setAttribute('aria-controls', 'analog' + i);        
-        buts[i].innerText = '#' + String(i + 1) + ' (' + buts[i].innerText + ' ' + String(i + 1) + ')'; 
-        divs[i].setAttribute('id', 'analog' + i);      
-      } 
-      // Digitals
-      for (let i = 0; i < numDg; i++) {
-        clon = digitalTemp.content.cloneNode(true);
-        digitalsDiv.appendChild(clon); 
-      }      
-      buts = digitalsDiv.querySelectorAll('button');
-      divs = digitalsDiv.querySelectorAll('#digital');
-      for (let i = 0; i < numDg; i++) {
-        buts[i].setAttribute('data-target', '#digital' + i);
-        buts[i].setAttribute('aria-controls', 'digital' + i);
-        buts[i].innerText = '#' + String(i + 1 + numAn) + ' (' + buts[i].innerText + ' ' + String(i + 1) + ')'; 
-        divs[i].setAttribute('id', 'digital' + i);      
-      }   
-      // Modbuses
-      for (let i = 0; i < numMo; i++) {
-        clon = modbusTemp.content.cloneNode(true);
-        modbusesDiv.appendChild(clon); 
-      }      
-      buts = modbusesDiv.querySelectorAll('button');
-      divs = modbusesDiv.querySelectorAll('#modbus');
-      for (let i = 0; i < numMo; i++) {
-        buts[i].setAttribute('data-target', '#modbus' + i);
-        buts[i].setAttribute('aria-controls', 'modbus' + i);
-        buts[i].innerText = '#' + String(i + 1 + +numAn + numDg) + ' (' + buts[i].innerText + ' ' + String(i + 1) + ')'; 
-        divs[i].setAttribute('id', 'modbus' + i);      
-      }
-      // Times
+      generalDiv.appendChild(clon); 
+      // TIME
       for (let i = 0; i < numTm; i++) {
         clon = timeTemp.content.cloneNode(true);
-        timesDiv.appendChild(clon); 
+        timeDiv.appendChild(clon); 
       }      
-      buts = timesDiv.querySelectorAll('button');
-      divs = timesDiv.querySelectorAll('#time');
+      btns = timeDiv.querySelectorAll('button');
+      divs = timeDiv.querySelectorAll('#time-temp');
       for (let i = 0; i < numTm; i++) {
-        buts[i].setAttribute('data-target', '#time' + i);
-        buts[i].setAttribute('aria-controls', 'time' + i);
-        buts[i].innerText = buts[i].innerText + ' ' + String(i + 1); 
-        divs[i].setAttribute('id', 'time' + i);      
-      }
+        btns[i].setAttribute('data-target', '#time-temp' + i);
+        btns[i].setAttribute('aria-controls', 'time-temp' + i);
+        btns[i].innerText = btns[i].innerText + ' ' + String(i + 1); 
+        divs[i].setAttribute('id', 'time-temp' + i);      
+      }      
+      // ANALOG
+      for (let i = 0; i < numAn; i++) {
+        clon = analogTemp.content.cloneNode(true);
+        analogDiv.appendChild(clon); 
+      }      
+      btns = analogDiv.querySelectorAll('button');
+      divs = analogDiv.querySelectorAll('#analog-temp');
+      for (let i = 0; i < numAn; i++) {
+        btns[i].setAttribute('data-target', '#analog-temp' + i);
+        btns[i].setAttribute('aria-controls', 'analog-temp' + i);        
+        btns[i].innerText = '#' + String(i + 1) + ' (' + btns[i].innerText + ' ' + String(i + 1) + ')'; 
+        divs[i].setAttribute('id', 'analog-temp' + i);      
+      } 
+      // DIGITAL
+      for (let i = 0; i < numDg; i++) {
+        clon = digitalTemp.content.cloneNode(true);
+        digitalDiv.appendChild(clon); 
+      }      
+      btns = digitalDiv.querySelectorAll('button');
+      divs = digitalDiv.querySelectorAll('#digital-temp');
+      for (let i = 0; i < numDg; i++) {
+        btns[i].setAttribute('data-target', '#digital-temp' + i);
+        btns[i].setAttribute('aria-controls', 'digital-temp' + i);
+        btns[i].innerText = '#' + String(i + 1 + numAn) + ' (' + btns[i].innerText + ' ' + String(i + 1) + ')'; 
+        divs[i].setAttribute('id', 'digital-temp' + i);      
+      }   
+      // MODBUS
+      for (let i = 0; i < numMo; i++) {
+        clon = modbusTemp.content.cloneNode(true);
+        modbusDiv.appendChild(clon); 
+      }      
+      btns = modbusDiv.querySelectorAll('button');
+      divs = modbusDiv.querySelectorAll('#modbus-temp');
+      for (let i = 0; i < numMo; i++) {
+        btns[i].setAttribute('data-target', '#modbus-temp' + i);
+        btns[i].setAttribute('aria-controls', 'modbus-temp' + i);
+        btns[i].innerText = '#' + String(i + 1 + +numAn + numDg) + ' (' + btns[i].innerText + ' ' + String(i + 1) + ')'; 
+        divs[i].setAttribute('id', 'modbus-temp' + i);      
+      }      
       // make id      
       let datas = 
       ['ge_u08','ge_u16','ge_u32','an_u08','an_f32','dg_u08','dg_u16','mo_u08','mo_u16','mo_f32','tm_u08']; 
       for (let i = 0; i < datas.length; i++) {        
-        items = mainForm.querySelectorAll('#x' + datas[i]);        
+        items = mainDiv.querySelectorAll('#x' + datas[i]);        
         for (let j = 0; j < items.length; j++) {
           items[j].id += ('0' + j).slice(-2);
           statusDisp.textContent += items[j].id + '\r\n';
@@ -114,6 +170,8 @@
       }
     }
     create();
+
+    /*
 
     loraGetBut.addEventListener('click', function() {
       //if (!port) {
@@ -201,14 +259,19 @@
       //port.send(t);      
     });
 
+    */
+
     function connect() {
       port.connect().then(() => {
         statusDisp.textContent = '';
-        connectBut.textContent = 'Disconnect';
+        connectBtn.textContent = 'Disconnect';
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
           console.log(textDecoder.decode(data));
           // here readline parser, and trim
+
+          /*
+
           let item;
           let value;
           let dataline;
@@ -229,7 +292,10 @@
             item.checked = value ? true : false;                    
           } else {
             item.value = value;
-          }          
+          } 
+          
+          */
+
         }
         port.onReceiveError = error => {
           console.error(error);
@@ -238,10 +304,10 @@
         statusDisp.textContent = error;
       });
     }    
-    connectBut.addEventListener('click', function() {
+    connectBtn.addEventListener('click', function() {
       if (port) {
         port.disconnect();
-        connectBut.textContent = 'Connect';
+        connectBtn.textContent = 'Connect';
         statusDisp.textContent = '';
         port = null;
       } else {
