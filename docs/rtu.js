@@ -26,19 +26,29 @@
      
     let connectBtn = document.querySelector('#connect-btn');    
     let lorawanBtn = document.querySelector('#lorawan-btn');
+    let lorawanGetBtn = document.querySelector('#lorawan-get-btn');
+    let lorawanSaveBtn = document.querySelector('#lorawan-save-btn');
     let lorawanBackBtn = document.querySelector('#lorawan-back-btn');
     let generalBtn = document.querySelector('#general-btn');
+    let generalGetBtn = document.querySelector('#general-get-btn');
+    let generalSaveBtn = document.querySelector('#general-save-btn');
     let generalBackBtn = document.querySelector('#general-back-btn');
     let timeBtn = document.querySelector('#time-btn');
+    let timeGetBtn = document.querySelector('#time-get-btn');
+    let timeSaveBtn = document.querySelector('#time-save-btn');
+    let timeAdjustBtn = document.querySelector('#time-adjust-btn');
     let timeBackBtn = document.querySelector('#time-back-btn');
     let channelsBtn = document.querySelector('#channels-btn'); 
+    let channelsGetBtn = document.querySelector('#channels-get-btn');
+    let channelsSaveBtn = document.querySelector('#channels-save-btn');
+    let channelsFetchBtn = document.querySelector('#channels-fetch-btn');
     let channelsBackBtn = document.querySelector('#channels-back-btn');    
     let port;
     let statusDisp = document.querySelector('#status');
 
     let numAn = 2, numDg = 2, numMo = 8, numTm = 2;
     let items;
-
+    
     lorawanBtn.addEventListener('click', function() {
       buttonDiv.hidden = true;
       formDiv.hidden = false;
@@ -46,6 +56,35 @@
       generalForm.hidden = true;
       timeForm.hidden = true;
       channelsForm.hidden = true;                
+    });
+
+    lorawanGetBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      //port.send('at+get_config=lora:status' + '\r\n');                 
+    });
+
+    lorawanSaveBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      let str = '';               
+      if (lorawanForm.checkValidity()) {
+        statusDisp.textContent = 'validaion ok';
+        items = lorawanForm.querySelectorAll('input,select');
+        let value = 0;        
+        for (let i = 0; i < items.length; i++) {                      
+          if (items[i].type === 'checkbox') {
+            value = items[i].checked ? 1 : 0;                    
+          } else {
+            value = items[i].value;
+          }
+          str += 'at+set_config=lora:' + items[i].id + ':' + value + '\r\n';                                           
+        }                                         
+      }                 
+      statusDisp.textContent = str;
+      //port.send(str);           
     });
 
     lorawanBackBtn.addEventListener('click', function() {
@@ -62,6 +101,38 @@
       channelsForm.hidden = true;                
     });
 
+    generalGetBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      //port.send('xget_ge');      
+    });
+
+    generalSaveBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      let str = '';          
+      if (generalForm.checkValidity()) {
+        statusDisp.textContent = 'validaion ok';
+        items = generalForm.querySelectorAll('input,select');
+        let value = 0;        
+        for (let i = 0; i < items.length; i++) {          
+          if (items[i].id[0] == 'x') {             
+            if (items[i].type === 'checkbox') {
+              value = items[i].checked ? 1 : 0;                    
+            } else {
+              value = Number(items[i].value);
+            }
+            str += items[i].id + value + '\r\n';                        
+          }                                 
+        }
+        str += 'xsave' + '\r\n';                                 
+      }            
+      statusDisp.textContent = str;
+      //port.send(str);      
+    });
+
     generalBackBtn.addEventListener('click', function() {
       buttonDiv.hidden = false;
       formDiv.hidden = true;                      
@@ -76,6 +147,56 @@
       channelsForm.hidden = true;                
     });
 
+    timeGetBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      //port.send('xget_tm');      
+    });
+
+    timeSaveBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      let str = '';          
+      if (timeForm.checkValidity()) {
+        statusDisp.textContent = 'validaion ok';
+        items = timeForm.querySelectorAll('input,select');
+        let value = 0;        
+        for (let i = 0; i < items.length; i++) {          
+          if (items[i].id[0] == 'x') {             
+            if (items[i].type === 'checkbox') {
+              value = items[i].checked ? 1 : 0;                    
+            } else {
+              value = Number(items[i].value);
+            }
+            str += items[i].id + value + '\r\n';                        
+          }                                 
+        }
+        str += 'xsave' + '\r\n';                                 
+      }            
+      statusDisp.textContent = str;
+      //port.send(str);      
+    });
+
+    timeAdjustBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      let d = new Date();
+      let str = '';
+      str += 'xss' + d.getSeconds() + '\r\n';
+      str += 'xmm' + d.getMinutes() + '\r\n';
+      str += 'xhh' + d.getHours() + '\r\n';
+      str += 'xdd' + d.getDate() + '\r\n';
+      str += 'xwd' + d.getDay() + '\r\n';
+      str += 'xmh' + String(d.getMonth() + 1) + '\r\n';
+      str += 'xyy' + d.getFullYear() + '\r\n';
+      str += 'xtime' + '\r\n';
+      statusDisp.textContent = str;      
+      //port.send(str);      
+    });
+
     timeBackBtn.addEventListener('click', function() {
       buttonDiv.hidden = false;
       formDiv.hidden = true;                      
@@ -88,6 +209,45 @@
       generalForm.hidden = true;
       timeForm.hidden = true;
       channelsForm.hidden = false;                
+    });
+
+    channelsGetBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      //port.send('xget_ch');      
+    });
+
+    channelsSaveBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}
+      let str = '';          
+      if (channelsForm.checkValidity()) {
+        statusDisp.textContent = 'validaion ok';
+        items = channelsForm.querySelectorAll('input,select');
+        let value = 0;        
+        for (let i = 0; i < items.length; i++) {          
+          if (items[i].id[0] == 'x') {             
+            if (items[i].type === 'checkbox') {
+              value = items[i].checked ? 1 : 0;                    
+            } else {
+              value = Number(items[i].value);
+            }
+            str += items[i].id + value + '\r\n';                        
+          }                                 
+        }
+        str += 'xsave' + '\r\n';                                 
+      }            
+      statusDisp.textContent = str;
+      //port.send(str);      
+    });
+
+    channelsFetchBtn.addEventListener('click', function() {
+      //if (!port) {
+      //  return;
+      //}      
+      //port.send('xfetch');      
     });
 
     channelsBackBtn.addEventListener('click', function() {
@@ -116,7 +276,7 @@
       for (let i = 0; i < numTm; i++) {
         btns[i].setAttribute('data-target', '#time' + i);
         btns[i].setAttribute('aria-controls', 'time' + i);
-        btns[i].textContent = btns[i].textContent + ' ' + String(i + 1); 
+        btns[i].textContent = 'Time ' + String(i + 1); 
         divs[i].setAttribute('id', 'time' + i);      
       }      
       // ANALOG
@@ -129,7 +289,7 @@
       for (let i = 0; i < numAn; i++) {
         btns[i].setAttribute('data-target', '#analog' + i);
         btns[i].setAttribute('aria-controls', 'analog' + i);        
-        btns[i].textContent = '#' + String(i + 1) + ' (' + btns[i].textContent + ' ' + String(i + 1) + ')'; 
+        btns[i].textContent = '#' + String(i + 1) + ' (Analog ' + String(i + 1) + ')' + ' Value: 0'; 
         divs[i].setAttribute('id', 'analog' + i);      
       } 
       // DIGITAL
@@ -142,7 +302,7 @@
       for (let i = 0; i < numDg; i++) {
         btns[i].setAttribute('data-target', '#digital' + i);
         btns[i].setAttribute('aria-controls', 'digital' + i);
-        btns[i].textContent = '#' + String(i + 1 + numAn) + ' (' + btns[i].textContent + ' ' + String(i + 1) + ')'; 
+        btns[i].textContent = '#' + String(i + 1 + numAn) + ' (Digital ' + String(i + 1) + ')' + ' Value: 0'; 
         divs[i].setAttribute('id', 'digital' + i);      
       }   
       // MODBUS
@@ -155,7 +315,7 @@
       for (let i = 0; i < numMo; i++) {
         btns[i].setAttribute('data-target', '#modbus' + i);
         btns[i].setAttribute('aria-controls', 'modbus' + i);
-        btns[i].textContent = '#' + String(i + 1 + +numAn + numDg) + ' (' + btns[i].textContent + ' ' + String(i + 1) + ')'; 
+        btns[i].textContent = '#' + String(i + 1 + +numAn + numDg) + ' (Modbus ' + String(i + 1) + ')' + ' Value: 0'; 
         divs[i].setAttribute('id', 'modbus' + i);      
       }      
       // make id      
@@ -170,96 +330,6 @@
       }
     }
     create();
-
-    /*
-
-    loraGetBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}      
-      //port.send('at+get_config=lora:status' + '\r\n');                 
-    });
-    
-    loraSaveBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}
-      let lora = '';               
-      if (loraForm.checkValidity()) {
-        statusDisp.textContent = 'validaion ok';
-        items = loraForm.querySelectorAll('input,select');
-        let value = 0;        
-        for (let i = 0; i < items.length; i++) {                      
-          if (items[i].type === 'checkbox') {
-            value = items[i].checked ? 1 : 0;                    
-          } else {
-            value = items[i].value;
-          }
-          lora += 'at+set_config=lora:' + items[i].id + ':' + value + '\r\n';                                           
-        }                                         
-      }                 
-      statusDisp.textContent = lora;
-      //port.send(lora);           
-    });
-
-    getBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}      
-      //port.send('xget');      
-    });
-
-    fetchBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}      
-      //port.send('xfetch');      
-    });
-        
-    saveBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}
-      let config = '';          
-      if (mainForm.checkValidity()) {
-        statusDisp.textContent = 'validaion ok';
-        items = mainForm.querySelectorAll('input,select');
-        let value = 0;        
-        for (let i = 0; i < items.length; i++) {          
-          if (items[i].id[0] == 'x') {             
-            if (items[i].type === 'checkbox') {
-              value = items[i].checked ? 1 : 0;                    
-            } else {
-              value = Number(items[i].value);
-            }
-            config += items[i].id + value + '\r\n';                        
-          }                                 
-        }
-        config += 'xsave' + '\r\n';                                 
-      }            
-      statusDisp.textContent = config;
-      //port.send(config);      
-    });
-
-    timeBut.addEventListener('click', function() {
-      //if (!port) {
-      //  return;
-      //}      
-      let d = new Date();
-      let t = '';
-      t += 'xss' + d.getSeconds() + '\r\n';
-      t += 'xmm' + d.getMinutes() + '\r\n';
-      t += 'xhh' + d.getHours() + '\r\n';
-      t += 'xdd' + d.getDate() + '\r\n';
-      t += 'xwd' + d.getDay() + '\r\n';
-      t += 'xmh' + String(d.getMonth() + 1) + '\r\n';
-      t += 'xyy' + d.getFullYear() + '\r\n';
-      t += 'xtime' + '\r\n';
-      statusDisp.textContent = t;      
-      //port.send(t);      
-    });
-
-    */
 
     function connect() {
       port.connect().then(() => {

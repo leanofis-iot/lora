@@ -426,10 +426,7 @@ bool isReportInterval() {
 }
 void getRakSerial() { 
   while (rakSerial.available()) {
-    const char chr = (char)rakSerial.read();
-    //if (usbSerial) {
-      usbSerial.print(chr); // or line print
-    //}
+    const char chr = (char)rakSerial.read();    
     strRakSerial += chr;
     if (chr == '\n') {
       strRakSerial.trim();
@@ -443,6 +440,9 @@ void getRakSerial() {
       } else if (strRakSerial.endsWith(F("send success"))) { 
         loraSend = true;
       }
+      //if (usbSerial) {
+      usbSerial.println(strRakSerial); 
+      //}
       strRakSerial = "";
     }
   }
