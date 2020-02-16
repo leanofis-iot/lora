@@ -338,17 +338,29 @@
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
           console.log(textDecoder.decode(data));
-          // here readline parser, and trim         
+          // here readline parser, and trim
+          let dataline;         
 
           let item;
-          let value;
-          let dataline;
+          let value;          
+          let split;
+          let n = Number(dataline.slice(7, 9));;
+          let btns = channelsForm.querySelectorAll('button');
           if (dataline.startsWith('xan_val')) {
-
+            n = Number(dataline.slice(7, 9));
+            value = dataline.slice(9);
+            split = btns[n].textContent.split('Value: ');
+            btns[n].textContent = btns[n].textContent.replace(split[1], value);
           } else if (dataline.startsWith('xdg_val')) {
-
-          } else if (dataline.startsWith('xmo_val')) {   
-          
+            n = Number(dataline.slice(7, 9)) + numAn;
+            value = dataline.slice(9);
+            split = btns[n].textContent.split('Value: ');
+            btns[n].textContent = btns[n].textContent.replace(split[1], value);
+          } else if (dataline.startsWith('xmo_val')) { 
+            n = Number(dataline.slice(7, 9)) + numAn + numDg;
+            value = dataline.slice(9);
+            split = btns[n].textContent.split('Value: ');
+            btns[n].textContent = btns[n].textContent.replace(split[1], value);          
           } else {
             if (dataline.startsWith('DevEui: ')) {
               item = loraForm.querySelector('#dev-eui');
@@ -360,8 +372,8 @@
               item = loraForm.querySelector('#app-key');
               value = dataline.slice(8);            
             } else if (dataline.startsWith('x')) {
-              item = mainForm.querySelector('#' + dataline.slice(0, 7));
-              value = Number(dataline.slice(7));            
+              item = mainForm.querySelector('#' + dataline.slice(0, 9));
+              value = Number(dataline.slice(9));            
             }
             if (item.type === 'checkbox') {
               item.checked = value ? true : false;                    
