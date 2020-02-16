@@ -338,34 +338,37 @@
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
           console.log(textDecoder.decode(data));
-          // here readline parser, and trim
-
-          /*
+          // here readline parser, and trim         
 
           let item;
           let value;
           let dataline;
-          if (dataline.startsWith('DevEui: ')) {
-            item = loraForm.querySelector('#dev-eui');
-            value = dataline.slice(8);                        
-          } else if (dataline.startsWith('AppEui: ')) {
-            item = loraForm.querySelector('#app-eui');
-            value = dataline.slice(8);            
-          } else if (dataline.startsWith('AppKey: ')) {
-            item = loraForm.querySelector('#app-key');
-            value = dataline.slice(8);            
-          } else if (dataline.startsWith('x')) {
-            item = mainForm.querySelector('#' + dataline.slice(0, 7));
-            value = Number(dataline.slice(7));            
-          }
-          if (item.type === 'checkbox') {
-            item.checked = value ? true : false;                    
-          } else {
-            item.value = value;
-          } 
-          
-          */
+          if (dataline.startsWith('xan_val')) {
 
+          } else if (dataline.startsWith('xdg_val')) {
+
+          } else if (dataline.startsWith('xmo_val')) {   
+          
+          } else {
+            if (dataline.startsWith('DevEui: ')) {
+              item = loraForm.querySelector('#dev-eui');
+              value = dataline.slice(8);                        
+            } else if (dataline.startsWith('AppEui: ')) {
+              item = loraForm.querySelector('#app-eui');
+              value = dataline.slice(8);            
+            } else if (dataline.startsWith('AppKey: ')) {
+              item = loraForm.querySelector('#app-key');
+              value = dataline.slice(8);            
+            } else if (dataline.startsWith('x')) {
+              item = mainForm.querySelector('#' + dataline.slice(0, 7));
+              value = Number(dataline.slice(7));            
+            }
+            if (item.type === 'checkbox') {
+              item.checked = value ? true : false;                    
+            } else {
+              item.value = value;
+            } 
+          }
         }
         port.onReceiveError = error => {
           console.error(error);
