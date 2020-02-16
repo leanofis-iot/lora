@@ -322,7 +322,7 @@
       let datas = 
       ['ge_u08','ge_u16','ge_u32','an_u08','an_f32','dg_u08','dg_u16','mo_u08','mo_u16','mo_f32','tm_u08']; 
       for (let i = 0; i < datas.length; i++) {        
-        items = mainDiv.querySelectorAll('#x' + datas[i]);        
+        items = formDiv.querySelectorAll('#x' + datas[i]);        
         for (let j = 0; j < items.length; j++) {
           items[j].id += ('0' + j).slice(-2);
           statusDisp.textContent += items[j].id + '\r\n';

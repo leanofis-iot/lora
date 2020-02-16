@@ -160,22 +160,22 @@ void setup() {
 }
 void loop() {
   if (isPollInterval()) {
-    getAnalog();
-    getModbus();
+    readAnalog();
+    readModbus();
   }  
-  getDigital();
-  getTm();
+  readDigital();
+  readTime();
   if (isReportIftt) {
     report();  
   }
   if (isReportInterval()) {
     report();    
   }  
-  getRakSerial();
-  getUsbSerial();
+  readRakSerial();
+  readUsbSerial();
   wdt_reset();
 }
-void getAnalog() {
+void readAnalog() {
   // wire.end();    
   for (uint8_t ch = 0; ch < numAn; ch++) {
     const uint8_t _enable = an_u08_enable + ch * sizeof(conf.an_u08) / numAn; 
@@ -241,7 +241,7 @@ void isAnalogIftt(const uint8_t ch) {
     }    
   }  
 }
-void getDigital() {
+void readDigital() {
   for (uint8_t ch = 0; ch < numDg; ch++) {
     const uint8_t _enable = dg_u08_enable + ch * sizeof(conf.dg_u08) / numDg;
     if (conf.dg_u08[_enable]) {      
@@ -280,7 +280,7 @@ void isDigitalIftt(const uint8_t ch) {
   }
   dg[ch] = digitalRead(DIG_PIN[ch]);       
 }
-void getModbus() { 
+void readModbus() { 
   for (uint8_t ch = 0; ch < numMo; ch++) {
     const uint8_t _enable = mo_u08_enable + ch * sizeof(conf.mo_u08) / numMo;        
     if (conf.mo_u08[_enable]) { 
@@ -385,7 +385,7 @@ void isModbusIftt(const uint8_t ch) {
     }    
   }
 }
-void getTm() {
+void readTime() {
   for (uint8_t ch = 0; ch < numTm; ch++) {
     const uint8_t _enable = tm_u08_enable + ch * sizeof(conf.tm_u08) / numTm;
     if (conf.tm_u08[_enable]) {
@@ -424,7 +424,7 @@ bool isReportInterval() {
     return true;
   }
 }
-void getRakSerial() { 
+void readRakSerial() { 
   while (rakSerial.available()) {
     const char chr = (char)rakSerial.read();    
     strRakSerial += chr;
@@ -447,7 +447,7 @@ void getRakSerial() {
     }
   }
 }
-void getUsbSerial() {
+void readUsbSerial() {
   while (usbSerial && usbSerial.available()) {
     const char chr = (char)usbSerial.read();
     strUsbSerial += chr;
@@ -476,10 +476,14 @@ void getUsbSerial() {
       } else if (strUsbSerial.startsWith(F("xsave"))) {
         EEPROM.put(0, conf);
         resetMe(); 
-      } else if (strUsbSerial.startsWith(F("xget"))) {
-        getConf();
+      } else if (strUsbSerial.startsWith(F("xget_ge"))) {
+        getGeneral();
+      } else if (strUsbSerial.startsWith(F("xget_tm"))) {
+        getTm();
+      } else if (strUsbSerial.startsWith(F("xget_ch"))) {
+        getChannels();
       } else if (strUsbSerial.startsWith(F("xfetch"))) {
-        fetchValues();        
+        fetchChannels();        
       } else if (strUsbSerial.startsWith(F("xss"))) {
         tm.Second = strUsbSerial.substring(3).toInt();
       } else if (strUsbSerial.startsWith(F("xmm"))) {
@@ -501,7 +505,7 @@ void getUsbSerial() {
     }
   }   
 }
-void getConf() { 
+void getGeneral() {
   String str; 
   for (uint8_t i = 0; i < sizeof(conf.ge_u08); i++) {    
     usbSerial.print(F("xge_u08"));
@@ -520,7 +524,19 @@ void getConf() {
     str = '0' + i;
     usbSerial.print(str.substring(str.length() - 2));
     usbSerial.println(conf.ge_u32[i]);    
-  }
+  }  
+}
+void getTm() {
+  String str;
+  for (uint8_t i = 0; i < sizeof(conf.tm_u08); i++) {
+    usbSerial.print(F("xtm_u08"));
+    str = '0' + i;
+    usbSerial.print(str.substring(str.length() - 2));
+    usbSerial.println(conf.tm_u08[i]);    
+  }   
+}
+void getChannels() { 
+  String str;  
   for (uint8_t i = 0; i < sizeof(conf.an_u08); i++) {
     usbSerial.print(F("xan_u08"));
     str = '0' + i;
@@ -562,15 +578,9 @@ void getConf() {
     str = '0' + i;
     usbSerial.print(str.substring(str.length() - 2));
     usbSerial.println(conf.mo_f32[i]);    
-  }
-  for (uint8_t i = 0; i < sizeof(conf.tm_u08); i++) {
-    usbSerial.print(F("xtm_u08"));
-    str = '0' + i;
-    usbSerial.print(str.substring(str.length() - 2));
-    usbSerial.println(conf.tm_u08[i]);    
-  }   
+  }  
 }
-void fetchValues() { 
+void fetchChannels() { 
   String str;
   for (uint8_t i = 0; i < numAn; i++) {
     usbSerial.print(F("xan_val"));
