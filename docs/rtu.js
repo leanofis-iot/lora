@@ -71,7 +71,7 @@
       //}
       let str = '';               
       if (lorawanForm.checkValidity()) {
-        statusDisp.textContent = 'validaion ok';
+        // statusDisp.textContent = 'validaion ok';
         items = lorawanForm.querySelectorAll('input,select');
         let value = 0;        
         for (let i = 0; i < items.length; i++) {                      
@@ -83,7 +83,7 @@
           str += 'at+set_config=lora:' + items[i].id + ':' + value + '\r\n';                                           
         }                                         
       }                 
-      statusDisp.textContent = str;
+      // statusDisp.textContent = str;
       //port.send(str);           
     });
 
@@ -114,7 +114,7 @@
       //}
       let str = '';          
       if (generalForm.checkValidity()) {
-        statusDisp.textContent = 'validaion ok';
+        // statusDisp.textContent = 'validaion ok';
         items = generalForm.querySelectorAll('input,select');
         let value = 0;        
         for (let i = 0; i < items.length; i++) {          
@@ -129,7 +129,7 @@
         }
         str += 'xsave' + '\r\n';                                 
       }            
-      statusDisp.textContent = str;
+      // statusDisp.textContent = str;
       //port.send(str);      
     });
 
@@ -160,7 +160,7 @@
       //}
       let str = '';          
       if (timeForm.checkValidity()) {
-        statusDisp.textContent = 'validaion ok';
+        // statusDisp.textContent = 'validaion ok';
         items = timeForm.querySelectorAll('input,select');
         let value = 0;        
         for (let i = 0; i < items.length; i++) {          
@@ -175,7 +175,7 @@
         }
         str += 'xsave' + '\r\n';                                 
       }            
-      statusDisp.textContent = str;
+      // statusDisp.textContent = str;
       //port.send(str);      
     });
 
@@ -193,7 +193,7 @@
       str += 'xmh' + String(d.getMonth() + 1) + '\r\n';
       str += 'xyy' + d.getFullYear() + '\r\n';
       str += 'xtime' + '\r\n';
-      statusDisp.textContent = str;      
+      // statusDisp.textContent = str;      
       //port.send(str);      
     });
 
@@ -224,7 +224,7 @@
       //}
       let str = '';          
       if (channelsForm.checkValidity()) {
-        statusDisp.textContent = 'validaion ok';
+        // statusDisp.textContent = 'validaion ok';
         items = channelsForm.querySelectorAll('input,select');
         let value = 0;        
         for (let i = 0; i < items.length; i++) {          
@@ -239,7 +239,7 @@
         }
         str += 'xsave' + '\r\n';                                 
       }            
-      statusDisp.textContent = str;
+      // statusDisp.textContent = str;
       //port.send(str);      
     });
 
@@ -256,7 +256,7 @@
     });    
     
     function create() {
-      statusDisp.textContent = '';
+      // statusDisp.textContent = '';
       let clon;
       let btns;
       let divs;
@@ -325,7 +325,7 @@
         items = formDiv.querySelectorAll('#x' + datas[i]);        
         for (let j = 0; j < items.length; j++) {
           items[j].id += ('0' + j).slice(-2);
-          statusDisp.textContent += items[j].id + '\r\n';
+          // statusDisp.textContent += items[j].id + '\r\n';
         }        
       }
     }
@@ -333,7 +333,7 @@
 
     function connect() {
       port.connect().then(() => {
-        statusDisp.textContent = '';
+        // statusDisp.textContent = '';
         connectBtn.textContent = 'Disconnect';
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
@@ -386,21 +386,21 @@
           console.error(error);
         };
       }, error => {
-        statusDisp.textContent = error;
+        // statusDisp.textContent = error;
       });
     }    
     connectBtn.addEventListener('click', function() {
       if (port) {
         port.disconnect();
         connectBtn.textContent = 'Connect';
-        statusDisp.textContent = '';
+        // statusDisp.textContent = '';
         port = null;
       } else {
         serial.requestPort().then(selectedPort => {
           port = selectedPort;
           connect();
         }).catch(error => {
-          statusDisp.textContent = error;
+          // statusDisp.textContent = error;
         });
       }
     }); 
