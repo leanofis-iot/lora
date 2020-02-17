@@ -452,27 +452,30 @@ void readUsbSerial() {
     const char chr = (char)usbSerial.read();
     strUsbSerial += chr;
     if (chr == '\n') {
-      strUsbSerial.trim();       
+      strUsbSerial.trim();
+      const uint8_t num = strUsbSerial.substring(7,9).toInt();
+      const int16_t valInt = strUsbSerial.substring(9).toInt();
+      const float valFloat = strUsbSerial.substring(9).toFloat();       
       if (strUsbSerial.startsWith(F("at"))) {
         rakSerial.println(strUsbSerial);
       } else if (strUsbSerial.startsWith(F("xge_u08"))) {
-        conf.ge_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());
+        conf.ge_u08[num] = (uint8_t)valInt;
       } else if (strUsbSerial.startsWith(F("xge_u16"))) {
-        conf.ge_u16[strUsbSerial.substring(7,9).toInt()] = (uint16_t)(strUsbSerial.substring(9).toInt());
+        conf.ge_u16[num] = (uint16_t)valInt;
       } else if (strUsbSerial.startsWith(F("xge_u32"))) {
-        conf.ge_u32[strUsbSerial.substring(7,9).toInt()] = (uint32_t)(strUsbSerial.substring(9).toInt());
+        conf.ge_u32[num] = (uint32_t)valInt;
       } else if (strUsbSerial.startsWith(F("xan_u08"))) {
-        conf.an_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());
+        conf.an_u08[num] = (uint8_t)valInt;
       } else if (strUsbSerial.startsWith(F("xan_f32"))) {
-        conf.an_f32[strUsbSerial.substring(7,9).toInt()] = strUsbSerial.substring(9).toFloat();
+        conf.an_f32[num] = valFloat;
       } else if (strUsbSerial.startsWith(F("xmo_u08"))) {
-        conf.mo_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());
+        conf.mo_u08[num] = (uint8_t)valInt;
       } else if (strUsbSerial.startsWith(F("xmo_u16"))) {
-        conf.mo_u16[strUsbSerial.substring(7,9).toInt()] = (uint16_t)(strUsbSerial.substring(9).toInt());
+        conf.mo_u16[num] = (uint16_t)valInt;
       } else if (strUsbSerial.startsWith(F("xmo_f32"))) {
-        conf.mo_f32[strUsbSerial.substring(7,9).toInt()] = strUsbSerial.substring(9).toFloat();
+        conf.mo_f32[num] = valFloat;
       } else if (strUsbSerial.startsWith(F("xtm_u08"))) {
-        conf.tm_u08[strUsbSerial.substring(7,9).toInt()] = (uint8_t)(strUsbSerial.substring(9).toInt());      
+        conf.tm_u08[num] = (uint8_t)valInt;      
       } else if (strUsbSerial.startsWith(F("xsave"))) {
         EEPROM.put(0, conf);
         resetMe(); 
