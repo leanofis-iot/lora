@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LoRa Wireless RTU</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">    
+</head>
+<body>
+<div class="container" id="main-div">
+
+  <div id="button-div">    
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="connect-btn">CONNECT</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="lorawan-btn">LORAWAN</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="general-btn">GENERAL</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="time-btn">TIME</button>
+    <button type="button" class="btn btn-secondary btn-lg btn-block" id="channels-btn">CHANNELS</button>
+  </div>
+  
+  <div id="form-div" hidden>
+    <br>
+    <form onsubmit="return false" id="lorawan-form">
+      <div id="lorawan-div"></div>
+      <br>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="lorawan-form" id="lorawan-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="lorawan-back-btn">BACK</button>      
+    </form>    
+    <form onsubmit="return false" id="general-form">
+      <div id="general-div"></div>
+      <br>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="general-form" id="general-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="general-back-btn">BACK</button>      
+    </form>
+    <form onsubmit="return false" id="time-form">
+      <div id="time-div"></div>
+      <br>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="time-form" id="time-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-adjust-btn">ADJUST</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="time-back-btn">BACK</button>      
+    </form>
+    <form class="accordion" onsubmit="return false" id="channels-form">
+      <div id="analog-div"></div>
+      <div id="digital-div"></div>
+      <div id="modbus-div"></div>
+      <br>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-get-btn">GET</button>
+      <button type="submit" class="btn btn-secondary btn-lg btn-block" form="channels-form" id="channels-save-btn">SAVE</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-fetch-btn">FETCH</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block"id ="channels-back-btn">BACK</button>        
+    </form>  
+  </div>
+    
+  <h6 id="status"></h6>
+  <br>
+  <br>
+  <br>
+  <br>
+</div>
+<script src="serial.js"></script>
+<script src="rtu.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+<template>
+  <div id="lorawan"> 
+    <br>    
+    <label for="dev-eui">Dev EUI:</label>
+    <input id="dev_eui" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="dev-eui">    
+    <label for="app-eui">App EUI:</label>
+    <input id="app_eui" type="text" required class="form-control" value="0000000000000000" pattern="[0-9A-F]{16}" maxlength ="16" name="app-eui">                
+    <label for="app-key">App KEY:</label>
+    <input id="app_key" type="text" required class="form-control" value="00000000000000000000000000000000" pattern="[0-9A-F]{32}" maxlength ="32" name="app-key">    
+    <br>
+  </div>       
+</template>
+
+<template>
+  <div id="general">
+    <br>    
+    <label for="lorawan-dr">LoRaWAN Data Rate:</label>
+    <select id="xge_u08" class="form-control" name="lorawan-dr">
+      <option value = "0">0 - SF12BW125</option>
+      <option value = "1">1 - SF11BW125</option>
+      <option value = "2">2 - SF10BW125</option>
+      <option value = "3">3 - SF9BW125</option>
+      <option value = "4" selected>4 - SF8BW125</option>
+      <option value = "5">5 - SF7BW125</option>
+    </select>  
+    <label for="lorawan-port">LoRaWAN Port:</label>
+    <input  id="xge_u08" type="number" required class="form-control" value="90" min="1" max="223" step="1" maxlength="3" name="lorawan-port">
+    <label for="poll">Poll Interval (Seconds 1-60):</label>
+    <input id="xge_u08" type="number" required class="form-control" value="1" min="1" max="60" step="1" maxlength="2" name="poll">
+    <label for="report">Report Interval (Minutes 5-1440):</label>
+    <input id="xge_u16" type="number" required class="form-control" value="5" min="5" max="1440" step="1" maxlength="4" name="report">
+    <label for="modbus-baud">Modbus Baud Rate:</label>
+    <select id="xge_u32" class="form-control" name="modbus-baud">
+      <option value = "2400">2400</option>
+      <option value = "4800">4800</option>
+      <option value = "9600" selected>9600</option>
+      <option value = "19200">19200</option>
+      <option value = "38400">38400</option>
+      <option value = "57600">57600</option>
+      <option value = "115200">115200</option>
+    </select>  
+    <label for="modbus-data-bit">Modbus Data Bits:</label>
+    <select id="xge_u08" class="form-control" name="modbus-data-bit">
+      <option value = "0">5</option>
+      <option value = "2">6</option>
+      <option value = "4">7</option>
+      <option value = "6" selected>8</option>      
+    </select> 
+    <label for="modbus-stop-bit">Modbus Stop Bits:</label>
+    <select id="xge_u08" class="form-control" name="modbus-stop-bit">
+      <option value = "0" selected>1</option>
+      <option value = "8">2</option>           
+    </select> 
+    <label for="modbus-par-bit">Modbus Parity Bits:</label>
+    <select id="xge_u08" class="form-control" name="modbus-par-bit">
+      <option value = "0" selected>none</option>
+      <option value = "32">Even</option>
+      <option value = "48">Odd</option>      
+    </select> 
+    <br> 
+  </div>
+</template>
+
+<template> 
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#time" aria-expanded="true" aria-controls="time">
+  Time
+  </button> 
+  <div id="time" class="collapse" data-parent="#time-form"> 
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xtm_u08" type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>  
+    <label for="hour">Hour:</label>
+    <input id="xtm_u08" type="number" required class="form-control" value="0" min="0" max="23" step="1" maxlength ="2" name="hour">
+    <label for="minute">Minute:</label>
+    <input id="xtm_u08" type="number" required class="form-control" value="0" min="0" max="59" step="1" maxlength ="2" name="minute">
+    <label for="time-relay-1">If Time Than Relay 1</label>
+    <select id="xtm_u08" class="form-control" name="time-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>               
+    </select> 
+    <label for="time-relay-2">If Time Than Relay 2</label>
+    <select id="xtm_u08" class="form-control" name="time-relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>         
+    </select>
+    <br>
+  </div>     
+</template>
+
+<template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#analog" aria-expanded="true" aria-controls="analog">
+  Analog
+  </button> 
+  <div id="analog" class="collapse" data-parent="#channels-form">
+    <br>
+    <h6>Settings:</h6>
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xan_u08" type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>    
+    <label for="unit">Unit:</label>
+    <select id="xan_u08" class="form-control" name="unit">    
+      <option value = "2">Analog</option>
+      <option value = "101">Luminosity</option>    
+      <option value = "103">Temperature</option>
+      <option value = "104">R.Humidity</option>
+      <option value = "115">Barometric</option>
+      <option value = "116">Voltage</option>
+      <option value = "117">Current</option> 
+      <option value = "120">Percentage</option>
+      <option value = "121">Altitude</option>
+      <option value = "128">Power</option>   
+      <option value = "132">Direction</option>
+      <option value = "0">Digital</option>
+      <option value = "142">Switch</option>
+      <option value = "102">Presence</option>                   
+    </select>    
+    <label for="in-min">In Min. (Ampere):</label>
+    <input id="xan_f32" type="number" required class="form-control" value="0.004" step="any" name="in-min">
+    <label for="in-max">In Max. (Ampere):</label>
+    <input id="xan_f32" type="number" required class="form-control" value="0.020" step="any" name="in-max">
+    <label for="out-min">Out Min.:</label>
+    <input id="xan_f32" type="number" required class="form-control" value="0" step="any" name="out-min">
+    <label for="out-max">Out Max.:</label>
+    <input id="xan_f32" type="number" required class="form-control" value="0" step="any" name="out-max">    
+    <label for="low">Low:</label>
+    <input id="xan_f32" type="number" required class="form-control" value="0" step="any" name="low">
+    <label for="high">High:</label>
+    <input id="xan_f32" type="number" required class="form-control" value="0" step="any" name="high">    
+    <br>
+    <h6>IFTT:</h6>
+    <br>    
+    <label for="low-relay-1">If Low Than Relay 1</label>
+    <select id="xan_u08" class="form-control" name="low-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>               
+    </select> 
+    <label for="low_relay-2">If Low Than Relay 2</label>
+    <select id="xan_u08" class="form-control" name="low_relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>         
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xan_u08" type="checkbox" class="form-check-input" name="low_report">If Low Than Report
+      </label>
+    </div> 
+    <br>
+    <label for="high-relay-1">If High Than Relay 1</label>
+    <select id="xan_u08" class="form-control" name="high-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>              
+    </select> 
+    <label for="high_relay-2">If High Than Relay 2</label>
+    <select id="xan_u08" class="form-control" name="high_relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>         
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xan_u08" type="checkbox" class="form-check-input" name="high_report">If High Than Report
+      </label>
+    </div>
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xan_u08" type="checkbox" class="form-check-input" name="within_report">If Within Than Report
+      </label>
+    </div>
+    <br>
+  </div>
+</template>
+
+<template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#digital" aria-expanded="true" aria-controls="digital">
+  Digital
+  </button> 
+  <div id="digital" class="collapse" data-parent="#channels-form">
+    <br>
+    <h6>Settings:</h6>
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xdg_u08" type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>     
+    <label for="unit">Unit:</label>
+    <select id="xdg_u08" class="form-control" name="unit">    
+    <option value = "0">Digital</option>
+    <option value = "142">Switch</option>
+    <option value = "102">Presence</option>            
+    </select>    
+    <label for="debounce">Debounce (Miliseconds 0-65535):</label>
+    <input id="xdg_u16" type="number" required class="form-control" value="100" max="65535" step="1" maxlength="5" name="debounce">
+    <br>
+    <h6>IFTT:</h6>
+    <br>    
+    <label for="low-relay-1">If Low Than Relay 1</label>
+    <select id="xdg_u08" class="form-control" name="low-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>              
+    </select> 
+    <label for="low_relay-2">If Low Than Relay 2</label>
+    <select id="xdg_u08" class="form-control" name="low_relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>        
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xdg_u08" type="checkbox" class="form-check-input" name="low_report">If Low Than Report
+      </label>
+    </div> 
+    <br>
+    <label for="high-relay-1">If High Than Relay 1</label>
+    <select id="xdg_u08" class="form-control" name="high-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>               
+    </select> 
+    <label for="high_relay-2">If High Than Relay 2</label>
+    <select id="xdg_u08" class="form-control" name="high_relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>         
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xdg_u08" type="checkbox" class="form-check-input" name="high_report">If High Than Report
+      </label>
+    </div>
+    <br>
+  </div>
+</template>
+
+<template>
+  <button class="btn btn-secondary btn-lg btn-block" type="button" data-toggle="collapse" data-target="#modbus" aria-expanded="true" aria-controls="modbus">
+  Modbus
+  </button> 
+  <div id="modbus" class="collapse" data-parent="#channels-form">
+    <br>
+    <h6>Settings:</h6>
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xmo_u08" type="checkbox" class="form-check-input" name="enable">Enable
+      </label>
+    </div>     
+    <label for="unit">Unit:</label>
+    <select id="xmo_u08" class="form-control" name="unit">    
+      <option value = "2">Analog</option>
+      <option value = "101">Luminosity</option>    
+      <option value = "103">Temperature</option>
+      <option value = "104">R.Humidity</option>
+      <option value = "115">Barometric</option>
+      <option value = "116">Voltage</option>
+      <option value = "117">Current</option> 
+      <option value = "120">Percentage</option>
+      <option value = "121">Altitude</option>
+      <option value = "128">Power</option>   
+      <option value = "132">Direction</option>
+      <option value = "0">Digital</option>
+      <option value = "142">Switch</option>
+      <option value = "102">Presence</option>            
+    </select>
+    <label for="slave">Slave Address (1-247):</label>
+    <input id="xmo_u08" type="number" required class="form-control" value="1" min="1" max="247" step="1" maxlength ="3" name="slave">
+    <label for="function">Function:</label>
+    <select id="xmo_u08" class="form-control" name="function">
+      <option value = "1">Coil</option>
+      <option value = "2">Discrete</option>            
+      <option value = "3" selected>Holding</option> 
+      <option value = "4">Input</option>          
+    </select> 
+    <label for="register">Register Address:</label>
+    <input id="xmo_u16" type="number" required class="form-control" value="0" min="0" step="1" maxlength ="5" name="register">
+    <label for="type">Type:</label>
+    <select id="xmo_u08" class="form-control" name="type">
+      <option value = "0">uint16</option>
+      <option value = "1">int16</option>         
+    </select>
+    <label for="decimal">Decimal Places:</label>
+    <select id="xmo_u08" class="form-control" name="decimal">
+      <option value = "0">0</option>
+      <option value = "1">1</option>
+      <option value = "2">2</option>
+      <option value = "3">3</option>
+      <option value = "4">4</option>
+      <option value = "5">5</option>     
+    </select>     
+    <label for="low">Low:</label>
+    <input id="xmo_f32"type="number" required class="form-control" value="0" step="any" name="low">
+    <label for="high">High:</label>
+    <input id="xmo_f32"type="number" required class="form-control" value="0" step="any" name="high">    
+    <br>
+    <h6>IFTT:</h6>
+    <br>    
+    <label for="low-relay-1">If Low Than Relay 1</label>
+    <select id="xmo_u08" class="form-control" name="low-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>               
+    </select> 
+    <label for="low_relay-2">If Low Than Relay 2</label>
+    <select id="xmo_u08" class="form-control" name="low_relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>         
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xmo_u08" type="checkbox" class="form-check-input" name="low_report">If Low Than Report
+      </label>
+    </div>
+    <br> 
+    <label for="high-relay-1">If High Than Relay 1</label>
+    <select id="xmo_u08" class="form-control" name="high-relay-1">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>               
+    </select> 
+    <label for="high_relay-2">If High Than Relay 2</label>
+    <select id="xmo_u08" class="form-control" name="high_relay-2">
+      <option value = "0">none</option>
+      <option value = "1">Activate</option>
+      <option value = "2">Deactivate</option>         
+    </select> 
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xmo_u08" type="checkbox" class="form-check-input" name="high_report">If High Than Report
+      </label>
+    </div>
+    <br>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input id="xmo_u08" type="checkbox" class="form-check-input" name="within_report">If Within Than Report
+      </label>
+    </div>
+    <br>
+  </div>
+</template>
